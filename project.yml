@@ -1,0 +1,42 @@
+name: Monotask
+options:
+  bundleIdPrefix: com.monotask
+  deploymentTarget:
+    iOS: '18.0'
+  createIntermediateGroups: true
+settings:
+  base:
+    IPHONEOS_DEPLOYMENT_TARGET: '18.0'
+targets:
+  Monotask:
+    type: application
+    platform: iOS
+    # Asset catalogs must be included here (not as generic `resources`) so Xcode runs `actool` and
+    # named colors are available in the built app.
+    sources:
+      - path: Monotask
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.monotask.Monotask
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: Monotask/App/Info.plist
+        # No AppIcon set yet; leaving this blank avoids actool looking up a missing `AppIcon` set.
+        ASSETCATALOG_COMPILER_APPICON_NAME: ''
+        TARGETED_DEVICE_FAMILY: '1'
+        CURRENT_PROJECT_VERSION: '1'
+        MARKETING_VERSION: '1.0.0'
+    scheme:
+      testTargets:
+        - MonotaskTests
+  MonotaskTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: MonotaskTests
+    dependencies:
+      - target: Monotask
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.monotask.MonotaskTests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_HOST: '$(BUILT_PRODUCTS_DIR)/Monotask.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Monotask'

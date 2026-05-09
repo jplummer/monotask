@@ -11,6 +11,13 @@ enum PostItCardLayout {
   static let verticalUpShiftRatio: CGFloat = 0.14
 }
 
+private struct BackgroundCard: Identifiable {
+  let id: Int
+  let angle: Double
+  let offset: CGSize
+  let color: Color
+}
+
 struct PostItCard: View {
   /// Edge length of the square post-it (points).
   let squareSide: CGFloat
@@ -20,8 +27,18 @@ struct PostItCard: View {
   @Binding var editTitle: String
   @Binding var editNotes: String
   var focus: FocusState<PostItEditFocus?>.Binding
+  /// Number of open tasks — drives how many stacked cards appear behind the front card.
+  var stackedCardsCount: Int = 0
+  /// Index into the shared post-it color palette. Background cards cycle forward from here.
+  var colorIndex: Int = 0
+  /// Rotation angle for the front card in degrees. Caller owns this so floating chrome can align.
+  var frontCardRotation: Double = 1.0
+  /// Extra leading padding for the title content, to make room for an overlaid checkbox icon.
+  var checkboxLeadingReserve: CGFloat = 0
 
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
+  /// Randomly generated per-card jitter, stable for the view's lifetime.
+  @State private var cardJitter: [(angle: Double, dx: CGFloat, dy: CGFloat, colorIdx: Int)] = []
 
   var body: some View {
     ZStack {
@@ -35,17 +52,58 @@ struct PostItCard: View {
       // GeometryReader defaults to top-leading; a bare VStack there was only as wide as the
       // square, so the post-it hugged the left. A full-size ZStack keeps the card centered.
       GeometryReader { geo in
+        let upShift = geo.size.height * PostItCardLayout.verticalUpShiftRatio
+
         ZStack {
+          // Background stacked cards (furthest back → closest, rendered before main card)
+          ForEach(backgroundCards) { card in
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+              .fill(card.color)
+              .frame(width: squareSide, height: squareSide)
+              .shadow(color: .black.opacity(0.08), radius: 4, y: 2)
+              .rotationEffect(.degrees(reduceMotion ? 0 : card.angle))
+              .offset(
+                x: reduceMotion ? 0 : card.offset.width,
+                y: -upShift + (reduceMotion ? 0 : card.offset.height)
+              )
+          }
+
+          // Main post-it card
           postItBody
             .frame(width: squareSide, height: squareSide)
-            .background(DesignColors.postItPaper)
+            .background(DesignColors.postItColor(at: colorIndex))
             .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-            .shadow(color: .black.opacity(0.18), radius: 12, y: 6)
-            .rotationEffect(.degrees(reduceMotion ? 0 : 1))
-            .offset(y: -geo.size.height * PostItCardLayout.verticalUpShiftRatio)
+            .shadow(color: .black.opacity(0.26), radius: 20, y: 10)
+            .rotationEffect(.degrees(reduceMotion ? 0 : frontCardRotation))
+            .offset(y: -upShift)
         }
         .frame(width: geo.size.width, height: geo.size.height)
       }
+    }
+    .onAppear { regenerateJitter(count: stackedCardsCount) }
+    .onChange(of: stackedCardsCount) { _, new in regenerateJitter(count: new) }
+  }
+
+  private var backgroundCards: [BackgroundCard] {
+    cardJitter.enumerated().map { i, jitter in
+      BackgroundCard(
+        id: i,
+        angle: jitter.angle,
+        offset: CGSize(width: jitter.dx, height: jitter.dy),
+        color: DesignColors.postItColor(at: jitter.colorIdx)
+      )
+    }
+  }
+
+  private func regenerateJitter(count: Int) {
+    let backCount = min(max(count - 1, 0), 2)
+    cardJitter = (0..<backCount).map { _ in
+      (
+        angle: Double.random(in: -2.2...2.2),
+        dx: CGFloat.random(in: -8...8),
+        dy: CGFloat.random(in: -5...5),
+        colorIdx: Int.random(in: 0..<DesignColors.postItColorCount)
+      )
     }
   }
 
@@ -72,6 +130,7 @@ struct PostItCard: View {
               .multilineTextAlignment(.leading)
           }
         }
+        .padding(.leading, checkboxLeadingReserve)
         .frame(maxWidth: .infinity, alignment: .leading)
 
         Group {
@@ -95,6 +154,7 @@ struct PostItCard: View {
               .multilineTextAlignment(.leading)
           }
         }
+        .padding(.leading, checkboxLeadingReserve)
         .frame(maxWidth: .infinity, alignment: .leading)
       }
       .padding(20)

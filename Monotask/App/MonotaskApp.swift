@@ -5,8 +5,7 @@ struct MonotaskApp: App {
   @State private var viewModel = AppViewModel(
     reminders: EventKitRemindersService(),
     selectionStore: SelectionStore(),
-    selectionPolicy: UniformRandomTopLevelPolicy(),
-    skipInitialBootstrap: true
+    selectionPolicy: UniformRandomTopLevelPolicy()
   )
 
   var body: some Scene {

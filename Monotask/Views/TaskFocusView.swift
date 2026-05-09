@@ -219,7 +219,7 @@ struct TaskFocusView: View {
 
     // Rotate the on-card icon anchor points with the card's tilt.
     let checkboxPos = rotatedPoint(
-      lx: -half + inset + iconHit / 2, ly: -half + 42,
+      lx: -half + inset + iconHit / 2, ly: -half + 40,
       cx: cx, cy: cy, degrees: angle
     )
     let editPos = rotatedPoint(

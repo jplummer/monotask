@@ -49,10 +49,6 @@ final class AppViewModel {
   private var taskAddedToastTask: Task<Void, Never>? = nil
 
   private var observationTask: Task<Void, Never>?
-  /// Ensures `start()` runs bootstrap at most once (splash defers bootstrap until intro completes).
-  private var didRunBootstrap = false
-  /// Coalesces rapid `EKEventStoreChanged` bursts so we do not reload the pool repeatedly.
-  private var externalReloadTask: Task<Void, Never>?
 
   init(
     reminders: RemindersService,
@@ -75,19 +71,8 @@ final class AppViewModel {
   }
 
   /// Entry point for previews and tests when `skipInitialBootstrap` was `true`.
-  /// Safe to call once after splash / onboarding; subsequent calls no-op.
   func start() async {
-    guard !didRunBootstrap else { return }
-    didRunBootstrap = true
     await bootstrap()
-  }
-
-  func markIntroCompleted() {
-    selectionStore.hasCompletedIntroFlow = true
-  }
-
-  var hasCompletedIntroFlow: Bool {
-    selectionStore.hasCompletedIntroFlow
   }
 
   // MARK: - Setup / permissions
@@ -423,13 +408,8 @@ final class AppViewModel {
   }
 
   private func reloadForExternalChange() async {
-    externalReloadTask?.cancel()
-    externalReloadTask = Task { @MainActor [weak self] in
-      try? await Task.sleep(for: .milliseconds(280))
-      guard let self, !Task.isCancelled else { return }
-      guard self.reminders.currentAuthorization() == .fullAccess else { return }
-      guard self.activeListSummary != nil || self.selectionStore.selectedListIdentifier != nil else { return }
-      await self.loadPoolAndFocus()
-    }
+    guard reminders.currentAuthorization() == .fullAccess else { return }
+    guard activeListSummary != nil || selectionStore.selectedListIdentifier != nil else { return }
+    await loadPoolAndFocus()
   }
 }

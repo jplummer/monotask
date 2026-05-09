@@ -21,6 +21,7 @@ struct TaskFocusView: View {
       let size = proxy.size
       let maxSide = squareSide(maxHeight: size.height, maxWidth: size.width)
       let postIt = postItGeometry(container: size, squareSide: maxSide)
+      let bottomPad = max(proxy.safeAreaInsets.bottom, 12)
 
       ZStack(alignment: .bottom) {
         ZStack {
@@ -41,9 +42,25 @@ struct TaskFocusView: View {
           }
         }
 
+        VStack(spacing: 8) {
+          if let undo = model.pendingUndo {
+            Toast(message: undo.toastMessage, actionLabel: "Undo") {
+              Task { await model.undoPendingAction() }
+            }
+            .transition(.move(edge: .bottom).combined(with: .opacity))
+          }
+          if model.showTaskAddedToast {
+            Toast(message: "Task added.")
+              .transition(.move(edge: .bottom).combined(with: .opacity))
+          }
+        }
+        .padding(.bottom, bottomPad + 56)
+        .animation(.easeInOut(duration: 0.22), value: model.pendingUndo != nil)
+        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: model.showTaskAddedToast)
+
         bottomIconStrip
           .padding(.horizontal, 28)
-          .padding(.bottom, max(proxy.safeAreaInsets.bottom, 12))
+          .padding(.bottom, bottomPad)
           .allowsHitTesting(!isEditing)
           .accessibilityHidden(isEditing)
       }
@@ -201,7 +218,7 @@ struct TaskFocusView: View {
 
       // Complete: bottom-right on the post-it.
       toolbarIconButton(systemName: "checkmark.circle.fill", accessibilityLabel: "Complete") {
-        Task { await model.completeCurrent() }
+        Task { await model.beginComplete() }
       }
       .position(
         x: cx + half - inset - iconHit / 2,
@@ -221,7 +238,7 @@ struct TaskFocusView: View {
       }
       Spacer(minLength: 0)
       bottomBarIcon(systemName: "trash", accessibilityLabel: "Trash") {
-        Task { await model.deleteCurrent() }
+        Task { await model.beginDelete() }
       }
     }
   }
@@ -273,3 +290,34 @@ struct TaskFocusView: View {
     editFocus = nil
   }
 }
+
+// MARK: - Toast
+
+private struct Toast: View {
+  let message: String
+  var actionLabel: String? = nil
+  var action: (() -> Void)? = nil
+
+  var body: some View {
+    HStack(spacing: 10) {
+      Text(message)
+      if let actionLabel {
+        Text(actionLabel)
+          .fontWeight(.semibold)
+          .padding(.horizontal, 10)
+          .padding(.vertical, 4)
+          .background(.primary.opacity(0.12))
+          .clipShape(Capsule())
+      }
+    }
+    .font(.subheadline)
+    .padding(.horizontal, 20)
+    .padding(.vertical, 13)
+    .background(.regularMaterial)
+    .clipShape(Capsule())
+    .shadow(color: .black.opacity(0.18), radius: 12, y: 4)
+    .contentShape(Capsule())
+    .onTapGesture { action?() }
+  }
+}
+

@@ -41,3 +41,4 @@ final class SelectionStore: @unchecked Sendable {
     defaults.removeObject(forKey: reminderKey)
   }
 }
+

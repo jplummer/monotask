@@ -249,7 +249,6 @@ final class AppViewModel {
     pendingTaskId = nil
     undoTimerTask = nil
     await sendToEventKit(action)
-    await loadPoolAndFocus()
   }
 
   /// If a previous undo window is open, commit it immediately before starting a new one.
@@ -260,7 +259,6 @@ final class AppViewModel {
       pendingUndo = nil
       pendingTaskId = nil
       await sendToEventKit(action)
-      await loadPoolAndFocus()
     }
   }
 

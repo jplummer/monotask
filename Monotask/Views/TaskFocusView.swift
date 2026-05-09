@@ -11,6 +11,9 @@ struct TaskFocusView: View {
 
   @State private var showNewListAlert = false
   @State private var newListName = ""
+  @State private var frontCardAngle: Double = 0
+
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
   private let horizontalPadding: CGFloat = 24
   /// Space reserved so the square post-it does not fully cover the bottom icon row (points).
@@ -21,6 +24,7 @@ struct TaskFocusView: View {
       let size = proxy.size
       let maxSide = squareSide(maxHeight: size.height, maxWidth: size.width)
       let postIt = postItGeometry(container: size, squareSide: maxSide)
+
       let bottomPad = max(proxy.safeAreaInsets.bottom, 12)
 
       ZStack(alignment: .bottom) {
@@ -32,14 +36,18 @@ struct TaskFocusView: View {
             displayNotes: task.notes,
             editTitle: $draftTitle,
             editNotes: $draftNotes,
-            focus: $editFocus
+            focus: $editFocus,
+            stackedCardsCount: model.pool.count,
+            colorIndex: model.pool.firstIndex(where: { $0.id == task.id }) ?? 0,
+            frontCardRotation: frontCardAngle,
+            checkboxLeadingReserve: 32
           )
 
-          if !isEditing {
-            postItFloatingChrome(postIt: postIt)
-              .frame(width: size.width, height: size.height)
-              .allowsHitTesting(true)
-          }
+          postItFloatingChrome(postIt: postIt)
+            .frame(width: size.width, height: size.height)
+            .allowsHitTesting(!isEditing)
+            .opacity(isEditing ? 0 : 1)
+            .animation(.easeInOut(duration: 0.15), value: isEditing)
         }
 
         VStack(spacing: 8) {
@@ -54,7 +62,7 @@ struct TaskFocusView: View {
               .transition(.move(edge: .bottom).combined(with: .opacity))
           }
         }
-        .padding(.bottom, bottomPad + 56)
+        .padding(.bottom, bottomPad + 60)
         .animation(.easeInOut(duration: 0.22), value: model.pendingUndo != nil)
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: model.showTaskAddedToast)
 
@@ -63,6 +71,8 @@ struct TaskFocusView: View {
           .padding(.bottom, bottomPad)
           .allowsHitTesting(!isEditing)
           .accessibilityHidden(isEditing)
+          .opacity(isEditing ? 0 : 1)
+          .animation(.easeInOut(duration: 0.15), value: isEditing)
       }
       .frame(width: size.width, height: size.height)
     }
@@ -111,9 +121,8 @@ struct TaskFocusView: View {
       Text("Creates a new list in Reminders and switches Monotask to it.")
     }
     .onChange(of: task.id) { _, _ in
-      if isEditing {
-        cancelInlineEdit()
-      }
+      if isEditing { cancelInlineEdit() }
+      frontCardAngle = Double.random(in: -2.5...2.5)
     }
     .onChange(of: task.title) { _, newTitle in
       if !isEditing {
@@ -128,6 +137,7 @@ struct TaskFocusView: View {
     .onAppear {
       draftTitle = task.title
       draftNotes = task.notes ?? ""
+      frontCardAngle = Double.random(in: -2.5...2.5)
     }
     .alert(
       "That's the only task in your list right now.",
@@ -205,36 +215,59 @@ struct TaskFocusView: View {
     let half = postIt.half
     let iconHit: CGFloat = 44
     let inset: CGFloat = 6
+    let angle = reduceMotion ? 0.0 : frontCardAngle
+
+    // Rotate the on-card icon anchor points with the card's tilt.
+    let checkboxPos = rotatedPoint(
+      lx: -half + inset + iconHit / 2, ly: -half + 40,
+      cx: cx, cy: cy, degrees: angle
+    )
+    let editPos = rotatedPoint(
+      lx: half - inset - iconHit / 2, ly: half - inset - iconHit / 2,
+      cx: cx, cy: cy, degrees: angle
+    )
+    // Add lives outside the card — anchor from the rotated lower-right corner, then drop below.
+    let cornerPos = rotatedPoint(
+      lx: half - inset - iconHit / 2, ly: half,
+      cx: cx, cy: cy, degrees: angle
+    )
 
     return ZStack {
-      // Edit: above the post-it, along the right edge (same spot as the old floating re-roll).
+      // Complete: upper-left, tilts with the card.
+      toolbarIconButton(systemName: "square", accessibilityLabel: "Complete") {
+        Task { await model.beginComplete() }
+      }
+      .rotationEffect(.degrees(angle))
+      .position(checkboxPos)
+
+      // Edit: bottom-right, tilts with the card.
       toolbarIconButton(systemName: "pencil", accessibilityLabel: "Edit") {
         beginInlineEdit()
       }
-      .position(
-        x: cx + half - inset - iconHit / 2,
-        y: cy - half - inset - iconHit / 2
-      )
+      .rotationEffect(.degrees(angle))
+      .position(editPos)
 
-      // Complete: bottom-right on the post-it.
-      toolbarIconButton(systemName: "checkmark.circle.fill", accessibilityLabel: "Complete") {
-        Task { await model.beginComplete() }
+      // Add: below the lower-right corner, upright (not tilted with card).
+      toolbarIconButton(systemName: "plus.circle", accessibilityLabel: "Add") {
+        model.beginAdd()
       }
-      .position(
-        x: cx + half - inset - iconHit / 2,
-        y: cy + half - inset - iconHit / 2
-      )
+      .position(x: cornerPos.x, y: cornerPos.y + iconHit / 2 + 20)
     }
+  }
+
+  /// Rotates a card-local point (lx, ly) around the card center (cx, cy) by `degrees` clockwise.
+  private func rotatedPoint(lx: CGFloat, ly: CGFloat, cx: CGFloat, cy: CGFloat, degrees: Double) -> CGPoint {
+    let r = CGFloat(degrees * .pi / 180)
+    return CGPoint(
+      x: cx + lx * cos(r) - ly * sin(r),
+      y: cy + lx * sin(r) + ly * cos(r)
+    )
   }
 
   private var bottomIconStrip: some View {
     HStack {
       bottomBarIcon(systemName: "shuffle", accessibilityLabel: "Re-roll") {
         Task { await model.reroll() }
-      }
-      Spacer(minLength: 0)
-      bottomBarIcon(systemName: "plus.circle", accessibilityLabel: "Add") {
-        model.beginAdd()
       }
       Spacer(minLength: 0)
       bottomBarIcon(systemName: "trash", accessibilityLabel: "Trash") {
@@ -320,4 +353,3 @@ private struct Toast: View {
     .onTapGesture { action?() }
   }
 }
-

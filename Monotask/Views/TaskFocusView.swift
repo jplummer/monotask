@@ -186,8 +186,8 @@ struct TaskFocusView: View {
           .font(.caption.weight(.semibold))
           .foregroundStyle(.secondary)
       }
-      .frame(maxWidth: 220)
-      .animation(.none, value: model.activeListSummary?.id)
+      .frame(width: 220)
+      .transaction { $0.animation = nil }
     }
     .accessibilityLabel("Reminders list, \(model.activeListSummary?.title ?? AppConfig.appName)")
     .accessibilityHint("Opens list of Reminders lists")

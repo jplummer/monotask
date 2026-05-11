@@ -18,15 +18,23 @@
 		3AA01BB320566EC2812D98BF /* ListSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DC6E3F60397339805700DD4 /* ListSetupView.swift */; };
 		4D685DCBBCE8549D6B1010C5 /* AppViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D49B6C5779CC00A5687625 /* AppViewModelTests.swift */; };
 		55B56CB11DA61BE819F9A23A /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48F43B0DC96A9612D88444CE /* RootView.swift */; };
+		6F0E714A1A69FEB37B6027F9 /* AppViewModelSectionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1081A9E891471E4BFE0F61E4 /* AppViewModelSectionsTests.swift */; };
+		79E0A8FBC8330875C7622218 /* AppViewModelListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519ADF9C3D96DF3F30C3E3B7 /* AppViewModelListTests.swift */; };
 		7A1E4104C406CEC5AFC0F99B /* EmptyListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84A97EE02769BD10123FB3A /* EmptyListView.swift */; };
 		9540E570FFCC2CFCFD2FBFBA /* PostItCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06406949F655DBC0E87E1D3D /* PostItCard.swift */; };
 		9CE585C776F23ADC597D48E9 /* SelectionStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F73D84A6E06658E5FBF7CE2 /* SelectionStoreTests.swift */; };
+		9F63305356BB612E622A1926 /* AppViewModelRerollTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BBA231FA7F56663E69FF5AE /* AppViewModelRerollTests.swift */; };
 		A7F1239C36DE24F766BA26EF /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4A30AB47C462A09439667F8 /* AppViewModel.swift */; };
+		A93B7100C480070C6410FDDD /* AppViewModelEditTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 673164E172A3DC3B67499382 /* AppViewModelEditTests.swift */; };
 		B0412FA365206B307BF16BFA /* MonotaskApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D5F84623697F5029EC94237 /* MonotaskApp.swift */; };
 		CB12BAE345F7A2827FE532FE /* DesignColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = B91F9D125026E1E93BD923B3 /* DesignColors.swift */; };
+		D59224BE359A36F36AD9DFCC /* AppViewModelExternalChangeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68A29CA4DE4F8093BFA52EAC /* AppViewModelExternalChangeTests.swift */; };
+		D84D442CEB55E8956684C722 /* AppViewModelBootstrapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4A46D2CDAA4C9EB99B9D69 /* AppViewModelBootstrapTests.swift */; };
 		D9EE1CA529E65990145EEFE9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E800D7EDE150EA3E6252EB32 /* Assets.xcassets */; };
 		DBB761004F4B2B7644A0AB40 /* ReminderTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25DA5A23BB9C638DA8409188 /* ReminderTask.swift */; };
 		E2644C875847A420E312A506 /* PermissionInstructionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D446D2DF1AAFB0F5EB6FBC07 /* PermissionInstructionsView.swift */; };
+		EA41C79833590C28171BB209 /* AppViewModelAddTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 452F04250BC2D5F3AF94EB26 /* AppViewModelAddTests.swift */; };
+		F36284D5D10E08B1EF50BFF2 /* AppViewModelUndoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F54BCFDFAD406B70687BE545 /* AppViewModelUndoTests.swift */; };
 		F8EDF8E1C0E26AC14643B7C0 /* RemindersService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 005C397DC31EBA4CE9302FF0 /* RemindersService.swift */; };
 /* End PBXBuildFile section */
 
@@ -44,13 +52,20 @@
 		005C397DC31EBA4CE9302FF0 /* RemindersService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersService.swift; sourceTree = "<group>"; };
 		06406949F655DBC0E87E1D3D /* PostItCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostItCard.swift; sourceTree = "<group>"; };
 		0DC6E3F60397339805700DD4 /* ListSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListSetupView.swift; sourceTree = "<group>"; };
+		1081A9E891471E4BFE0F61E4 /* AppViewModelSectionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelSectionsTests.swift; sourceTree = "<group>"; };
 		25DA5A23BB9C638DA8409188 /* ReminderTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderTask.swift; sourceTree = "<group>"; };
 		2D5F84623697F5029EC94237 /* MonotaskApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonotaskApp.swift; sourceTree = "<group>"; };
 		2F346652DC3D832B10E62A54 /* SelectionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionStore.swift; sourceTree = "<group>"; };
 		33DFF2BDB5DCD91C4AC72638 /* TaskFocusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskFocusView.swift; sourceTree = "<group>"; };
+		3A4A46D2CDAA4C9EB99B9D69 /* AppViewModelBootstrapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelBootstrapTests.swift; sourceTree = "<group>"; };
+		3BBA231FA7F56663E69FF5AE /* AppViewModelRerollTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelRerollTests.swift; sourceTree = "<group>"; };
+		452F04250BC2D5F3AF94EB26 /* AppViewModelAddTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelAddTests.swift; sourceTree = "<group>"; };
 		48F43B0DC96A9612D88444CE /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		519ADF9C3D96DF3F30C3E3B7 /* AppViewModelListTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelListTests.swift; sourceTree = "<group>"; };
 		523BF9EBE35BE37299CCF566 /* RandomSelectionPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomSelectionPolicy.swift; sourceTree = "<group>"; };
 		6387EC86FE304FE87706B23B /* MockRemindersService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRemindersService.swift; sourceTree = "<group>"; };
+		673164E172A3DC3B67499382 /* AppViewModelEditTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelEditTests.swift; sourceTree = "<group>"; };
+		68A29CA4DE4F8093BFA52EAC /* AppViewModelExternalChangeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelExternalChangeTests.swift; sourceTree = "<group>"; };
 		70ABF40ABD611E676AE43560 /* AddTaskSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskSheet.swift; sourceTree = "<group>"; };
 		75DA0B54B0B47596455685CB /* Monotask.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Monotask.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F013528CA9350091CF39245 /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
@@ -67,6 +82,7 @@
 		D446D2DF1AAFB0F5EB6FBC07 /* PermissionInstructionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionInstructionsView.swift; sourceTree = "<group>"; };
 		D84A97EE02769BD10123FB3A /* EmptyListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyListView.swift; sourceTree = "<group>"; };
 		E800D7EDE150EA3E6252EB32 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		F54BCFDFAD406B70687BE545 /* AppViewModelUndoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelUndoTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -91,7 +107,15 @@
 		438326E0A5E046B4B44680C1 /* MonotaskTests */ = {
 			isa = PBXGroup;
 			children = (
+				452F04250BC2D5F3AF94EB26 /* AppViewModelAddTests.swift */,
+				3A4A46D2CDAA4C9EB99B9D69 /* AppViewModelBootstrapTests.swift */,
+				673164E172A3DC3B67499382 /* AppViewModelEditTests.swift */,
+				68A29CA4DE4F8093BFA52EAC /* AppViewModelExternalChangeTests.swift */,
+				519ADF9C3D96DF3F30C3E3B7 /* AppViewModelListTests.swift */,
+				3BBA231FA7F56663E69FF5AE /* AppViewModelRerollTests.swift */,
+				1081A9E891471E4BFE0F61E4 /* AppViewModelSectionsTests.swift */,
 				C3D49B6C5779CC00A5687625 /* AppViewModelTests.swift */,
+				F54BCFDFAD406B70687BE545 /* AppViewModelUndoTests.swift */,
 				7F73D84A6E06658E5FBF7CE2 /* SelectionStoreTests.swift */,
 				97859C8EE67792A23C73D74F /* UniformRandomTopLevelPolicyTests.swift */,
 			);
@@ -236,7 +260,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 2640;
+				LastUpgradeCheck = 1430;
 			};
 			buildConfigurationList = 6BFB00E8D9F309545F5D247D /* Build configuration list for PBXProject "Monotask" */;
 			developmentRegion = en;
@@ -298,7 +322,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EA41C79833590C28171BB209 /* AppViewModelAddTests.swift in Sources */,
+				D84D442CEB55E8956684C722 /* AppViewModelBootstrapTests.swift in Sources */,
+				A93B7100C480070C6410FDDD /* AppViewModelEditTests.swift in Sources */,
+				D59224BE359A36F36AD9DFCC /* AppViewModelExternalChangeTests.swift in Sources */,
+				79E0A8FBC8330875C7622218 /* AppViewModelListTests.swift in Sources */,
+				9F63305356BB612E622A1926 /* AppViewModelRerollTests.swift in Sources */,
+				6F0E714A1A69FEB37B6027F9 /* AppViewModelSectionsTests.swift in Sources */,
 				4D685DCBBCE8549D6B1010C5 /* AppViewModelTests.swift in Sources */,
+				F36284D5D10E08B1EF50BFF2 /* AppViewModelUndoTests.swift in Sources */,
 				9CE585C776F23ADC597D48E9 /* SelectionStoreTests.swift in Sources */,
 				261661A94965EAC1959107DA /* UniformRandomTopLevelPolicyTests.swift in Sources */,
 			);
@@ -350,9 +382,9 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 7294Y62396;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -366,7 +398,6 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
@@ -426,9 +457,9 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 7294Y62396;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -449,7 +480,6 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -463,7 +493,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 7294Y62396;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Monotask/App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -502,7 +531,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 7294Y62396;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Monotask/App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

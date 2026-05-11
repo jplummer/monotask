@@ -10,6 +10,8 @@ final class MockRemindersService: RemindersService, @unchecked Sendable {
     var reminders: [String: [ReminderTask]]
     var changeContinuation: AsyncStream<Void>.Continuation?
     var nextReminderNumericId: Int
+    /// When non-nil, `createReminderList` throws this error instead of succeeding.
+    var createListError: Error? = nil
   }
 
   private let lock: OSAllocatedUnfairLock<MutableState>
@@ -60,6 +62,10 @@ final class MockRemindersService: RemindersService, @unchecked Sendable {
     lock.withLock { $0.auth = value }
   }
 
+  func setCreateListError(_ error: Error?) {
+    lock.withLock { $0.createListError = error }
+  }
+
   func currentAuthorization() -> RemindersAuthorization {
     lock.withLock { $0.auth }
   }
@@ -82,15 +88,21 @@ final class MockRemindersService: RemindersService, @unchecked Sendable {
   }
 
   func createReminderList(title: String) throws -> ReminderCalendarSummary {
-    let summary = lock.withLock { state -> ReminderCalendarSummary in
+    let result = lock.withLock { state -> Result<ReminderCalendarSummary, Error> in
+      if let error = state.createListError { return .failure(error) }
       let newId = "cal-mock-\(state.calendars.count + 1)"
       let created = ReminderCalendarSummary(id: newId, title: title)
       state.calendars.append(created)
       state.reminders[newId] = []
-      return created
+      return .success(created)
     }
-    emitChange()
-    return summary
+    switch result {
+    case .success(let summary):
+      emitChange()
+      return summary
+    case .failure(let error):
+      throw error
+    }
   }
 
   func fetchIncompleteTopLevel(calendarId: String) async throws -> [ReminderTask] {

@@ -49,13 +49,16 @@ final class AppViewModel {
   private var taskAddedToastTask: Task<Void, Never>? = nil
 
   private var observationTask: Task<Void, Never>?
+  private let undoDelay: Duration
 
   init(
     reminders: RemindersService,
     selectionStore: SelectionStore,
     selectionPolicy: UniformRandomTopLevelPolicy = UniformRandomTopLevelPolicy(),
+    undoDelay: Duration = .seconds(4),
     skipInitialBootstrap: Bool = false
   ) {
+    self.undoDelay = undoDelay
     self.reminders = reminders
     self.selectionStore = selectionStore
     self.selectionPolicy = selectionPolicy
@@ -138,7 +141,8 @@ final class AppViewModel {
     let result = selectionPolicy.pick(from: pool, excluding: current.id)
     guard let task = result.task else { return }
     currentTask = task
-    selectionStore.selectedReminderIdentifier = task.id
+    guard let listId = activeListSummary?.id else { return }
+    selectionStore.setReminderID(task.id, forList: listId)
     if result.onlyOneInPool {
       showOnlyOneTaskAlert = true
     }
@@ -153,7 +157,6 @@ final class AppViewModel {
     }
     await cancelAndCommitPending()
     pendingTaskId = task.id
-    selectionStore.clearReminderSelection()
     await loadPoolAndFocus()
     pendingUndo = .completion(task: task)
     startUndoTimer()
@@ -168,7 +171,6 @@ final class AppViewModel {
     }
     await cancelAndCommitPending()
     pendingTaskId = task.id
-    selectionStore.clearReminderSelection()
     await loadPoolAndFocus()
     pendingUndo = .deletion(task: task)
     startUndoTimer()
@@ -185,7 +187,10 @@ final class AppViewModel {
     }
     pendingUndo = nil
     pendingTaskId = nil
-    selectionStore.selectedReminderIdentifier = task.id
+    if let listId = activeListSummary?.id {
+      // activeListSummary is always set when phase == .focused (the only state where undo is possible).
+      selectionStore.setReminderID(task.id, forList: listId)
+    }
     await loadPoolAndFocus()
   }
 
@@ -237,7 +242,7 @@ final class AppViewModel {
 
   private func startUndoTimer() {
     undoTimerTask = Task {
-      try? await Task.sleep(for: .seconds(4))
+      try? await Task.sleep(for: undoDelay)
       guard !Task.isCancelled else { return }
       await commitPending()
     }
@@ -273,7 +278,6 @@ final class AppViewModel {
       case .deletion: try reminders.deleteReminder(id: task.id)
       case .completion: try reminders.completeReminder(id: task.id)
       }
-      selectionStore.clearReminderSelection()
       await loadPoolAndFocus()
     } catch {
       userMessage = error.localizedDescription
@@ -358,12 +362,12 @@ final class AppViewModel {
       let newPool = pendingTaskId.map { id in raw.filter { $0.id != id } } ?? raw
       pool = newPool
       if newPool.isEmpty {
-        selectionStore.clearReminderSelection()
+        selectionStore.clearReminderID(forList: listId)
         currentTask = nil
         phase = .emptyList
         return
       }
-      if let rid = selectionStore.selectedReminderIdentifier,
+      if let rid = selectionStore.reminderID(forList: listId),
          let existing = newPool.first(where: { $0.id == rid }) {
         currentTask = existing
         phase = .focused
@@ -372,7 +376,7 @@ final class AppViewModel {
       let result = selectionPolicy.pick(from: newPool, excluding: nil)
       if let task = result.task {
         currentTask = task
-        selectionStore.selectedReminderIdentifier = task.id
+        selectionStore.setReminderID(task.id, forList: listId)
         phase = .focused
       }
     } catch {
@@ -388,7 +392,7 @@ final class AppViewModel {
       let newPool = pendingTaskId.map { id in raw.filter { $0.id != id } } ?? raw
       pool = newPool
       if newPool.isEmpty {
-        selectionStore.clearReminderSelection()
+        selectionStore.clearReminderID(forList: listId)
         currentTask = nil
         phase = .emptyList
         return
@@ -396,7 +400,7 @@ final class AppViewModel {
       if priorPoolSize <= 1 {
         if let t = newPool.first(where: { $0.id == createdId }) {
           currentTask = t
-          selectionStore.selectedReminderIdentifier = createdId
+          selectionStore.setReminderID(createdId, forList: listId)
           phase = .focused
           return
         }

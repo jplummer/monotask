@@ -10,7 +10,7 @@ An iOS 18+ SwiftUI app that surfaces one randomly-selected incomplete reminder a
 
 - **App name**: `Monotask`. Centralized via `AppConfig.appName` / `CFBundleDisplayName`. Default Reminders list title follows the app name.
 - **Deployment target**: iOS 18+. Uses `requestFullAccessToReminders`. `writeOnly` access is treated as insufficient and routed to instructions (full read access is required).
-- **Random pool (v1)**: all incomplete reminders in the chosen list (public EventKit does not expose parent/subtask relationships on `EKReminder`, so subtasks cannot be filtered at fetch time without private APIs).
+- **Random pool (v1)**: all incomplete reminders in the chosen list (public EventKit does not expose parent/subtask relationships on `EKReminder`, so subtasks cannot be filtered at fetch time without private APIs). **Sections** in Reminders.app are a visual concept — from EventKit's perspective, all reminders in a list are fetched flat regardless of how they appear in the UI. It is unknown whether section "header" tasks appear in `EKReminder` results (and if so, whether we want them in the pool). This needs a manual smoke test before any sections-aware filtering is attempted.
 - **Re-roll**: excludes the currently-selected task when the pool has ≥ 2 items; with only one task, re-roll surfaces the same task and may show the “only one task” alert with “Add another” / “Stay here”.
 - **Complete vs Trash**: Complete sets `isCompleted = true`. Trash removes the reminder via `EKEventStore.remove`. When there are **two or more** tasks in the pool, both actions **defer** talking to EventKit briefly and show a **toast with Undo** (`beginComplete` / `beginDelete` in `AppViewModel`); after the window expires (or if the user does not undo), the action is committed. With **only one** task, complete/trash apply **immediately** (no undo window). There is **no separate confirmation alert** — undo covers mistaken taps when multiple tasks exist.
 - **Edit (v1)**: **inline** on the post-it (title and notes), not a separate sheet. No supported public URL to open a specific reminder in the system Reminders app ([discussion](https://stackoverflow.com/questions/78688263/how-to-open-a-reminders-app-reminder-item-using)).
@@ -29,7 +29,9 @@ Longer-term ideas live in [TASKS.md — Deferred / roadmap](TASKS.md#deferred--r
 
 - Animations and gestures (replace or augment the bottom / floating action pattern).
 - Priority, due dates, recurrence UI, subtasks (if Apple exposes stable APIs).
-- Richer settings, widgets / Live Activities.
+- **Sections / grouped tasks**: surface or filter by section once the smoke test clarifies EventKit's behavior.
+- **Widgets / Lock Screen / Live Activities**: requires App Group for shared UserDefaults, WidgetKit timeline, and read-only EventKit access from the extension — see TASKS.md for the full checklist.
+- **Due dates**: filter pool or add overdue styling; test against EventKit's recurrence next-instance behavior before committing to a design.
 - **App Store distribution** (icon, screenshots, metadata): **after** UI and branding stabilize — see [TASKS.md — App Store and marketing assets](TASKS.md#app-store-and-marketing-assets).
 - See TASKS.md for the full list.
 

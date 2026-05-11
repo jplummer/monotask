@@ -28,7 +28,7 @@ final class AppViewModelTests: XCTestCase {
     await vm.confirmAdd(title: "Second", notes: nil)
     XCTAssertEqual(vm.phase, .focused)
     XCTAssertEqual(vm.currentTask?.title, "Second")
-    XCTAssertEqual(store.selectedReminderIdentifier, vm.currentTask?.id)
+    XCTAssertEqual(store.reminderID(forList: "cal-1"), vm.currentTask?.id)
   }
 
   func testAddKeepsFocusWhenPoolWasTwoOrMore() async {
@@ -37,7 +37,7 @@ final class AppViewModelTests: XCTestCase {
     defaults.removePersistentDomain(forName: suite)
     let store = SelectionStore(defaults: defaults)
     store.selectedListIdentifier = "cal-1"
-    store.selectedReminderIdentifier = "r-1"
+    store.setReminderID("r-1", forList: "cal-1")
     let mock = MockRemindersService(
       calendars: [ReminderCalendarSummary(id: "cal-1", title: "Monotask")],
       reminders: [

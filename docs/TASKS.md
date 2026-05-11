@@ -22,7 +22,7 @@ Snapshot of the repo **today** so PLAN/TASKS stay honest. Update this section wh
 - **Write-only / denied**: Routed per `AppViewModel.bootstrap` and Reminders authorization.
 - **Only-one-task alert**: Implemented with add / dismiss paths.
 - **External changes**: `EKEventStoreChanged` subscription reloads pool/focus.
-- **Tests**: Selection policy + mocks exist under `MonotaskTests/`.
+- **Tests**: 61 tests across 9 groups covering bootstrap phases, undo/defer, reroll, edit, list switching, add edge cases, external changes, SelectionStore, and sections guard. All passing.
 - **xcodegen**: `project.yml`, signing xcconfig pattern, README workflow.
 
 ### Partial (implemented but thin or needs a dedicated pass)
@@ -50,6 +50,7 @@ The navigation bar still hosts the **list picker** (`ToolbarItem` / principal); 
 - **Performance pass** (intentional optimization pass): Not done as a tracked pass; opportunistic tweaks only so far.
 - **App icon in Assets**: `project.yml` may still omit a filled **App Icon** set until branding is decided.
 - **App Store artifacts**: Screenshots, listing copy, privacy answers — **last**, after UI and branding stabilize ([App Store and marketing assets](#app-store-and-marketing-assets)).
+- **Sections smoke test**: Unknown whether EventKit exposes section headers as `EKReminder` objects. See [Sections smoke test](#sections-smoke-test) — a quick manual check before any sections-aware work.
 
 ---
 
@@ -58,14 +59,15 @@ The navigation bar still hosts the **list picker** (`ToolbarItem` / principal); 
 Prioritize **identity and observability**, then **inclusive UX**, then **first-run flows**, then **speed**, then **distribution**.
 
 1. **Branding & visual identity** — Lock icon direction, palette/post-it character, and voice **before** splash and onboarding so those screens feel intentional. Optional: run **multiple agents or designers in parallel** on competing directions, then pick one.
-2. **Daily-use instrumentation** — Wire **core events** for real usage (opens, completes, deletes, undo usage, list switches, errors) so you can iterate before and after launch. Choose provider (TelemetryDeck, PostHog, OSLog-only, etc.) and privacy stance; onboarding funnel events can share the same pipe later.
-3. **Full accessibility pass** — VoiceOver order and labels, Dynamic Type through **large** sizes, Reduce Motion, contrast and tap targets on **bottom strip**, **floating chrome**, sheets, and empty/setup flows.
-4. **Splash + first-run onboarding** — After branding; short launch shell; education per [ONBOARDING.md](ONBOARDING.md); defer `bootstrap` / `start()` until after onboarding when applicable so the Reminders prompt is not the first screen.
-5. **Performance pass** — Profile focus view, post-it, list loads; coalesce or debounce `EKEventStoreChanged` if reloads stack; trim redundant layout/animation cost (see [Performance pass](#performance-pass)).
-6. **Ship-ready polish** — Error UX improvements, scene lifecycle (background / Settings / Reminders edits), small-phone and dark/light passes (can overlap step 3).
-7. **View refinement** — Typography, haptics, tokens ([View and behavior refinement](#view-and-behavior-refinement)); ongoing.
-8. **App Store and marketing assets** — **Last**: screenshots, copy, privacy questionnaire, support URL after UI and icon settle ([App Store and marketing assets](#app-store-and-marketing-assets)).
-9. **Deferred roadmap** — [Deferred](#deferred--roadmap) when expanding scope.
+2. ~~**Test coverage pass**~~ — **Done.** 61 tests; all passing. See [Test coverage pass](#test-coverage-pass-).
+3. **Daily-use instrumentation** — Wire **core events** for real usage (opens, completes, deletes, undo usage, list switches, errors) so you can iterate before and after launch. Choose provider (TelemetryDeck, PostHog, OSLog-only, etc.) and privacy stance; onboarding funnel events can share the same pipe later.
+4. **Full accessibility pass** — VoiceOver order and labels, Dynamic Type through **large** sizes, Reduce Motion, contrast and tap targets on **bottom strip**, **floating chrome**, sheets, and empty/setup flows.
+5. **Splash + first-run onboarding** — After branding; short launch shell; education per [ONBOARDING.md](ONBOARDING.md); defer `bootstrap` / `start()` until after onboarding when applicable so the Reminders prompt is not the first screen.
+6. **Performance pass** — Profile focus view, post-it, list loads; coalesce or debounce `EKEventStoreChanged` if reloads stack; trim redundant layout/animation cost (see [Performance pass](#performance-pass)).
+7. **Ship-ready polish** — Error UX improvements, scene lifecycle (background / Settings / Reminders edits), small-phone and dark/light passes (can overlap step 4).
+8. **View refinement** — Typography, haptics, tokens ([View and behavior refinement](#view-and-behavior-refinement)); ongoing.
+9. **App Store and marketing assets** — **Last**: screenshots, copy, privacy questionnaire, support URL after UI and icon settle ([App Store and marketing assets](#app-store-and-marketing-assets)).
+10. **Deferred roadmap** — [Deferred](#deferred--roadmap) when expanding scope.
 
 ---
 
@@ -76,6 +78,86 @@ Do **before** splash/onboarding and before treating App Icon / screenshots as fi
 - [ ] Define **icon** concept (metaphor, silhouette, dark/light).
 - [ ] Align **gradient + post-it** with personality (calm, playful, minimal — pick and execute).
 - [ ] Optional: **multi-agent / parallel exploration** of 2–3 directions, then merge winners into one system.
+
+---
+
+## Test coverage pass ✅
+
+**Complete.** 61 tests across 9 groups; all passing. The mock supports error injection via `setCreateListError(_:)` and `setAuthorization(_:)`; `AppViewModel.init` accepts `undoDelay:` for fast timer tests.
+
+### Group 1 — Bootstrap / permission state machine (`AppViewModelBootstrapTests`)
+
+- [x] **`fullAccess` + persisted list + non-empty pool → `.focused`**
+- [x] **`fullAccess` + persisted list not found, name-match fallback → `.focused`**
+- [x] **`fullAccess` + no persisted list, no name match → `.listSetup`**
+- [x] **`denied` → `.permissionDenied`**
+- [x] **`writeOnly` → `.permissionDenied`**
+- [x] **`undetermined` → grant access → `.focused`**
+- [x] **`fullAccess` + empty pool → `.emptyList`**
+- [x] **`fetchIncompleteTopLevel` throws during load → `userMessage` set, phase → `.listSetup`**
+- [x] **`refreshAfterSettings` while denied → still `.permissionDenied`**
+
+### Group 2 — Complete / delete with undo window (`AppViewModelUndoTests`)
+
+- [x] **`beginComplete` pool ≥ 2 → task absent from pool, `pendingUndo` = `.completion`, phase still `.focused`**
+- [x] **`beginDelete` pool ≥ 2 → task absent from pool, `pendingUndo` = `.deletion`, phase still `.focused`**
+- [x] **Undo complete → task restored to pool, mock not mutated, `pendingUndo` nil**
+- [x] **Undo delete → task restored to pool, mock not mutated, `pendingUndo` nil**
+- [x] **Timer fires → action committed to mock**
+- [x] **`beginComplete` pool = 1 → immediate commit, `pendingUndo` stays nil, phase → `.emptyList`**
+- [x] **`beginDelete` pool = 1 → immediate commit, `pendingUndo` stays nil, phase → `.emptyList`**
+- [x] **Rapid second action commits first**
+- [x] **External change during undo window → pending task still filtered from reloaded pool**
+- [x] **`completeReminder` throws after timer fires → `userMessage` set**
+- [x] **`deleteReminder` throws after timer fires → `userMessage` set**
+
+### Group 3 — Reroll (`AppViewModelRerollTests`)
+
+- [x] **Reroll pool ≥ 2 → `currentTask` changes, `selectionStore.selectedReminderIdentifier` updates**
+- [x] **Reroll pool = 1 → same task kept, `showOnlyOneTaskAlert` = true**
+
+### Group 4 — Edit (`AppViewModelEditTests`)
+
+- [x] **`confirmEdit` valid → `currentTask` title/notes updated, mock store reflects change**
+- [x] **`confirmEdit` blank title → no-op, mock not called**
+- [x] **`confirmEdit` whitespace-only title → no-op**
+- [x] **`confirmEdit` throws → `userMessage` set, `currentTask` unchanged**
+
+### Group 5 — List switching (`AppViewModelListTests`)
+
+- [x] **`applyListChoice` → `activeListSummary` updates, pool reloads from new list, `selectionStore` list ID updated**
+- [x] **`applyListChoice` → reminder selection cleared when switching to a different list**
+- [x] **`createReminderList` → new calendar created in mock, VM switches to it, pool is empty, phase → `.emptyList`**
+- [x] **`createReminderList` blank name → no-op**
+- [x] **`createReminderList` throws → `userMessage` set**
+- [x] **`openListSetup` → phase → `.listSetup`**
+
+### Group 6 — Add edge cases (`AppViewModelAddTests`)
+
+- [x] **Add pool = 0 (`addFromEmpty`) → focuses new task**
+- [x] **`confirmAdd` blank title → no-op, sheet stays open**
+- [x] **`confirmAdd` whitespace-only title → no-op**
+- [x] **`confirmAdd` throws → `userMessage` set, `showAddSheet` stays true**
+- [x] **`cancelAdd` → `showAddSheet` = false**
+- [x] **`showTaskAddedToast` set to true after successful add**
+
+### Group 7 — External change reload (`AppViewModelExternalChangeTests`)
+
+- [x] **Change fired while `.focused` → pool reloads, `currentTask` updated if data changed**
+- [x] **Change fired while `activeListSummary` is nil → ignored (no crash)**
+- [x] **Change fired while permission is not `.fullAccess` → ignored**
+
+### Group 8 — `SelectionStore` (`SelectionStoreTests`)
+
+- [x] **Initial state is all nil**
+- [x] **`clearReminderSelection` preserves list ID**
+- [x] **`clearAll` resets both fields to nil**
+- [x] **Two separate instances on the same suite share state**
+- [x] **Overwrite list ID persists**
+
+### Group 9 — Sections regression guard (`AppViewModelSectionsTests`)
+
+- [x] **Pool containing section-header-shaped tasks → `.focused`, no crash**
 
 ---
 
@@ -195,14 +277,65 @@ Polish each surface: layout, copy, motion, and interaction consistency.
 Ideas explicitly deferred from v1; implement when you choose to expand scope.
 
 - **Animations / gestures**: Replace or augment the **bottom strip** / **floating chrome** with gestures (swipe complete, swipe re-roll, etc.).
-- **“Back of the stack” animation**: When pool ≥ 2 and add does not change focus, animate the new task visually **behind** the post-it (purely cosmetic).
+- **”Back of the stack” animation**: When pool ≥ 2 and add does not change focus, animate the new task visually **behind** the post-it (purely cosmetic).
 - **Priority**: weighting or visual priority cues in UI and optional selection policy.
-- **Due dates**: Filters (“today only”), overdue styling, or exclude not-yet-due from random pool.
-- **Recurrence**: Surface recurrence info on the card without breaking EventKit’s next-instance behavior.
-- **Subtasks**: If Apple exposes stable APIs, exclude or represent subtasks explicitly in the pool.
-- **Settings screen**: Beyond list switching (e.g. appearance, haptics, selection policy).
-- **Widgets / Lock Screen / Live Activities**: Surface current task outside the app.
+
+### Sections / grouped tasks
+
+Reminders.app lets users organize a list into named sections. EventKit’s public API does not expose a section field on `EKReminder`, so behavior is currently unknown:
+
+- Section headers might surface as their own `EKReminder` items (polluting the pool with non-task noise), or sections might be purely a UI construct with no EventKit representation.
+- Subtask relationships (`EKReminder` parent/child) are not exposed in the public API either.
+
+**Before building anything here, run the smoke test in [Sections smoke test](#sections-smoke-test) below.**
+
+Once behavior is understood, options include: ignore section tasks silently (filter by `hasRecurrenceRules` / title heuristics), expose sections as a pool filter, or simply document that Monotask works flat.
+
+### Due dates
+
+- **Filter**: “Today / overdue only” mode — exclude reminders with a future due date from the random pool.
+- **Styling**: Overdue badge or color shift on the post-it card.
+- **Caveat**: EventKit models recurring reminders as a single `EKReminder` with `recurrenceRules`; “completing” it advances to the next occurrence rather than removing it from the store. Any due-date filter must account for this or it will hide recurring tasks perpetually.
+
+### Recurrence
+
+- Surface recurrence cadence on the card (“repeats daily”) so the user knows completing it will bring it back.
+- Do **not** try to delete recurring reminders — completing them is almost always the right action. Document this constraint.
+- Test: complete a recurring reminder and verify the pool correctly reflects the next instance appearing (or not) on the same reload.
+
+### Widgets / Lock Screen / Live Activities
+
+Surfacing the current task outside the app requires meaningful architecture work:
+
+- **App Group**: Add an App Group entitlement (e.g. `group.com.yourname.monotask`) to both the app target and widget extension so they can share `UserDefaults` (chosen list ID + focused reminder ID).
+- **WidgetKit extension**: New target in `project.yml`; a `TimelineProvider` that reads from shared UserDefaults and performs a lightweight EventKit fetch.
+- **EventKit in extension**: Widget extensions can call EventKit but must request their own authorization; the OS may grant it automatically if the main app already has full access — verify this on device.
+- **Timeline refresh**: Refresh on complete/trash/re-roll by calling `WidgetCenter.shared.reloadAllTimelines()` from `AppViewModel`.
+- **Lock Screen**: A small rectangular widget showing the current task title.
+- **Live Activities**: Heavier lift; only worthwhile if timed tasks or focus sessions become a feature.
 - **iCloud selection sync**: Usually unnecessary because EventKit already syncs reminders; revisit only if you add non-EventKit state.
+
+- **Settings screen**: Beyond list switching (e.g. appearance, haptics, selection policy).
+- **Subtasks**: If Apple exposes stable APIs, exclude or represent subtasks explicitly in the pool.
+
+---
+
+## Sections smoke test
+
+Before implementing any sections-aware behavior, verify what EventKit actually returns from a sectioned list. This is a one-time investigative task.
+
+**Manual procedure** (fastest path):
+1. In Reminders.app, open (or create) the Monotask list.
+2. Add two or three **sections** via the `…` menu → “Add Section”.
+3. Add a task in each section.
+4. Run Monotask on simulator or device pointing at that list.
+5. Tap re-roll several times and note whether section header names appear as tasks in the pool.
+
+**To make this reproducible / automated**, add a `MockRemindersService` fixture (in `MonotaskTests/`) that returns a mix of normal reminders and potential section-header-shaped reminders (e.g. reminders with no title body, or with `hasAlarms == false && notes == nil`). Assert the pool and focus view handle them without crashing.
+
+- [ ] Run manual smoke test with a sectioned Reminders list.
+- [ ] Document findings in a comment in `EventKitRemindersService` (or here) so future contributors know what to expect.
+- [ ] If section headers appear in the pool: decide on filter strategy and add a unit test covering it.
 
 ---
 

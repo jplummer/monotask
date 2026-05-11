@@ -17,7 +17,7 @@ An iOS 18+ SwiftUI app that surfaces one randomly-selected incomplete reminder a
 - **Add task**: a control is always available on the main focus path (including empty list flows).
 - **Scaffolding**: xcodegen keeps the Xcode project reproducible; `Monotask.xcodeproj` is checked in for clone-and-open.
 - **Branding before first-run shell**: App **icon**, gradient/post-it **personality**, and overall look should be decided **before** splash and onboarding so first-run screens match the shipped product ([TASKS.md — Branding](TASKS.md#branding--visual-identity)).
-- **Instrumentation (planned)**: **Daily-use** analytics/logging is not wired yet; funnel events for onboarding live in ONBOARDING.md until implemented ([TASKS.md — Daily-use instrumentation](TASKS.md#daily-use-instrumentation)).
+- **Instrumentation**: **Daily-use** analytics wired via **TelemetryDeck** (pseudonymous — hashed per-install UUID, no PII). Core events: `app.foreground`, `task.complete`, `task.delete`, `task.undo`, `task.reroll`, `task.add`, `list.switch`, `permission.outcome`, `error.critical`. Onboarding funnel events in ONBOARDING.md share the same pipe when implemented.
 
 ## First-run onboarding (planned)
 
@@ -134,9 +134,10 @@ flowchart TB
 ## Architecture (implementation)
 
 - **UI**: SwiftUI, `@main` app, `@Observable` view model.
-- **State**: `AppViewModel` owns `AppPhase`, pool, current `ReminderTask`, sheets, and alerts.
+- **State**: `AppViewModel` owns `AppPhase`, pool, current `ReminderTask`, sheets, alerts, and undo state.
 - **Reminders**: `RemindersService` protocol; `EventKitRemindersService` for device; `MockRemindersService` for tests.
-- **Persistence**: `SelectionStore` (`UserDefaults`) for list id and last focused reminder id.
+- **Persistence**: `SelectionStore` (`UserDefaults`) — list id + per-list LRU map (up to 50 entries) of last focused reminder id per list. Migrates legacy single-key format on first launch after upgrade.
+- **Analytics**: `AnalyticsService` protocol; `TelemetryDeckAnalyticsService` for production (hashed install UUID); `MockAnalyticsService` for tests. Injected optionally into `AppViewModel`.
 - **External changes**: `EKEventStoreChanged` triggers reload so edits from the Reminders app stay consistent.
 
 ## Random selection
@@ -158,8 +159,8 @@ Implemented in `AppViewModel` (`poolSizeWhenAddOpened`).
 
 - Gradient background + post-it card (`PostItCard`, `DesignColors` with asset + RGB fallbacks).
 - Focus screen: **bottom icon strip** (re-roll, add, trash), **floating chrome** on the card (edit upper area, complete on the card); navigation bar holds the **list picker**. Gestures for actions deferred. Older docs called this an “action row”; **TASKS.md** uses strip + floating chrome + list picker for clarity.
-- Post-action **toasts**: undo for complete/trash (multi-task pool), brief confirmation after add.
-- Reduce Motion respects accessibility settings for tilt.
+- Post-action **toasts**: undo for complete/trash (multi-task pool), brief confirmation after add. Toast is VoiceOver-accessible (button trait + hint) when it carries an action.
+- **Reduce Motion**: all animations in `RootView` and `TaskFocusView` gate on `accessibilityReduceMotion`; card tilt disabled when reduce motion is on (`PostItCard`).
 
 ## Renaming the app
 

@@ -16,22 +16,24 @@ Snapshot of the repo **today** so PLAN/TASKS stay honest. Update this section wh
 
 - **Core loop**: EventKit full-access path, pool fetch, random selection + re-roll exclusion, complete, trash, inline edit on post-it, add sheet, empty list, list setup, persisted list + reminder ids (`SelectionStore`).
 - **Complete / trash UX**: When the pool has **two or more** tasks, complete and trash **defer** sending to EventKit for a short window and show a **post-action toast with Undo** (`AppViewModel.beginComplete`, `beginDelete`, `pendingUndo`, `TaskFocusView`). No separate confirmation alert — undo covers mistaken taps. When only **one** task remains, complete/trash **commit immediately** (nothing to rotate to during an undo window).
-- **Add feedback**: Brief **“Task added.”** toast after a successful add (`showTaskAddedToast`).
+- **Add feedback**: Brief **”Task added.”** toast after a successful add (`showTaskAddedToast`).
 - **Phases**: `AppPhase` and `RootView` switch (`bootstrapping`, `permissionDenied`, `listSetup`, `emptyList`, `focused`).
 - **Permission denial UI**: `PermissionInstructionsView` with Open Settings / Try again.
 - **Write-only / denied**: Routed per `AppViewModel.bootstrap` and Reminders authorization.
 - **Only-one-task alert**: Implemented with add / dismiss paths.
 - **External changes**: `EKEventStoreChanged` subscription reloads pool/focus.
+- **Per-list reminder memory**: `SelectionStore` persists last focused reminder for every list in a 50-entry LRU map. Switching back to a prior list restores focus. One-time migration from legacy single-key format on first launch after upgrade.
+- **Daily-use instrumentation**: TelemetryDeck wired via `AnalyticsService` protocol. Pseudonymous (SHA-256 hashed per-install UUID). Core events: `app.foreground`, `task.complete`, `task.delete`, `task.undo`, `task.reroll`, `task.add`, `list.switch`, `permission.outcome`, `error.critical`.
+- **Accessibility — Reduce Motion**: All animations in `RootView` and `TaskFocusView` gate on `accessibilityReduceMotion`. Card tilt off when reduce motion is on (`PostItCard`). Undo/add toasts VoiceOver-accessible with button trait and hint.
 - **Tests**: 61 tests across 9 groups covering bootstrap phases, undo/defer, reroll, edit, list switching, add edge cases, external changes, SelectionStore, and sections guard. All passing.
 - **xcodegen**: `project.yml`, signing xcconfig pattern, README workflow.
 
 ### Partial (implemented but thin or needs a dedicated pass)
 
 - **Errors**: `userMessage` + generic **Notice** alert in `RootView` — works, but not inline/recoverable UX everywhere.
-- **Accessibility**: Some labels exist (e.g. list menu, focus controls); a **full VoiceOver / Dynamic Type / hit-target audit** is still required (see [Suggested implementation order](#suggested-implementation-order)).
-- **RootView**: `.animation(.default, value: phase)` exists; dedicated phase transitions remain polish-tier.
+- **Accessibility**: Reduce Motion gated, VoiceOver labels on all controls, toast discoverable. Dynamic Type uses semantic fonts throughout. **Full VoiceOver traversal order audit and large-text layout testing** still needed as part of the ship-ready polish pass.
+- **RootView**: Phase animation respects Reduce Motion; dedicated crossfade transitions remain polish-tier.
 - **Permission copy**: `PermissionInstructionsView` is usable; refinement bullets below remain.
-- **Instrumentation**: No **daily-use** or product analytics wired yet (sessions, core actions, retention signals — provider TBD). Onboarding funnel events in [ONBOARDING.md](ONBOARDING.md) are spec-only until implemented.
 
 ### Focus UI terminology (vs older TASKS wording)
 
@@ -60,11 +62,11 @@ Prioritize **identity and observability**, then **inclusive UX**, then **first-r
 
 1. **Branding & visual identity** — Lock icon direction, palette/post-it character, and voice **before** splash and onboarding so those screens feel intentional. Optional: run **multiple agents or designers in parallel** on competing directions, then pick one.
 2. ~~**Test coverage pass**~~ — **Done.** 61 tests; all passing. See [Test coverage pass](#test-coverage-pass-).
-3. **Daily-use instrumentation** — Wire **core events** for real usage (opens, completes, deletes, undo usage, list switches, errors) so you can iterate before and after launch. Choose provider (TelemetryDeck, PostHog, OSLog-only, etc.) and privacy stance; onboarding funnel events can share the same pipe later.
-4. **Full accessibility pass** — VoiceOver order and labels, Dynamic Type through **large** sizes, Reduce Motion, contrast and tap targets on **bottom strip**, **floating chrome**, sheets, and empty/setup flows.
+3. ~~**Daily-use instrumentation**~~ — **Done.** TelemetryDeck, pseudonymous, 9 core events. See [Daily-use instrumentation](#daily-use-instrumentation).
+4. ~~**Accessibility pass (core)**~~ — **Done.** Reduce Motion on all animations, VoiceOver labels and traits on all controls and toasts, semantic fonts throughout. Remaining: full VoiceOver traversal order audit + large-text layout (ship-ready polish pass).
 5. **Splash + first-run onboarding** — After branding; short launch shell; education per [ONBOARDING.md](ONBOARDING.md); defer `bootstrap` / `start()` until after onboarding when applicable so the Reminders prompt is not the first screen.
 6. **Performance pass** — Profile focus view, post-it, list loads; coalesce or debounce `EKEventStoreChanged` if reloads stack; trim redundant layout/animation cost (see [Performance pass](#performance-pass)).
-7. **Ship-ready polish** — Error UX improvements, scene lifecycle (background / Settings / Reminders edits), small-phone and dark/light passes (can overlap step 4).
+7. **Ship-ready polish** — Error UX improvements, scene lifecycle (background / Settings / Reminders edits), small-phone and dark/light passes, full VoiceOver traversal order + large-text layout.
 8. **View refinement** — Typography, haptics, tokens ([View and behavior refinement](#view-and-behavior-refinement)); ongoing.
 9. **App Store and marketing assets** — **Last**: screenshots, copy, privacy questionnaire, support URL after UI and icon settle ([App Store and marketing assets](#app-store-and-marketing-assets)).
 10. **Deferred roadmap** — [Deferred](#deferred--roadmap) when expanding scope.
@@ -161,13 +163,13 @@ Do **before** splash/onboarding and before treating App Icon / screenshots as fi
 
 ---
 
-## Daily-use instrumentation
+## Daily-use instrumentation ✅
 
 Goal: understand **real** usage patterns (not only onboarding drop-off).
 
-- [ ] Choose **transport** (hosted analytics, first-party, or logging-only) and document retention / PII rules.
-- [ ] Emit **core events**: app foreground, focus session, complete, delete, undo tap, re-roll, add success, list change, permission outcome, critical errors.
-- [ ] Optional: **dashboards** or weekly export for iteration.
+- [x] Choose **transport**: TelemetryDeck. Pseudonymous — SHA-256 hashed per-install UUID, no PII, GDPR-compliant. No opt-in prompt required.
+- [x] Emit **core events**: `app.foreground`, `task.complete`, `task.delete`, `task.undo`, `task.reroll`, `task.add`, `list.switch`, `permission.outcome`, `error.critical`.
+- [ ] Optional: **dashboards** or weekly export for iteration (set up in TelemetryDeck dashboard).
 
 Onboarding-specific events remain specified in [ONBOARDING.md](ONBOARDING.md) and can be wired alongside or after the core set.
 

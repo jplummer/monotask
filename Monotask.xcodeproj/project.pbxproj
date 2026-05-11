@@ -16,9 +16,11 @@
 		3574236E9AFCEAF8958B5B87 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F013528CA9350091CF39245 /* AppConfig.swift */; };
 		360176AFA52FA6A415B1FA3F /* MockRemindersService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6387EC86FE304FE87706B23B /* MockRemindersService.swift */; };
 		3AA01BB320566EC2812D98BF /* ListSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DC6E3F60397339805700DD4 /* ListSetupView.swift */; };
+		402F42A567D26EE55882613B /* MockAnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72A2991A13FA16F28EC2D4DF /* MockAnalyticsService.swift */; };
 		4D685DCBBCE8549D6B1010C5 /* AppViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D49B6C5779CC00A5687625 /* AppViewModelTests.swift */; };
 		55B56CB11DA61BE819F9A23A /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48F43B0DC96A9612D88444CE /* RootView.swift */; };
 		6F0E714A1A69FEB37B6027F9 /* AppViewModelSectionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1081A9E891471E4BFE0F61E4 /* AppViewModelSectionsTests.swift */; };
+		753EC5116ED04C0C3741ECE9 /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEE8E64231DAEF32F4845F12 /* AnalyticsService.swift */; };
 		79E0A8FBC8330875C7622218 /* AppViewModelListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519ADF9C3D96DF3F30C3E3B7 /* AppViewModelListTests.swift */; };
 		7A1E4104C406CEC5AFC0F99B /* EmptyListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84A97EE02769BD10123FB3A /* EmptyListView.swift */; };
 		9540E570FFCC2CFCFD2FBFBA /* PostItCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06406949F655DBC0E87E1D3D /* PostItCard.swift */; };
@@ -28,11 +30,13 @@
 		A93B7100C480070C6410FDDD /* AppViewModelEditTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 673164E172A3DC3B67499382 /* AppViewModelEditTests.swift */; };
 		B0412FA365206B307BF16BFA /* MonotaskApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D5F84623697F5029EC94237 /* MonotaskApp.swift */; };
 		CB12BAE345F7A2827FE532FE /* DesignColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = B91F9D125026E1E93BD923B3 /* DesignColors.swift */; };
+		D4A393CF018054B6F2F26299 /* TelemetryDeck in Frameworks */ = {isa = PBXBuildFile; productRef = C2921D5CFA55A765921AD8B7 /* TelemetryDeck */; };
 		D59224BE359A36F36AD9DFCC /* AppViewModelExternalChangeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68A29CA4DE4F8093BFA52EAC /* AppViewModelExternalChangeTests.swift */; };
 		D84D442CEB55E8956684C722 /* AppViewModelBootstrapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A4A46D2CDAA4C9EB99B9D69 /* AppViewModelBootstrapTests.swift */; };
 		D9EE1CA529E65990145EEFE9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E800D7EDE150EA3E6252EB32 /* Assets.xcassets */; };
 		DBB761004F4B2B7644A0AB40 /* ReminderTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25DA5A23BB9C638DA8409188 /* ReminderTask.swift */; };
 		E2644C875847A420E312A506 /* PermissionInstructionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D446D2DF1AAFB0F5EB6FBC07 /* PermissionInstructionsView.swift */; };
+		E66DD921FDFD04FA48899CD2 /* TelemetryDeckAnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11D54A003154C053E01E66FD /* TelemetryDeckAnalyticsService.swift */; };
 		EA41C79833590C28171BB209 /* AppViewModelAddTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 452F04250BC2D5F3AF94EB26 /* AppViewModelAddTests.swift */; };
 		F36284D5D10E08B1EF50BFF2 /* AppViewModelUndoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F54BCFDFAD406B70687BE545 /* AppViewModelUndoTests.swift */; };
 		F8EDF8E1C0E26AC14643B7C0 /* RemindersService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 005C397DC31EBA4CE9302FF0 /* RemindersService.swift */; };
@@ -53,6 +57,7 @@
 		06406949F655DBC0E87E1D3D /* PostItCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostItCard.swift; sourceTree = "<group>"; };
 		0DC6E3F60397339805700DD4 /* ListSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListSetupView.swift; sourceTree = "<group>"; };
 		1081A9E891471E4BFE0F61E4 /* AppViewModelSectionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelSectionsTests.swift; sourceTree = "<group>"; };
+		11D54A003154C053E01E66FD /* TelemetryDeckAnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryDeckAnalyticsService.swift; sourceTree = "<group>"; };
 		25DA5A23BB9C638DA8409188 /* ReminderTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderTask.swift; sourceTree = "<group>"; };
 		2D5F84623697F5029EC94237 /* MonotaskApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonotaskApp.swift; sourceTree = "<group>"; };
 		2F346652DC3D832B10E62A54 /* SelectionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionStore.swift; sourceTree = "<group>"; };
@@ -67,15 +72,17 @@
 		673164E172A3DC3B67499382 /* AppViewModelEditTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelEditTests.swift; sourceTree = "<group>"; };
 		68A29CA4DE4F8093BFA52EAC /* AppViewModelExternalChangeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelExternalChangeTests.swift; sourceTree = "<group>"; };
 		70ABF40ABD611E676AE43560 /* AddTaskSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskSheet.swift; sourceTree = "<group>"; };
-		75DA0B54B0B47596455685CB /* Monotask.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Monotask.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		72A2991A13FA16F28EC2D4DF /* MockAnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAnalyticsService.swift; sourceTree = "<group>"; };
+		75DA0B54B0B47596455685CB /* Monotask.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Monotask.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F013528CA9350091CF39245 /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
 		7F73D84A6E06658E5FBF7CE2 /* SelectionStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionStoreTests.swift; sourceTree = "<group>"; };
 		8FFD8A1586A517CC5B83804F /* MonotaskSigning.local.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = MonotaskSigning.local.xcconfig; sourceTree = "<group>"; };
 		97859C8EE67792A23C73D74F /* UniformRandomTopLevelPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniformRandomTopLevelPolicyTests.swift; sourceTree = "<group>"; };
 		A19DE4889FDD92F317F75BD3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A67ADAFC102AC71EE087BD6E /* EventKitRemindersService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventKitRemindersService.swift; sourceTree = "<group>"; };
+		AEE8E64231DAEF32F4845F12 /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
 		B91F9D125026E1E93BD923B3 /* DesignColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignColors.swift; sourceTree = "<group>"; };
-		BAD00AC729E55C092B963F8D /* MonotaskTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MonotaskTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BAD00AC729E55C092B963F8D /* MonotaskTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MonotaskTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C24576CAE9EF72FAF0A56F1C /* MonotaskSigning.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = MonotaskSigning.xcconfig; sourceTree = "<group>"; };
 		C3D49B6C5779CC00A5687625 /* AppViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelTests.swift; sourceTree = "<group>"; };
 		C4A30AB47C462A09439667F8 /* AppViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
@@ -84,6 +91,17 @@
 		E800D7EDE150EA3E6252EB32 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F54BCFDFAD406B70687BE545 /* AppViewModelUndoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelUndoTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		33872894F0239F81AC383C33 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D4A393CF018054B6F2F26299 /* TelemetryDeck in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		1E7D37189E4F05A45FD49620 /* Products */ = {
@@ -134,9 +152,12 @@
 		6414157C8325752801FCACAA /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				AEE8E64231DAEF32F4845F12 /* AnalyticsService.swift */,
 				A67ADAFC102AC71EE087BD6E /* EventKitRemindersService.swift */,
+				72A2991A13FA16F28EC2D4DF /* MockAnalyticsService.swift */,
 				6387EC86FE304FE87706B23B /* MockRemindersService.swift */,
 				005C397DC31EBA4CE9302FF0 /* RemindersService.swift */,
+				11D54A003154C053E01E66FD /* TelemetryDeckAnalyticsService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -223,6 +244,7 @@
 			buildPhases = (
 				45125B462C62A3FAE6788BD0 /* Sources */,
 				19311F3C370357D13BCD2987 /* Resources */,
+				33872894F0239F81AC383C33 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -230,6 +252,7 @@
 			);
 			name = Monotask;
 			packageProductDependencies = (
+				C2921D5CFA55A765921AD8B7 /* TelemetryDeck */,
 			);
 			productName = Monotask;
 			productReference = 75DA0B54B0B47596455685CB /* Monotask.app */;
@@ -261,6 +284,8 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
 			};
 			buildConfigurationList = 6BFB00E8D9F309545F5D247D /* Build configuration list for PBXProject "Monotask" */;
 			developmentRegion = en;
@@ -271,6 +296,9 @@
 			);
 			mainGroup = 4C04DEEF7ED3D08E295D97B3;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				3F6AF6480033E8DC25869461 /* XCRemoteSwiftPackageReference "SwiftSDK" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1E7D37189E4F05A45FD49620 /* Products */;
 			projectDirPath = "";
@@ -299,12 +327,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				1C5BFC79515F06F559313FB4 /* AddTaskSheet.swift in Sources */,
+				753EC5116ED04C0C3741ECE9 /* AnalyticsService.swift in Sources */,
 				3574236E9AFCEAF8958B5B87 /* AppConfig.swift in Sources */,
 				A7F1239C36DE24F766BA26EF /* AppViewModel.swift in Sources */,
 				CB12BAE345F7A2827FE532FE /* DesignColors.swift in Sources */,
 				7A1E4104C406CEC5AFC0F99B /* EmptyListView.swift in Sources */,
 				08C507209163925D70402A25 /* EventKitRemindersService.swift in Sources */,
 				3AA01BB320566EC2812D98BF /* ListSetupView.swift in Sources */,
+				402F42A567D26EE55882613B /* MockAnalyticsService.swift in Sources */,
 				360176AFA52FA6A415B1FA3F /* MockRemindersService.swift in Sources */,
 				B0412FA365206B307BF16BFA /* MonotaskApp.swift in Sources */,
 				E2644C875847A420E312A506 /* PermissionInstructionsView.swift in Sources */,
@@ -315,6 +345,7 @@
 				55B56CB11DA61BE819F9A23A /* RootView.swift in Sources */,
 				1EDD36506EDC098A1C740CE3 /* SelectionStore.swift in Sources */,
 				32B1C25D313A11AAEE51E158 /* TaskFocusView.swift in Sources */,
+				E66DD921FDFD04FA48899CD2 /* TelemetryDeckAnalyticsService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -382,7 +413,6 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 7294Y62396;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -457,7 +487,6 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 7294Y62396;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -575,6 +604,25 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		3F6AF6480033E8DC25869461 /* XCRemoteSwiftPackageReference "SwiftSDK" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/TelemetryDeck/SwiftSDK";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C2921D5CFA55A765921AD8B7 /* TelemetryDeck */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3F6AF6480033E8DC25869461 /* XCRemoteSwiftPackageReference "SwiftSDK" */;
+			productName = TelemetryDeck;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B5C95FDD9E33B453AF96E710 /* Project object */;
 }

@@ -28,6 +28,7 @@ final class AppViewModel {
   private let reminders: RemindersService
   private let selectionStore: SelectionStore
   private var selectionPolicy: UniformRandomTopLevelPolicy
+  private let analytics: AnalyticsService?
 
   var phase: AppPhase = .bootstrapping
   var userMessage: String?
@@ -55,6 +56,7 @@ final class AppViewModel {
     reminders: RemindersService,
     selectionStore: SelectionStore,
     selectionPolicy: UniformRandomTopLevelPolicy = UniformRandomTopLevelPolicy(),
+    analytics: AnalyticsService? = nil,
     undoDelay: Duration = .seconds(4),
     skipInitialBootstrap: Bool = false
   ) {
@@ -62,6 +64,7 @@ final class AppViewModel {
     self.reminders = reminders
     self.selectionStore = selectionStore
     self.selectionPolicy = selectionPolicy
+    self.analytics = analytics
     observationTask = Task { @MainActor [weak self] in
       guard let self else { return }
       for await _ in self.reminders.eventStoreChanges() {
@@ -100,6 +103,7 @@ final class AppViewModel {
   func applyListChoice(_ summary: ReminderCalendarSummary) async {
     selectionStore.selectedListIdentifier = summary.id
     activeListSummary = summary
+    analytics?.record("list.switch")
     await loadPoolAndFocus()
   }
 
@@ -143,6 +147,7 @@ final class AppViewModel {
     currentTask = task
     guard let listId = activeListSummary?.id else { return }
     selectionStore.setReminderID(task.id, forList: listId)
+    analytics?.record("task.reroll")
     if result.onlyOneInPool {
       showOnlyOneTaskAlert = true
     }
@@ -159,6 +164,7 @@ final class AppViewModel {
     pendingTaskId = task.id
     await loadPoolAndFocus()
     pendingUndo = .completion(task: task)
+    analytics?.record("task.complete")
     startUndoTimer()
   }
 
@@ -173,6 +179,7 @@ final class AppViewModel {
     pendingTaskId = task.id
     await loadPoolAndFocus()
     pendingUndo = .deletion(task: task)
+    analytics?.record("task.delete")
     startUndoTimer()
   }
 
@@ -181,6 +188,7 @@ final class AppViewModel {
     undoTimerTask?.cancel()
     undoTimerTask = nil
     guard let undo = pendingUndo else { return }
+    analytics?.record("task.undo", parameters: ["action": undo.toastMessage])
     let task: ReminderTask = switch undo {
     case .deletion(let t): t
     case .completion(let t): t
@@ -209,6 +217,7 @@ final class AppViewModel {
       )
       showAddSheet = false
       await loadPoolAfterAdd(createdId: created.id, priorPoolSize: prior)
+      analytics?.record("task.add")
       showTaskAddedToastBriefly()
     } catch {
       userMessage = error.localizedDescription
@@ -280,6 +289,7 @@ final class AppViewModel {
       }
       await loadPoolAndFocus()
     } catch {
+      analytics?.record("error.critical", parameters: ["site": "executeImmediately"])
       userMessage = error.localizedDescription
     }
   }
@@ -302,6 +312,7 @@ final class AppViewModel {
       case .completion(let task): try reminders.completeReminder(id: task.id)
       }
     } catch {
+      analytics?.record("error.critical", parameters: ["site": "sendToEventKit"])
       userMessage = error.localizedDescription
     }
   }
@@ -316,18 +327,22 @@ final class AppViewModel {
       do {
         let ok = try await reminders.requestFullAccess()
         if !ok {
+          analytics?.record("permission.outcome", parameters: ["result": "denied"])
           phase = .permissionDenied
           return
         }
       } catch {
+        analytics?.record("permission.outcome", parameters: ["result": "error"])
         phase = .permissionDenied
         userMessage = error.localizedDescription
         return
       }
+      analytics?.record("permission.outcome", parameters: ["result": "granted"])
       await resolveListAndLoad()
     case .fullAccess:
       await resolveListAndLoad()
     case .denied, .writeOnly:
+      analytics?.record("permission.outcome", parameters: ["result": "denied"])
       phase = .permissionDenied
     }
   }
@@ -380,6 +395,7 @@ final class AppViewModel {
         phase = .focused
       }
     } catch {
+      analytics?.record("error.critical", parameters: ["site": "loadPoolAndFocus"])
       userMessage = error.localizedDescription
       phase = .listSetup
     }

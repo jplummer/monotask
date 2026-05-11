@@ -16,12 +16,19 @@ options:
 settings:
   base:
     IPHONEOS_DEPLOYMENT_TARGET: '18.0'
+packages:
+  TelemetryDeck:
+    url: https://github.com/TelemetryDeck/SwiftSDK
+    from: 2.0.0
+
 targets:
   Monotask:
     type: application
     platform: iOS
     # Asset catalogs must be included here (not as generic `resources`) so Xcode runs `actool` and
     # named colors are available in the built app.
+    dependencies:
+      - package: TelemetryDeck
     sources:
       - path: Monotask
         excludes:

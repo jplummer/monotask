@@ -49,7 +49,7 @@ The navigation bar still hosts the **list picker** (`ToolbarItem` / principal); 
 - **Branding & visual identity** — Direction for **app icon**, gradient/post-it **personality**, and overall tone **before** splash and onboarding so first-run screens match the product (good candidate for a **competitive multi-agent** exploration: parallel moodboards / icon directions, then converge).
 - **Splash / launch shell**: Not in the main app path yet.
 - **First-run onboarding** (welcome + education **before** system prompt): Spec in [ONBOARDING.md](ONBOARDING.md); main branch still starts `bootstrap` without those screens.
-- **Performance pass** (intentional optimization pass): Not done as a tracked pass; opportunistic tweaks only so far.
+- **Performance pass** (intentional optimization pass): EKEventStoreChanged debounce (500ms) shipped. Rendering audit (shadows, trig) deferred until Instruments trace on device.
 - **App icon in Assets**: `project.yml` may still omit a filled **App Icon** set until branding is decided.
 - **App Store artifacts**: Screenshots, listing copy, privacy answers — **last**, after UI and branding stabilize ([App Store and marketing assets](#app-store-and-marketing-assets)).
 - **Sections smoke test**: Unknown whether EventKit exposes section headers as `EKReminder` objects. See [Sections smoke test](#sections-smoke-test) — a quick manual check before any sections-aware work.
@@ -65,7 +65,7 @@ Prioritize **identity and observability**, then **inclusive UX**, then **first-r
 3. ~~**Daily-use instrumentation**~~ — **Done.** TelemetryDeck, pseudonymous, 9 core events. See [Daily-use instrumentation](#daily-use-instrumentation).
 4. ~~**Accessibility pass (core)**~~ — **Done.** Reduce Motion on all animations, VoiceOver labels and traits on all controls and toasts, semantic fonts throughout. Remaining: full VoiceOver traversal order audit + large-text layout (ship-ready polish pass).
 5. **Splash + first-run onboarding** — After branding; short launch shell; education per [ONBOARDING.md](ONBOARDING.md); defer `bootstrap` / `start()` until after onboarding when applicable so the Reminders prompt is not the first screen.
-6. **Performance pass** — Profile focus view, post-it, list loads; coalesce or debounce `EKEventStoreChanged` if reloads stack; trim redundant layout/animation cost (see [Performance pass](#performance-pass)).
+6. **Performance pass** — EKEventStoreChanged debounce done. Remaining: profile focus view and post-it rendering on device with Instruments; trim layout/animation cost if hot (see [Performance pass](#performance-pass)).
 7. **Ship-ready polish** — Error UX improvements, scene lifecycle (background / Settings / Reminders edits), small-phone and dark/light passes, full VoiceOver traversal order + large-text layout.
 8. **View refinement** — Typography, haptics, tokens ([View and behavior refinement](#view-and-behavior-refinement)); ongoing.
 9. **App Store and marketing assets** — **Last**: screenshots, copy, privacy questionnaire, support URL after UI and icon settle ([App Store and marketing assets](#app-store-and-marketing-assets)).

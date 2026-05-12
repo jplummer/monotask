@@ -54,6 +54,16 @@ xcodebuild -scheme Monotask -destination 'platform=iOS Simulator,name=iPhone 16,
 
 Verified on this machine with Xcode 16 / iOS 18.1 simulator. List devices: `xcrun simctl list devices available`.
 
+## Testing the onboarding flow
+
+The onboarding screen appears when Reminders permission is `.undetermined` (first run) or has been denied. To reset permission on the simulator without wiping it:
+
+```bash
+xcrun simctl privacy booted reset reminders com.monotask.Monotask
+```
+
+Then relaunch the app. On a real device, delete and reinstall the app to reset permission state.
+
 ## Product docs
 
 - **[docs/PLAN.md](docs/PLAN.md)** — architecture, state machine, and locked decisions.

@@ -3,6 +3,8 @@ import os
 
 /// In-memory `RemindersService` for unit tests and SwiftUI previews.
 final class MockRemindersService: RemindersService, @unchecked Sendable {
+  enum MockError: Error { case generic }
+
   private struct MutableState: @unchecked Sendable {
     var auth: RemindersAuthorization
     var calendars: [ReminderCalendarSummary]
@@ -12,6 +14,9 @@ final class MockRemindersService: RemindersService, @unchecked Sendable {
     var nextReminderNumericId: Int
     /// When non-nil, `createReminderList` throws this error instead of succeeding.
     var createListError: Error? = nil
+    /// Controls `requestFullAccess` outcome: nil = grant (default), false = deny, error = throw.
+    var requestAccessResult: Bool? = nil
+    var requestAccessError: Error? = nil
   }
 
   private let lock: OSAllocatedUnfairLock<MutableState>
@@ -66,11 +71,25 @@ final class MockRemindersService: RemindersService, @unchecked Sendable {
     lock.withLock { $0.createListError = error }
   }
 
+  func setRequestAccessResult(_ result: Bool?) {
+    lock.withLock { $0.requestAccessResult = result }
+  }
+
+  func setRequestAccessError(_ error: Error?) {
+    lock.withLock { $0.requestAccessError = error }
+  }
+
   func currentAuthorization() -> RemindersAuthorization {
     lock.withLock { $0.auth }
   }
 
   func requestFullAccess() async throws -> Bool {
+    let state = lock.withLock { $0 }
+    if let error = state.requestAccessError { throw error }
+    if let result = state.requestAccessResult {
+      if result { lock.withLock { $0.auth = .fullAccess } }
+      return result
+    }
     lock.withLock { $0.auth = .fullAccess }
     return true
   }

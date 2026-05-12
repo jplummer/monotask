@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		03F4F7C3FF9D44CE6A66E305 /* AppViewModelOnboardingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B10FD36271E941B9FDA153A /* AppViewModelOnboardingTests.swift */; };
 		08C507209163925D70402A25 /* EventKitRemindersService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67ADAFC102AC71EE087BD6E /* EventKitRemindersService.swift */; };
 		1C5BFC79515F06F559313FB4 /* AddTaskSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70ABF40ABD611E676AE43560 /* AddTaskSheet.swift */; };
 		1EDD36506EDC098A1C740CE3 /* SelectionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F346652DC3D832B10E62A54 /* SelectionStore.swift */; };
@@ -18,6 +19,7 @@
 		3AA01BB320566EC2812D98BF /* ListSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DC6E3F60397339805700DD4 /* ListSetupView.swift */; };
 		402F42A567D26EE55882613B /* MockAnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72A2991A13FA16F28EC2D4DF /* MockAnalyticsService.swift */; };
 		4D685DCBBCE8549D6B1010C5 /* AppViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D49B6C5779CC00A5687625 /* AppViewModelTests.swift */; };
+		5148CC255170109417A807B7 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43755B5BF3DD7413E727E72 /* OnboardingView.swift */; };
 		55B56CB11DA61BE819F9A23A /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48F43B0DC96A9612D88444CE /* RootView.swift */; };
 		6F0E714A1A69FEB37B6027F9 /* AppViewModelSectionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1081A9E891471E4BFE0F61E4 /* AppViewModelSectionsTests.swift */; };
 		753EC5116ED04C0C3741ECE9 /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEE8E64231DAEF32F4845F12 /* AnalyticsService.swift */; };
@@ -76,9 +78,11 @@
 		75DA0B54B0B47596455685CB /* Monotask.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Monotask.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F013528CA9350091CF39245 /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
 		7F73D84A6E06658E5FBF7CE2 /* SelectionStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionStoreTests.swift; sourceTree = "<group>"; };
+		8B10FD36271E941B9FDA153A /* AppViewModelOnboardingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelOnboardingTests.swift; sourceTree = "<group>"; };
 		8FFD8A1586A517CC5B83804F /* MonotaskSigning.local.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = MonotaskSigning.local.xcconfig; sourceTree = "<group>"; };
 		97859C8EE67792A23C73D74F /* UniformRandomTopLevelPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniformRandomTopLevelPolicyTests.swift; sourceTree = "<group>"; };
 		A19DE4889FDD92F317F75BD3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		A43755B5BF3DD7413E727E72 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		A67ADAFC102AC71EE087BD6E /* EventKitRemindersService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventKitRemindersService.swift; sourceTree = "<group>"; };
 		AEE8E64231DAEF32F4845F12 /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
 		B91F9D125026E1E93BD923B3 /* DesignColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignColors.swift; sourceTree = "<group>"; };
@@ -130,6 +134,7 @@
 				673164E172A3DC3B67499382 /* AppViewModelEditTests.swift */,
 				68A29CA4DE4F8093BFA52EAC /* AppViewModelExternalChangeTests.swift */,
 				519ADF9C3D96DF3F30C3E3B7 /* AppViewModelListTests.swift */,
+				8B10FD36271E941B9FDA153A /* AppViewModelOnboardingTests.swift */,
 				3BBA231FA7F56663E69FF5AE /* AppViewModelRerollTests.swift */,
 				1081A9E891471E4BFE0F61E4 /* AppViewModelSectionsTests.swift */,
 				C3D49B6C5779CC00A5687625 /* AppViewModelTests.swift */,
@@ -176,6 +181,7 @@
 				70ABF40ABD611E676AE43560 /* AddTaskSheet.swift */,
 				D84A97EE02769BD10123FB3A /* EmptyListView.swift */,
 				0DC6E3F60397339805700DD4 /* ListSetupView.swift */,
+				A43755B5BF3DD7413E727E72 /* OnboardingView.swift */,
 				D446D2DF1AAFB0F5EB6FBC07 /* PermissionInstructionsView.swift */,
 				06406949F655DBC0E87E1D3D /* PostItCard.swift */,
 				48F43B0DC96A9612D88444CE /* RootView.swift */,
@@ -337,6 +343,7 @@
 				402F42A567D26EE55882613B /* MockAnalyticsService.swift in Sources */,
 				360176AFA52FA6A415B1FA3F /* MockRemindersService.swift in Sources */,
 				B0412FA365206B307BF16BFA /* MonotaskApp.swift in Sources */,
+				5148CC255170109417A807B7 /* OnboardingView.swift in Sources */,
 				E2644C875847A420E312A506 /* PermissionInstructionsView.swift in Sources */,
 				9540E570FFCC2CFCFD2FBFBA /* PostItCard.swift in Sources */,
 				2D4DAE5117A63EB0953D5D94 /* RandomSelectionPolicy.swift in Sources */,
@@ -358,6 +365,7 @@
 				A93B7100C480070C6410FDDD /* AppViewModelEditTests.swift in Sources */,
 				D59224BE359A36F36AD9DFCC /* AppViewModelExternalChangeTests.swift in Sources */,
 				79E0A8FBC8330875C7622218 /* AppViewModelListTests.swift in Sources */,
+				03F4F7C3FF9D44CE6A66E305 /* AppViewModelOnboardingTests.swift in Sources */,
 				9F63305356BB612E622A1926 /* AppViewModelRerollTests.swift in Sources */,
 				6F0E714A1A69FEB37B6027F9 /* AppViewModelSectionsTests.swift in Sources */,
 				4D685DCBBCE8549D6B1010C5 /* AppViewModelTests.swift in Sources */,

@@ -6,14 +6,15 @@ struct PermissionInstructionsView: View {
   var body: some View {
     ScrollView {
       VStack(alignment: .leading, spacing: 16) {
-        Text("Reminders access")
+        Text("Reminders access needed")
           .font(.title2.weight(.semibold))
         Text(
-          "Monotask needs full access to Reminders so it can read incomplete tasks and update them when you complete or edit."
+          "Monotask needs Full Access to Reminders to read and manage your tasks. If you chose \"Add Only\", please switch to Full Access."
         )
         .font(.body)
-        Text("If access was denied or set to write-only only, open Settings and enable full access for Monotask under Privacy & Security → Reminders.")
+        Text("In Settings, go to Privacy & Security → Reminders → Monotask and choose Full Access.")
           .font(.body)
+          .foregroundStyle(.secondary)
         HStack(spacing: 12) {
           Button("Open Settings") {
             model.openAppSettings()

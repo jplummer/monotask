@@ -89,33 +89,28 @@ final class AppViewModelBootstrapTests: XCTestCase {
 
   // MARK: - Permission branches
 
-  func testDeniedGoesToPermissionDenied() async {
+  func testDeniedGoesToOnboarding() async {
     let mock = MockRemindersService(authorization: .denied)
     let store = makeStore()
     let vm = makeVM(mock: mock, store: store)
     await vm.start()
-    XCTAssertEqual(vm.phase, .permissionDenied)
+    XCTAssertEqual(vm.phase, .onboarding)
   }
 
-  func testWriteOnlyGoesToPermissionDenied() async {
+  func testWriteOnlyGoesToOnboarding() async {
     let mock = MockRemindersService(authorization: .writeOnly)
     let store = makeStore()
     let vm = makeVM(mock: mock, store: store)
     await vm.start()
-    XCTAssertEqual(vm.phase, .permissionDenied)
+    XCTAssertEqual(vm.phase, .onboarding)
   }
 
-  func testUndeterminedGrantsAndProceeds() async {
-    let task = ReminderTask(id: "r-1", title: "Do thing", isCompleted: false)
-    let mock = MockRemindersService(
-      authorization: .undetermined,
-      calendars: [ReminderCalendarSummary(id: "cal-1", title: "Monotask")],
-      reminders: ["cal-1": [task]]
-    )
-    let store = makeStore(listId: "cal-1")
+  func testUndeterminedGoesToOnboarding() async {
+    let mock = MockRemindersService(authorization: .undetermined)
+    let store = makeStore()
     let vm = makeVM(mock: mock, store: store)
     await vm.start()
-    XCTAssertEqual(vm.phase, .focused)
+    XCTAssertEqual(vm.phase, .onboarding)
   }
 
   // MARK: - Empty pool
@@ -153,14 +148,14 @@ final class AppViewModelBootstrapTests: XCTestCase {
 
   // MARK: - refreshAfterSettings
 
-  func testRefreshAfterSettingsWhileDeniedStaysPermissionDenied() async {
+  func testRefreshAfterSettingsWhileDeniedStaysOnboarding() async {
     let mock = MockRemindersService(authorization: .denied)
     let store = makeStore()
     let vm = makeVM(mock: mock, store: store)
     await vm.start()
-    XCTAssertEqual(vm.phase, .permissionDenied)
+    XCTAssertEqual(vm.phase, .onboarding)
     await vm.refreshAfterSettings()
-    XCTAssertEqual(vm.phase, .permissionDenied)
+    XCTAssertEqual(vm.phase, .onboarding)
   }
 
   func testRefreshAfterSettingsRecoversTofocused() async {
@@ -173,7 +168,7 @@ final class AppViewModelBootstrapTests: XCTestCase {
     let store = makeStore(listId: "cal-1")
     let vm = makeVM(mock: mock, store: store)
     await vm.start()
-    XCTAssertEqual(vm.phase, .permissionDenied)
+    XCTAssertEqual(vm.phase, .onboarding)
     mock.setAuthorization(.fullAccess)
     await vm.refreshAfterSettings()
     XCTAssertEqual(vm.phase, .focused)

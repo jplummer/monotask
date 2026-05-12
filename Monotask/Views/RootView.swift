@@ -10,6 +10,8 @@ struct RootView: View {
       case .bootstrapping:
         ProgressView("Loading…")
           .frame(maxWidth: .infinity, maxHeight: .infinity)
+      case .onboarding:
+        OnboardingView()
       case .permissionDenied:
         PermissionInstructionsView()
       case .listSetup:

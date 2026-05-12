@@ -4,6 +4,7 @@ import SwiftUI
 
 enum AppPhase: Equatable, Sendable {
   case bootstrapping
+  case onboarding
   case permissionDenied
   case listSetup
   case emptyList
@@ -323,31 +324,45 @@ final class AppViewModel {
 
   // MARK: - Private
 
-  private func bootstrap() async {
-    phase = .bootstrapping
-    userMessage = nil
+  func recordOnboardingImpression() {
+    analytics?.record("onboarding.impression")
+  }
+
+  /// Called from OnboardingView when the user taps "Connect my Reminders".
+  func connectReminders() async {
+    analytics?.record("onboarding.cta_tapped")
     switch reminders.currentAuthorization() {
     case .undetermined:
       do {
         let ok = try await reminders.requestFullAccess()
-        if !ok {
+        if ok {
+          analytics?.record("permission.outcome", parameters: ["result": "granted"])
+          await resolveListAndLoad()
+        } else {
           analytics?.record("permission.outcome", parameters: ["result": "denied"])
           phase = .permissionDenied
-          return
         }
       } catch {
         analytics?.record("permission.outcome", parameters: ["result": "error"])
         phase = .permissionDenied
         userMessage = error.localizedDescription
-        return
       }
-      analytics?.record("permission.outcome", parameters: ["result": "granted"])
-      await resolveListAndLoad()
     case .fullAccess:
       await resolveListAndLoad()
     case .denied, .writeOnly:
       analytics?.record("permission.outcome", parameters: ["result": "denied"])
       phase = .permissionDenied
+    }
+  }
+
+  private func bootstrap() async {
+    phase = .bootstrapping
+    userMessage = nil
+    switch reminders.currentAuthorization() {
+    case .undetermined, .denied, .writeOnly:
+      phase = .onboarding
+    case .fullAccess:
+      await resolveListAndLoad()
     }
   }
 

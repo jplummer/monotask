@@ -322,7 +322,7 @@ final class AppViewModel {
     }
   }
 
-  // MARK: - Private
+  // MARK: - Onboarding
 
   func recordOnboardingImpression() {
     analytics?.record("onboarding.impression")
@@ -354,6 +354,8 @@ final class AppViewModel {
       phase = .permissionDenied
     }
   }
+
+  // MARK: - Private
 
   private func bootstrap() async {
     phase = .bootstrapping

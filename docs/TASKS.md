@@ -25,7 +25,7 @@ Snapshot of the repo **today** so PLAN/TASKS stay honest. Update this section wh
 - **Per-list reminder memory**: `SelectionStore` persists last focused reminder for every list in a 50-entry LRU map. Switching back to a prior list restores focus. One-time migration from legacy single-key format on first launch after upgrade.
 - **Daily-use instrumentation**: TelemetryDeck wired via `AnalyticsService` protocol. Pseudonymous (SHA-256 hashed per-install UUID). Core events: `app.foreground`, `task.complete`, `task.delete`, `task.undo`, `task.reroll`, `task.add`, `list.switch`, `permission.outcome`, `error.critical`.
 - **Accessibility — Reduce Motion**: All animations in `RootView` and `TaskFocusView` gate on `accessibilityReduceMotion`. Card tilt off when reduce motion is on (`PostItCard`). Undo/add toasts VoiceOver-accessible with button trait and hint.
-- **Tests**: 82 tests across 10 groups covering bootstrap phases, onboarding/permission flow, undo/defer, reroll, edit, list switching, add edge cases, external changes, SelectionStore, and sections guard. All passing.
+- **Tests**: 82 tests across 12 groups covering bootstrap phases, onboarding/permission flow, undo/defer, reroll, edit, list switching, add edge cases, external changes, SelectionStore, and sections guard. All passing.
 - **xcodegen**: `project.yml`, signing xcconfig pattern, README workflow.
 
 ### Partial (implemented but thin or needs a dedicated pass)
@@ -61,7 +61,7 @@ The navigation bar still hosts the **list picker** (`ToolbarItem` / principal); 
 Prioritize **identity and observability**, then **inclusive UX**, then **first-run flows**, then **speed**, then **distribution**.
 
 1. **Branding & visual identity** — Lock icon direction, palette/post-it character, and voice **before** splash and onboarding so those screens feel intentional. Optional: run **multiple agents or designers in parallel** on competing directions, then pick one.
-2. ~~**Test coverage pass**~~ — **Done.** 61 tests; all passing. See [Test coverage pass](#test-coverage-pass-).
+2. ~~**Test coverage pass**~~ — **Done.** 82 tests across 12 groups; all passing. See [Test coverage pass](#test-coverage-pass-).
 3. ~~**Daily-use instrumentation**~~ — **Done.** TelemetryDeck, pseudonymous, 9 core events. See [Daily-use instrumentation](#daily-use-instrumentation).
 4. ~~**Accessibility pass (core)**~~ — **Done.** Reduce Motion on all animations, VoiceOver labels and traits on all controls and toasts, semantic fonts throughout. Remaining: full VoiceOver traversal order audit + large-text layout (ship-ready polish pass).
 5. ~~**First-run onboarding (flow and wiring)**~~ — **Done.** Value prop screen, "Connect my Reminders" CTA, permission gate, denied/write-only recovery path, analytics hooks. Placeholder visual in place. **Splash visual and final polish wait on branding.**
@@ -85,7 +85,7 @@ Do **before** splash/onboarding and before treating App Icon / screenshots as fi
 
 ## Test coverage pass ✅
 
-**Complete.** 61 tests across 9 groups; all passing. The mock supports error injection via `setCreateListError(_:)` and `setAuthorization(_:)`; `AppViewModel.init` accepts `undoDelay:` for fast timer tests.
+**Complete.** 82 tests across 12 groups; all passing. The mock supports error injection via `setCreateListError(_:)` and `setAuthorization(_:)`; `AppViewModel.init` accepts `undoDelay:` for fast timer tests.
 
 ### Group 1 — Bootstrap / permission state machine (`AppViewModelBootstrapTests`)
 

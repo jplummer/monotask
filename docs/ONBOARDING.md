@@ -1,6 +1,6 @@
 # Onboarding (proposed)
 
-This document proposes a first-run flow aimed at **maximizing full Reminders access** (see product constraints in [PLAN.md](PLAN.md)). **No implementation yet.** Later, instrument the steps so we can see where users drop off (see [Instrumentation hooks](#instrumentation-hooks)).
+This document describes the first-run flow aimed at **maximizing full Reminders access** (see product constraints in [PLAN.md](PLAN.md)). **Implemented.** Placeholder visual in `OnboardingView` pending brand artwork; final copy tweaks follow identity work. Later, instrument the steps so we can see where users drop off (see [Instrumentation hooks](#instrumentation-hooks)).
 
 ## Sources consulted
 

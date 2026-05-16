@@ -16,12 +16,12 @@ An iOS 18+ SwiftUI app that surfaces one randomly-selected incomplete reminder a
 - **Edit (v1)**: **inline** on the post-it (title and notes), not a separate sheet. No supported public URL to open a specific reminder in the system Reminders app ([discussion](https://stackoverflow.com/questions/78688263/how-to-open-a-reminders-app-reminder-item-using)).
 - **Add task**: a control is always available on the main focus path (including empty list flows).
 - **Scaffolding**: xcodegen keeps the Xcode project reproducible; `Monotask.xcodeproj` is checked in for clone-and-open.
-- **Branding before first-run polish**: App **icon**, gradient/post-it **personality**, and overall look should be decided before final onboarding visuals. The onboarding flow and wiring are done with a placeholder visual ([TASKS.md — Branding](TASKS.md#branding--visual-identity)).
+- **Branding**: App **icon** (Icon Composer, light/dark/tinted), gradient palette, and post-it personality are locked. Onboarding visuals can now be finalized ([TASKS.md — Branding](TASKS.md#branding--visual-identity)).
 - **Instrumentation**: **Daily-use** analytics wired via **TelemetryDeck** (pseudonymous — hashed per-install UUID, no PII). Core events: `app.foreground`, `task.complete`, `task.delete`, `task.undo`, `task.reroll`, `task.add`, `list.switch`, `permission.outcome`, `error.critical`. Onboarding funnel events in ONBOARDING.md share the same pipe when implemented.
 
-## First-run onboarding (planned)
+## First-run onboarding (next up)
 
-Not implemented in code yet. **Goal**: screens + copy before the system Reminders permission so more users grant **full** access; optional instrumentation for drop-off. **Order**: settle **branding** first, then build splash/onboarding ([TASKS.md — Suggested implementation order](TASKS.md#suggested-implementation-order)). Spec and references: [ONBOARDING.md](ONBOARDING.md). Track tasks under [TASKS.md — First-run onboarding](TASKS.md#first-run-onboarding).
+Flow and wiring are done; placeholder visual in `OnboardingView`. Branding is now locked so splash visual and final copy can be implemented. **Goal**: screens + copy before the system Reminders permission so more users grant **full** access; optional instrumentation for drop-off. Spec and references: [ONBOARDING.md](ONBOARDING.md). Track tasks under [TASKS.md — First-run onboarding](TASKS.md#first-run-onboarding).
 
 ## Deferred roadmap
 

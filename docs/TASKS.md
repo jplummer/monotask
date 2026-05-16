@@ -27,6 +27,8 @@ Snapshot of the repo **today** so PLAN/TASKS stay honest. Update this section wh
 - **Accessibility — Reduce Motion**: All animations in `RootView` and `TaskFocusView` gate on `accessibilityReduceMotion`. Card tilt off when reduce motion is on (`PostItCard`). Undo/add toasts VoiceOver-accessible with button trait and hint.
 - **Tests**: 82 tests across 12 groups covering bootstrap phases, onboarding/permission flow, undo/defer, reroll, edit, list switching, add edge cases, external changes, SelectionStore, and sections guard. All passing.
 - **xcodegen**: `project.yml`, signing xcconfig pattern, README workflow.
+- **App icon**: Icon Composer file (`Monotask.icon`) added to project; `ASSETCATALOG_COMPILER_APPICON_NAME` set to `Monotask`. Light, dark, and tinted variants confirmed working in Simulator.
+- **Branding & visual identity**: Icon direction, gradient palette, and post-it personality locked.
 
 ### Partial (implemented but thin or needs a dedicated pass)
 
@@ -46,11 +48,9 @@ The navigation bar still hosts the **list picker** (`ToolbarItem` / principal); 
 
 ### Not started
 
-- **Branding & visual identity** — Direction for **app icon**, gradient/post-it **personality**, and overall tone **before** splash and onboarding so first-run screens match the product (good candidate for a **competitive multi-agent** exploration: parallel moodboards / icon directions, then converge).
 - **Splash / launch shell**: Not in the main app path yet.
-- **First-run onboarding** (splash visual + final polish): Flow and wiring are done. Placeholder visual in `OnboardingView`. Brand artwork and final copy tweaks pending identity work.
+- **First-run onboarding** (splash visual + final polish): Flow and wiring are done. Placeholder visual in `OnboardingView`. **Ready to implement now that branding is locked.**
 - **Performance pass** (intentional optimization pass): EKEventStoreChanged debounce (500ms) shipped. Rendering audit (shadows, trig) deferred until Instruments trace on device.
-- **App icon in Assets**: `project.yml` may still omit a filled **App Icon** set until branding is decided.
 - **App Store artifacts**: Screenshots, listing copy, privacy answers — **last**, after UI and branding stabilize ([App Store and marketing assets](#app-store-and-marketing-assets)).
 - **Sections smoke test**: Unknown whether EventKit exposes section headers as `EKReminder` objects. See [Sections smoke test](#sections-smoke-test) — a quick manual check before any sections-aware work.
 
@@ -60,7 +60,7 @@ The navigation bar still hosts the **list picker** (`ToolbarItem` / principal); 
 
 Prioritize **identity and observability**, then **inclusive UX**, then **first-run flows**, then **speed**, then **distribution**.
 
-1. **Branding & visual identity** — Lock icon direction, palette/post-it character, and voice **before** splash and onboarding so those screens feel intentional. Optional: run **multiple agents or designers in parallel** on competing directions, then pick one.
+1. ~~**Branding & visual identity**~~ — **Done.** Icon (Icon Composer, light/dark/tinted), gradient palette, post-it personality locked. See [Branding & visual identity](#branding--visual-identity).
 2. ~~**Test coverage pass**~~ — **Done.** 82 tests across 12 groups; all passing. See [Test coverage pass](#test-coverage-pass-).
 3. ~~**Daily-use instrumentation**~~ — **Done.** TelemetryDeck, pseudonymous, 9 core events. See [Daily-use instrumentation](#daily-use-instrumentation).
 4. ~~**Accessibility pass (core)**~~ — **Done.** Reduce Motion on all animations, VoiceOver labels and traits on all controls and toasts, semantic fonts throughout. Remaining: full VoiceOver traversal order audit + large-text layout (ship-ready polish pass).
@@ -73,13 +73,13 @@ Prioritize **identity and observability**, then **inclusive UX**, then **first-r
 
 ---
 
-## Branding & visual identity
+## Branding & visual identity ✅
 
-Do **before** splash/onboarding and before treating App Icon / screenshots as final.
+**Complete.** Icon Composer file (`Monotask.icon`) with light, dark, and tinted variants confirmed working in Simulator. Gradient palette and post-it personality locked.
 
-- [ ] Define **icon** concept (metaphor, silhouette, dark/light).
-- [ ] Align **gradient + post-it** with personality (calm, playful, minimal — pick and execute).
-- [ ] Optional: **multi-agent / parallel exploration** of 2–3 directions, then merge winners into one system.
+- [x] Define **icon** concept (metaphor, silhouette, dark/light).
+- [x] Align **gradient + post-it** with personality.
+- [x] App icon wired in `project.yml` (`ASSETCATALOG_COMPILER_APPICON_NAME: 'Monotask'`).
 
 ---
 
@@ -214,7 +214,7 @@ Complete/trash are covered by **undo toasts** when the pool has 2+ tasks; no sep
 
 **Last** in the sequence: depends on stable UI, **branding**, and **App Icon**.
 
-- [ ] **App icon**: Full **Asset Catalog** icon set; set `ASSETCATALOG_COMPILER_APPICON_NAME` in `project.yml` / target when the branding set is ready.
+- [x] **App icon**: Icon Composer file (`Monotask.icon`); `ASSETCATALOG_COMPILER_APPICON_NAME: 'Monotask'` set in `project.yml`. Light, dark, and tinted variants confirmed.
 - [ ] **Screenshots**: Required sizes per App Store Connect; dark and light if differentiated.
 - [ ] **App Store copy**: Subtitle, description, keywords, **what’s new** template; align with Reminders positioning and privacy reality.
 - [ ] **Privacy**: App Privacy questionnaire; **Privacy Policy URL** if required.

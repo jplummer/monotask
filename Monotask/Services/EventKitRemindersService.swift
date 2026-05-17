@@ -113,9 +113,11 @@ final class EventKitRemindersService: RemindersService, @unchecked Sendable {
 
   func eventStoreChanges() -> AsyncStream<Void> {
     AsyncStream { continuation in
+      // object: nil — avoids forcing EKEventStore initialization at observer-registration time.
+      // EKEventStoreChanged is only ever posted by EventKit, so nil is safe here.
       let token = NotificationCenter.default.addObserver(
         forName: .EKEventStoreChanged,
-        object: store,
+        object: nil,
         queue: .main
       ) { _ in
         continuation.yield()

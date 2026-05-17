@@ -35,8 +35,8 @@ struct OnboardingView: View {
         PostItCard(
           squareSide: side,
           isEditing: false,
-          displayTitle: "Select a Reminders list",
-          displayNotes: "Monotask gives you one task at a time. Check off this card and choose a Reminders list of your choice.",
+          displayTitle: "Monotask gives you one task at a time",
+          displayNotes: "Check off this task and choose a Reminders list. (If you have a \"Monotask\" list we'll use it automatically)",
           editTitle: .constant(""),
           editNotes: .constant(""),
           focus: $dummyFocus,
@@ -49,6 +49,9 @@ struct OnboardingView: View {
         // Completion checkbox — sole CTA.
         // Geometry and styling match TaskFocusView's complete button (toolbarIconButton + checkboxPos).
         Button {
+          withAnimation(reduceMotion ? .none : .easeOut(duration: 0.3)) {
+            contentVisible = false
+          }
           Task { await model.connectReminders() }
         } label: {
           Image(systemName: "square")

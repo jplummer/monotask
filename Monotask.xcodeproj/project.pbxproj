@@ -18,7 +18,6 @@
 		3574236E9AFCEAF8958B5B87 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F013528CA9350091CF39245 /* AppConfig.swift */; };
 		360176AFA52FA6A415B1FA3F /* MockRemindersService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6387EC86FE304FE87706B23B /* MockRemindersService.swift */; };
 		3AA01BB320566EC2812D98BF /* ListSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DC6E3F60397339805700DD4 /* ListSetupView.swift */; };
-		3B428C2A3187DC09E9E47D4D /* BootstrapCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04E1B4A09BBA1DDCC05E1B2 /* BootstrapCardView.swift */; };
 		402F42A567D26EE55882613B /* MockAnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72A2991A13FA16F28EC2D4DF /* MockAnalyticsService.swift */; };
 		4D685DCBBCE8549D6B1010C5 /* AppViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D49B6C5779CC00A5687625 /* AppViewModelTests.swift */; };
 		5148CC255170109417A807B7 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43755B5BF3DD7413E727E72 /* OnboardingView.swift */; };
@@ -93,7 +92,6 @@
 		AEE8E64231DAEF32F4845F12 /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
 		B91F9D125026E1E93BD923B3 /* DesignColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignColors.swift; sourceTree = "<group>"; };
 		BAD00AC729E55C092B963F8D /* MonotaskTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MonotaskTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		C04E1B4A09BBA1DDCC05E1B2 /* BootstrapCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BootstrapCardView.swift; sourceTree = "<group>"; };
 		C24576CAE9EF72FAF0A56F1C /* MonotaskSigning.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = MonotaskSigning.xcconfig; sourceTree = "<group>"; };
 		C3D49B6C5779CC00A5687625 /* AppViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelTests.swift; sourceTree = "<group>"; };
 		C4A30AB47C462A09439667F8 /* AppViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
@@ -187,7 +185,6 @@
 			isa = PBXGroup;
 			children = (
 				70ABF40ABD611E676AE43560 /* AddTaskSheet.swift */,
-				C04E1B4A09BBA1DDCC05E1B2 /* BootstrapCardView.swift */,
 				D84A97EE02769BD10123FB3A /* EmptyListView.swift */,
 				7DF532513D63E467E2776E82 /* ListPickerSheetView.swift */,
 				0DC6E3F60397339805700DD4 /* ListSetupView.swift */,
@@ -350,7 +347,6 @@
 				753EC5116ED04C0C3741ECE9 /* AnalyticsService.swift in Sources */,
 				3574236E9AFCEAF8958B5B87 /* AppConfig.swift in Sources */,
 				A7F1239C36DE24F766BA26EF /* AppViewModel.swift in Sources */,
-				3B428C2A3187DC09E9E47D4D /* BootstrapCardView.swift in Sources */,
 				CB12BAE345F7A2827FE532FE /* DesignColors.swift in Sources */,
 				7A1E4104C406CEC5AFC0F99B /* EmptyListView.swift in Sources */,
 				08C507209163925D70402A25 /* EventKitRemindersService.swift in Sources */,
@@ -548,6 +544,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Monotask/App/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -586,6 +583,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Monotask/App/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

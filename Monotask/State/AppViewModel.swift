@@ -44,7 +44,7 @@ final class AppViewModel {
   var pendingUndo: UndoableAction? = nil
   /// True while the "Task added" info toast is visible.
   var showTaskAddedToast: Bool = false
-  /// True while the "Using your Monotask list" onboarding toast is visible.
+  /// True while the "We found your Monotask list!" onboarding toast is visible.
   var showAutoSelectedListToast: Bool = false
   /// True when resolveListAndLoad needs the list picker sheet to auto-present.
   var showListPickerSheet: Bool = false
@@ -395,8 +395,6 @@ final class AppViewModel {
     let authorization = reminders.currentAuthorization()
     switch authorization {
     case .undetermined, .denied, .writeOnly:
-      // Show the branded bootstrap card briefly before transitioning to onboarding.
-      try? await Task.sleep(for: .milliseconds(400))
       phase = .onboarding
     case .fullAccess:
       // Fetch immediately — bootstrap card stays visible until data is ready, no artificial delay.
@@ -413,6 +411,7 @@ final class AppViewModel {
         showAutoSelectedListToastBriefly()
       }
       await loadPoolAndFocus()
+      if fromOnboarding { offsetPoolColorFromOnboarding() }
       if fromOnboarding && (phase == .focused || phase == .emptyList) {
         analytics?.record("onboarding.complete")
       }
@@ -426,6 +425,7 @@ final class AppViewModel {
         showAutoSelectedListToastBriefly()
       }
       await loadPoolAndFocus()
+      if fromOnboarding { offsetPoolColorFromOnboarding() }
       if fromOnboarding && (phase == .focused || phase == .emptyList) {
         analytics?.record("onboarding.complete")
       }
@@ -474,6 +474,13 @@ final class AppViewModel {
       userMessage = error.localizedDescription
       phase = .listSetup
     }
+  }
+
+  /// Ensures the first task shown after onboarding doesn't share colorIndex 0 with the
+  /// onboarding card. If the focused task landed at pool[0], swap it to pool[1].
+  private func offsetPoolColorFromOnboarding() {
+    guard pool.count > 1, let taskId = currentTask?.id, pool[0].id == taskId else { return }
+    pool.swapAt(0, 1)
   }
 
   private func loadPoolAfterAdd(createdId: String, priorPoolSize: Int) async {

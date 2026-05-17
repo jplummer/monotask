@@ -119,7 +119,7 @@ final class AppViewModel {
   func openListPickerFromToast() {
     analytics?.record("onboarding.change_tapped")
     dismissAutoSelectedToast()
-    showListPickerSheet = true
+    // Dismisses the toast; user switches lists via the nav bar picker.
   }
 
   func applyListChoice(_ summary: ReminderCalendarSummary) async {
@@ -392,15 +392,14 @@ final class AppViewModel {
   private func bootstrap() async {
     phase = .bootstrapping
     userMessage = nil
-    // Run the auth check concurrently with a minimum display so the branded
-    // bootstrap card is visible for at least 400 ms on every launch.
-    async let minDisplay: Void = Task.sleep(for: .milliseconds(400))
     let authorization = reminders.currentAuthorization()
-    try? await minDisplay
     switch authorization {
     case .undetermined, .denied, .writeOnly:
+      // Show the branded bootstrap card briefly before transitioning to onboarding.
+      try? await Task.sleep(for: .milliseconds(400))
       phase = .onboarding
     case .fullAccess:
+      // Fetch immediately — bootstrap card stays visible until data is ready, no artificial delay.
       await resolveListAndLoad()
     }
   }

@@ -3,7 +3,9 @@ import Foundation
 
 /// Live Reminders access via `EKEventStore`.
 final class EventKitRemindersService: RemindersService, @unchecked Sendable {
-  private let store = EKEventStore()
+  // Lazy so EKEventStore is not created until after the first SwiftUI frame renders.
+  // All access paths go through AppViewModel (@MainActor), so lazy is safe here.
+  private lazy var store = EKEventStore()
 
   func currentAuthorization() -> RemindersAuthorization {
     let status = EKEventStore.authorizationStatus(for: .reminder)

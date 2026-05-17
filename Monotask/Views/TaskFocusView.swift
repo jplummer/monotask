@@ -61,10 +61,17 @@ struct TaskFocusView: View {
             Toast(message: "Task added.")
               .transition(.move(edge: .bottom).combined(with: .opacity))
           }
+          if model.showAutoSelectedListToast {
+            Toast(message: "Using your Monotask list", actionLabel: "Change") {
+              model.openListPickerFromToast()
+            }
+            .transition(.move(edge: .bottom).combined(with: .opacity))
+          }
         }
         .padding(.bottom, bottomPad + 60)
         .animation(reduceMotion ? .none : .easeInOut(duration: 0.22), value: model.pendingUndo != nil)
         .animation(reduceMotion ? .none : .spring(response: 0.4, dampingFraction: 0.8), value: model.showTaskAddedToast)
+        .animation(reduceMotion ? .none : .spring(response: 0.4, dampingFraction: 0.8), value: model.showAutoSelectedListToast)
 
         bottomIconStrip
           .padding(.horizontal, 28)
@@ -106,6 +113,14 @@ struct TaskFocusView: View {
       set: { if !$0 { model.cancelAdd() } }
     )) {
       AddTaskSheet()
+    }
+    .sheet(isPresented: Binding(
+      get: { model.showListPickerSheet },
+      set: { if !$0 { model.showListPickerSheet = false } }
+    )) {
+      ListPickerSheetView()
+        .presentationDetents([.medium, .large])
+        .presentationDragIndicator(.visible)
     }
     .alert("New Reminders list", isPresented: $showNewListAlert) {
       TextField("List name", text: $newListName)
@@ -159,23 +174,29 @@ struct TaskFocusView: View {
 
   private var listPickerMenu: some View {
     Menu {
-      let calendars = model.calendarsForSetup().sorted { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
-      let activeId = model.activeListSummary?.id
-      ForEach(calendars) { cal in
-        Button {
-          Task { await model.applyListChoice(cal) }
-        } label: {
-          if cal.id == activeId {
-            Label(cal.title, systemImage: "checkmark")
-          } else {
-            Text(cal.title)
+      Section("Select Reminders list") {
+        let calendars = model.calendarsForSetup().sorted {
+          $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
+        }
+        let activeId = model.activeListSummary?.id
+        ForEach(calendars) { cal in
+          Button {
+            Task { await model.applyListChoice(cal) }
+          } label: {
+            if cal.id == activeId {
+              Label(cal.title, systemImage: "checkmark")
+            } else {
+              Text(cal.title)
+            }
           }
         }
       }
       Divider()
-      Button("Add new list") {
+      Button {
         newListName = ""
         showNewListAlert = true
+      } label: {
+        Label("Add New List", systemImage: "plus.circle")
       }
     } label: {
       HStack(spacing: 6) {

@@ -2,62 +2,205 @@ import SwiftUI
 
 struct EmptyListView: View {
   @Environment(AppViewModel.self) private var model
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+  @State private var isEditing = false
   @State private var title = ""
   @State private var notes = ""
   @State private var isSaving = false
+  @State private var frontCardAngle: Double = 1.5
+  @FocusState private var editFocus: PostItEditFocus?
+
+  private let horizontalPadding: CGFloat = 24
+  /// Space reserved so the post-it does not cover the bottom chrome area (points).
+  private let bottomChromeReserve: CGFloat = 72
 
   var body: some View {
-    ZStack {
-      LinearGradient(
-        colors: [DesignColors.gradientTop, DesignColors.gradientBottom],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-      )
-      .ignoresSafeArea()
+    GeometryReader { proxy in
+      let size = proxy.size
+      let widthBudget = size.width - horizontalPadding * 2
+      let heightBudget = size.height - bottomChromeReserve
+      let side = max(200, min(widthBudget, heightBudget))
+      let upShift = size.height * PostItCardLayout.verticalUpShiftRatio
+      let cardCY = size.height / 2 - upShift
 
-      VStack(alignment: .leading, spacing: 16) {
-        Text("No open tasks")
-          .font(.title2.weight(.semibold))
-        Text("Add your first task to this list. It appears on the post-it as soon as you save.")
-          .font(.body)
-          .foregroundStyle(.secondary)
-        TextField("Title", text: $title)
-          .textFieldStyle(.roundedBorder)
-        TextField("Notes (optional)", text: $notes, axis: .vertical)
-          .textFieldStyle(.roundedBorder)
-          .lineLimit(3...6)
-        Button("Add task") {
-          Task {
-            isSaving = true
-            await model.addFromEmpty(title: title, notes: notes)
-            title = ""
-            notes = ""
-            isSaving = false
+      let angle = reduceMotion ? 0.0 : frontCardAngle
+
+      ZStack {
+        // Card — switches between static placeholder and edit mode
+        PostItCard(
+          squareSide: side,
+          isEditing: isEditing,
+          displayTitle: "What do you need to do?",
+          displayNotes: "Add a task to your Monotask list",
+          editTitle: $title,
+          editNotes: $notes,
+          focus: $editFocus,
+          stackedCardsCount: 1,
+          colorIndex: 0,
+          frontCardRotation: angle
+        )
+        .position(x: size.width / 2, y: cardCY)
+
+        // Static placeholder chrome — pencil on the card, plus below
+        if !isEditing {
+          // Pencil: bottom-right of the card, rotated with card tilt
+          toolbarIconButton(systemName: "pencil", accessibilityLabel: "Edit") {
+            beginEdit()
+          }
+          .rotationEffect(.degrees(angle))
+          .position(rotatedPoint(
+            lx: side / 2 - 6 - 22,
+            ly: side / 2 - 6 - 22,
+            cx: size.width / 2,
+            cy: cardCY,
+            degrees: angle
+          ))
+
+          // Plus: below the card center, upright
+          toolbarIconButton(systemName: "plus.circle", accessibilityLabel: "Add task") {
+            beginEdit()
+          }
+          .position(x: size.width / 2, y: cardCY + side / 2 + 36)
+        }
+
+        // Done button — floating above safe area when editing
+        if isEditing {
+          VStack {
+            Spacer()
+            HStack {
+              Spacer()
+              Button("Done") {
+                Task { await submitEdit() }
+              }
+              .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isSaving)
+              .fontWeight(.semibold)
+              .padding(.horizontal, 24)
+              .padding(.bottom, max(proxy.safeAreaInsets.bottom, 12) + 8)
+            }
           }
         }
-        .buttonStyle(.borderedProminent)
-        .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isSaving)
-        Button("Add with full form…") {
-          model.beginAdd()
-        }
-        .buttonStyle(.bordered)
-        Spacer()
       }
-      .padding(24)
+      .frame(width: size.width, height: size.height)
     }
-    .navigationTitle(model.activeListSummary?.title ?? "Monotask")
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
     .toolbar {
-      ToolbarItem(placement: .topBarTrailing) {
-        Button("Switch list") {
-          model.openListSetup()
+      ToolbarItem(placement: .principal) {
+        if !isEditing {
+          listPickerMenu
         }
       }
+      ToolbarItem(placement: .topBarLeading) {
+        if isEditing {
+          Button("Cancel") { cancelEdit() }
+        }
+      }
+    }
+    .navigationBarTitleDisplayMode(.inline)
+    .onAppear {
+      frontCardAngle = reduceMotion ? 0 : Double.random(in: -2.5...2.5)
+      DispatchQueue.main.async { beginEdit() }
     }
     .sheet(isPresented: Binding(
-      get: { model.showAddSheet },
-      set: { if !$0 { model.cancelAdd() } }
+      get: { model.showListPickerSheet },
+      set: { if !$0 { model.showListPickerSheet = false } }
     )) {
-      AddTaskSheet()
+      ListPickerSheetView()
+        .presentationDetents([.medium, .large])
+        .presentationDragIndicator(.visible)
     }
+  }
+
+  // MARK: - List picker menu
+
+  private var listPickerMenu: some View {
+    Menu {
+      Section("Select Reminders list") {
+        let calendars = model.calendarsForSetup().sorted {
+          $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
+        }
+        let activeId = model.activeListSummary?.id
+        ForEach(calendars) { cal in
+          Button {
+            Task { await model.applyListChoice(cal) }
+          } label: {
+            if cal.id == activeId {
+              Label(cal.title, systemImage: "checkmark")
+            } else {
+              Text(cal.title)
+            }
+          }
+        }
+      }
+      Divider()
+      Button {
+        model.showListPickerSheet = true
+      } label: {
+        Label("Add New List", systemImage: "plus.circle")
+      }
+    } label: {
+      HStack(spacing: 6) {
+        Text(model.activeListSummary?.title ?? AppConfig.appName)
+          .font(.headline)
+          .lineLimit(1)
+        Image(systemName: "chevron.down")
+          .font(.caption.weight(.semibold))
+          .foregroundStyle(.secondary)
+      }
+      .frame(width: 220)
+      .transaction { $0.animation = nil }
+    }
+    .accessibilityLabel("Reminders list, \(model.activeListSummary?.title ?? AppConfig.appName)")
+    .accessibilityHint("Opens list of Reminders lists")
+  }
+
+  // MARK: - Icon button
+
+  private func toolbarIconButton(systemName: String, accessibilityLabel: String, action: @escaping () -> Void) -> some View {
+    Button(action: action) {
+      Image(systemName: systemName)
+        .imageScale(.large)
+        .frame(width: 44, height: 44)
+        .contentShape(Rectangle())
+    }
+    .buttonStyle(.plain)
+    .foregroundStyle(.primary)
+    .shadow(color: .black.opacity(0.2), radius: 2, y: 1)
+    .accessibilityLabel(accessibilityLabel)
+  }
+
+  // MARK: - Geometry helpers
+
+  /// Rotates a card-local point (lx, ly) around the card center (cx, cy) by `degrees` clockwise.
+  private func rotatedPoint(lx: CGFloat, ly: CGFloat, cx: CGFloat, cy: CGFloat, degrees: Double) -> CGPoint {
+    let r = CGFloat(degrees * .pi / 180)
+    return CGPoint(
+      x: cx + lx * cos(r) - ly * sin(r),
+      y: cy + lx * sin(r) + ly * cos(r)
+    )
+  }
+
+  // MARK: - Edit lifecycle
+
+  private func beginEdit() {
+    isEditing = true
+    editFocus = .title
+  }
+
+  private func cancelEdit() {
+    title = ""
+    notes = ""
+    isEditing = false
+    editFocus = nil
+  }
+
+  private func submitEdit() async {
+    isSaving = true
+    await model.addFromEmpty(title: title, notes: notes)
+    title = ""
+    notes = ""
+    isSaving = false
+    isEditing = false
+    editFocus = nil
   }
 }

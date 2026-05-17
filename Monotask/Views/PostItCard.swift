@@ -5,10 +5,19 @@ enum PostItEditFocus: Hashable {
   case notes
 }
 
-/// Shared with `TaskFocusView` so floating chrome aligns with the centered post-it.
+/// Shared geometry helpers used by all views that position chrome on or around the post-it card.
 enum PostItCardLayout {
   /// Nudges the card above true vertical center (fraction of the gradient area height).
   static let verticalUpShiftRatio: CGFloat = 0.14
+
+  /// Rotates a card-local point (lx, ly) around the card center (cx, cy) by `degrees` clockwise.
+  static func rotatedPoint(lx: CGFloat, ly: CGFloat, cx: CGFloat, cy: CGFloat, degrees: Double) -> CGPoint {
+    let r = CGFloat(degrees * .pi / 180)
+    return CGPoint(
+      x: cx + lx * cos(r) - ly * sin(r),
+      y: cy + lx * sin(r) + ly * cos(r)
+    )
+  }
 }
 
 private struct BackgroundCard: Identifiable {

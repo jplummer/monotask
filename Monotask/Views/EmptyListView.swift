@@ -51,7 +51,7 @@ struct EmptyListView: View {
             beginEdit()
           }
           .rotationEffect(.degrees(angle))
-          .position(rotatedPoint(
+          .position(PostItCardLayout.rotatedPoint(
             lx: side / 2 - 6 - 22,
             ly: side / 2 - 6 - 22,
             cx: size.width / 2,
@@ -182,17 +182,6 @@ struct EmptyListView: View {
     .foregroundStyle(.primary)
     .shadow(color: .black.opacity(0.2), radius: 2, y: 1)
     .accessibilityLabel(accessibilityLabel)
-  }
-
-  // MARK: - Geometry helpers
-
-  /// Rotates a card-local point (lx, ly) around the card center (cx, cy) by `degrees` clockwise.
-  private func rotatedPoint(lx: CGFloat, ly: CGFloat, cx: CGFloat, cy: CGFloat, degrees: Double) -> CGPoint {
-    let r = CGFloat(degrees * .pi / 180)
-    return CGPoint(
-      x: cx + lx * cos(r) - ly * sin(r),
-      y: cy + lx * sin(r) + ly * cos(r)
-    )
   }
 
   // MARK: - Edit lifecycle

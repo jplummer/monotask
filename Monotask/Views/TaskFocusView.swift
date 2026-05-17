@@ -240,16 +240,16 @@ struct TaskFocusView: View {
     let angle = reduceMotion ? 0.0 : frontCardAngle
 
     // Rotate the on-card icon anchor points with the card's tilt.
-    let checkboxPos = rotatedPoint(
+    let checkboxPos = PostItCardLayout.rotatedPoint(
       lx: -half + inset + iconHit / 2, ly: -half + 40,
       cx: cx, cy: cy, degrees: angle
     )
-    let editPos = rotatedPoint(
+    let editPos = PostItCardLayout.rotatedPoint(
       lx: half - inset - iconHit / 2, ly: half - inset - iconHit / 2,
       cx: cx, cy: cy, degrees: angle
     )
     // Add lives outside the card — anchor from the rotated lower-right corner, then drop below.
-    let cornerPos = rotatedPoint(
+    let cornerPos = PostItCardLayout.rotatedPoint(
       lx: half - inset - iconHit / 2, ly: half,
       cx: cx, cy: cy, degrees: angle
     )
@@ -275,15 +275,6 @@ struct TaskFocusView: View {
       }
       .position(x: cornerPos.x, y: cornerPos.y + iconHit / 2 + 20)
     }
-  }
-
-  /// Rotates a card-local point (lx, ly) around the card center (cx, cy) by `degrees` clockwise.
-  private func rotatedPoint(lx: CGFloat, ly: CGFloat, cx: CGFloat, cy: CGFloat, degrees: Double) -> CGPoint {
-    let r = CGFloat(degrees * .pi / 180)
-    return CGPoint(
-      x: cx + lx * cos(r) - ly * sin(r),
-      y: cy + lx * sin(r) + ly * cos(r)
-    )
   }
 
   private var bottomIconStrip: some View {

@@ -25,7 +25,7 @@ struct OnboardingView: View {
       let angle = reduceMotion ? 0.0 : frontCardAngle
 
       // Same rotated-point formula as TaskFocusView.postItFloatingChrome.
-      let checkboxPos = rotatedPoint(
+      let checkboxPos = PostItCardLayout.rotatedPoint(
         lx: -half + inset + iconHit / 2,
         ly: -half + 40,
         cx: cx, cy: cy, degrees: angle
@@ -75,13 +75,5 @@ struct OnboardingView: View {
     }
   }
 
-  /// Rotates a card-local point (lx, ly) around the card center (cx, cy).
-  /// Identical to TaskFocusView.rotatedPoint — kept local to avoid coupling.
-  private func rotatedPoint(lx: CGFloat, ly: CGFloat, cx: CGFloat, cy: CGFloat, degrees: Double) -> CGPoint {
-    let r = CGFloat(degrees * .pi / 180)
-    return CGPoint(
-      x: cx + lx * cos(r) - ly * sin(r),
-      y: cy + lx * sin(r) + ly * cos(r)
-    )
-  }
+
 }

@@ -8,8 +8,7 @@ struct RootView: View {
     Group {
       switch model.phase {
       case .bootstrapping:
-        ProgressView("Loading…")
-          .frame(maxWidth: .infinity, maxHeight: .infinity)
+        BootstrapCardView()
       case .onboarding:
         OnboardingView()
       case .permissionDenied:

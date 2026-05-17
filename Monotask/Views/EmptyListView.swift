@@ -10,6 +10,8 @@ struct EmptyListView: View {
   @State private var isSaving = false
   @State private var frontCardAngle: Double = 1.5
   @FocusState private var editFocus: PostItEditFocus?
+  @State private var showNewListAlert = false
+  @State private var newListName = ""
 
   private let horizontalPadding: CGFloat = 24
   /// Space reserved so the post-it does not cover the bottom chrome area (points).
@@ -99,6 +101,7 @@ struct EmptyListView: View {
     .navigationBarTitleDisplayMode(.inline)
     .onAppear {
       frontCardAngle = reduceMotion ? 0 : Double.random(in: -2.5...2.5)
+      // Defer past the first render cycle to avoid conflicting with the view's entry animation.
       DispatchQueue.main.async { beginEdit() }
     }
     .sheet(isPresented: Binding(
@@ -108,6 +111,17 @@ struct EmptyListView: View {
       ListPickerSheetView()
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
+    }
+    .alert("New Reminders list", isPresented: $showNewListAlert) {
+      TextField("List name", text: $newListName)
+      Button("Create") {
+        let name = newListName
+        newListName = ""
+        Task { await model.createReminderList(named: name) }
+      }
+      Button("Cancel", role: .cancel) { newListName = "" }
+    } message: {
+      Text("Creates a new list in Reminders and switches Monotask to it.")
     }
   }
 
@@ -134,7 +148,8 @@ struct EmptyListView: View {
       }
       Divider()
       Button {
-        model.showListPickerSheet = true
+        newListName = ""
+        showNewListAlert = true
       } label: {
         Label("Add New List", systemImage: "plus.circle")
       }
@@ -188,6 +203,7 @@ struct EmptyListView: View {
   }
 
   private func cancelEdit() {
+    isSaving = false  // defensive: reset in case submitEdit had an early exit
     title = ""
     notes = ""
     isEditing = false
@@ -196,7 +212,8 @@ struct EmptyListView: View {
 
   private func submitEdit() async {
     isSaving = true
-    await model.addFromEmpty(title: title, notes: notes)
+    let notesValue = notes.trimmingCharacters(in: .whitespacesAndNewlines)
+    await model.addFromEmpty(title: title, notes: notesValue.isEmpty ? nil : notesValue)
     title = ""
     notes = ""
     isSaving = false

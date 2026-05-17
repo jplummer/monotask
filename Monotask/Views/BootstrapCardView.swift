@@ -2,7 +2,9 @@ import SwiftUI
 
 struct BootstrapCardView: View {
   @State private var showSpinner = false
+  // PostItCard requires a focus binding; unused here because isEditing is always false.
   @FocusState private var dummyFocus: PostItEditFocus?
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
   var body: some View {
     GeometryReader { proxy in
@@ -17,7 +19,7 @@ struct BootstrapCardView: View {
         focus: $dummyFocus,
         stackedCardsCount: 3,
         colorIndex: 0,
-        frontCardRotation: 2.0
+        frontCardRotation: reduceMotion ? 0 : 2.0
       )
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -28,11 +30,9 @@ struct BootstrapCardView: View {
           .transition(.opacity)
       }
     }
-    .onAppear {
-      Task {
-        try? await Task.sleep(for: .milliseconds(300))
-        withAnimation { showSpinner = true }
-      }
+    .task {
+      try? await Task.sleep(for: .milliseconds(300))
+      withAnimation { showSpinner = true }
     }
   }
 }

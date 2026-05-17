@@ -240,4 +240,25 @@ final class AppViewModelOnboardingTests: XCTestCase {
     await vm.connectReminders()
     XCTAssertEqual(analytics.eventCount(named: "onboarding.list_picker_opened"), 1)
   }
+
+  // MARK: - List picker from toast
+
+  func testOpenListPickerFromToastDismissesToastAndOpensSheet() async {
+    let mock = MockRemindersService(authorization: .undetermined)
+    let analytics = MockAnalyticsService()
+    let store = makeStore()
+    let vm = AppViewModel(
+      reminders: mock,
+      selectionStore: store,
+      selectionPolicy: UniformRandomTopLevelPolicy { 0.0 },
+      analytics: analytics,
+      skipInitialBootstrap: true
+    )
+    // Manually set the toast visible (simulating what showAutoSelectedListToastBriefly does)
+    vm.showAutoSelectedListToast = true
+    vm.openListPickerFromToast()
+    XCTAssertFalse(vm.showAutoSelectedListToast)
+    XCTAssertTrue(vm.showListPickerSheet)
+    XCTAssertEqual(analytics.eventCount(named: "onboarding.change_tapped"), 1)
+  }
 }

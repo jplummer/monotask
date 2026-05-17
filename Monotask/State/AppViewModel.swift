@@ -249,7 +249,7 @@ final class AppViewModel {
   func addFromEmpty(title: String, notes: String?) async {
     poolSizeWhenAddOpened = 0
     await confirmAdd(title: title, notes: notes)
-    if phase == .focused || phase == .emptyList {
+    if phase == .focused {
       analytics?.record("onboarding.first_task_created")
     }
   }

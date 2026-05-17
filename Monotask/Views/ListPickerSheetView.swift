@@ -18,6 +18,7 @@ struct ListPickerSheetView: View {
         ForEach(calendars) { cal in
           Button(cal.title) {
             Task {
+              guard !isWorking else { return }
               isWorking = true
               await model.applyListChoice(cal)
               isWorking = false
@@ -48,6 +49,7 @@ struct ListPickerSheetView: View {
         let name = newListName
         newListName = ""
         Task {
+          guard !isWorking else { return }
           isWorking = true
           await model.createReminderList(named: name)
           isWorking = false

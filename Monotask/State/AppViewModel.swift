@@ -44,11 +44,16 @@ final class AppViewModel {
   var pendingUndo: UndoableAction? = nil
   /// True while the "Task added" info toast is visible.
   var showTaskAddedToast: Bool = false
+  /// True while the "Using your Monotask list" onboarding toast is visible.
+  var showAutoSelectedListToast: Bool = false
+  /// True when resolveListAndLoad needs the list picker sheet to auto-present.
+  var showListPickerSheet: Bool = false
 
   /// ID of the task currently in the undo window, filtered out of pool reloads.
   private var pendingTaskId: String? = nil
   private var undoTimerTask: Task<Void, Never>? = nil
   private var taskAddedToastTask: Task<Void, Never>? = nil
+  private var autoSelectedToastTask: Task<Void, Never>? = nil
   private var externalChangeDebounceTask: Task<Void, Never>? = nil
 
   private var observationTask: Task<Void, Never>?
@@ -103,6 +108,18 @@ final class AppViewModel {
 
   func openListSetup() {
     phase = .listSetup
+  }
+
+  func dismissAutoSelectedToast() {
+    autoSelectedToastTask?.cancel()
+    autoSelectedToastTask = nil
+    showAutoSelectedListToast = false
+  }
+
+  func openListPickerFromToast() {
+    analytics?.record("onboarding.change_tapped")
+    dismissAutoSelectedToast()
+    showListPickerSheet = true
   }
 
   func applyListChoice(_ summary: ReminderCalendarSummary) async {
@@ -232,6 +249,9 @@ final class AppViewModel {
   func addFromEmpty(title: String, notes: String?) async {
     poolSizeWhenAddOpened = 0
     await confirmAdd(title: title, notes: notes)
+    if phase == .focused || phase == .emptyList {
+      analytics?.record("onboarding.first_task_created")
+    }
   }
 
   func cancelAdd() {
@@ -309,6 +329,16 @@ final class AppViewModel {
     }
   }
 
+  private func showAutoSelectedListToastBriefly() {
+    autoSelectedToastTask?.cancel()
+    showAutoSelectedListToast = true
+    autoSelectedToastTask = Task {
+      try? await Task.sleep(for: .seconds(4))
+      guard !Task.isCancelled else { return }
+      showAutoSelectedListToast = false
+    }
+  }
+
   /// Sends the deferred action to EventKit. Does not reload the pool.
   private func sendToEventKit(_ action: UndoableAction) async {
     do {
@@ -337,7 +367,7 @@ final class AppViewModel {
         let ok = try await reminders.requestFullAccess()
         if ok {
           analytics?.record("permission.outcome", parameters: ["result": "granted"])
-          await resolveListAndLoad()
+          await resolveListAndLoad(fromOnboarding: true)
         } else {
           analytics?.record("permission.outcome", parameters: ["result": "denied"])
           phase = .permissionDenied
@@ -348,7 +378,7 @@ final class AppViewModel {
         userMessage = error.localizedDescription
       }
     case .fullAccess:
-      await resolveListAndLoad()
+      await resolveListAndLoad(fromOnboarding: true)
     case .denied, .writeOnly:
       analytics?.record("permission.outcome", parameters: ["result": "denied"])
       phase = .permissionDenied
@@ -368,18 +398,32 @@ final class AppViewModel {
     }
   }
 
-  private func resolveListAndLoad() async {
+  private func resolveListAndLoad(fromOnboarding: Bool = false) async {
     if let storedId = selectionStore.selectedListIdentifier,
        let summary = reminders.calendar(withIdentifier: storedId) {
       activeListSummary = summary
       await loadPoolAndFocus()
+      if fromOnboarding && (phase == .focused || phase == .emptyList) {
+        analytics?.record("onboarding.complete")
+      }
       return
     }
     if let summary = reminders.firstCalendar(named: AppConfig.defaultListName) {
       selectionStore.selectedListIdentifier = summary.id
       activeListSummary = summary
+      if fromOnboarding {
+        analytics?.record("onboarding.list_auto_selected")
+        showAutoSelectedListToastBriefly()
+      }
       await loadPoolAndFocus()
+      if fromOnboarding && (phase == .focused || phase == .emptyList) {
+        analytics?.record("onboarding.complete")
+      }
       return
+    }
+    if fromOnboarding {
+      analytics?.record("onboarding.list_picker_opened")
+      showListPickerSheet = true
     }
     phase = .listSetup
   }

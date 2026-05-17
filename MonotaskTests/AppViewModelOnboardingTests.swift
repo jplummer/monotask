@@ -142,4 +142,102 @@ final class AppViewModelOnboardingTests: XCTestCase {
     vm.recordOnboardingImpression()
     XCTAssertEqual(analytics.eventCount(named: "onboarding.impression"), 1)
   }
+
+  // MARK: - List auto-selection during onboarding (Case A)
+
+  func testConnectRemindersAutoSelectsMonotaskListShowsToast() async {
+    let task = ReminderTask(id: "r-1", title: "Buy milk", isCompleted: false)
+    let mock = MockRemindersService(
+      authorization: .undetermined,
+      calendars: [ReminderCalendarSummary(id: "cal-1", title: "Monotask")],
+      reminders: ["cal-1": [task]]
+    )
+    // No stored list ID → resolveListAndLoad falls through to firstCalendar(named:)
+    let store = makeStore(listId: nil)
+    let vm = AppViewModel(
+      reminders: mock,
+      selectionStore: store,
+      selectionPolicy: UniformRandomTopLevelPolicy { 0.0 },
+      skipInitialBootstrap: true
+    )
+    await vm.connectReminders()
+    XCTAssertEqual(vm.phase, .focused)
+    XCTAssertTrue(vm.showAutoSelectedListToast)
+  }
+
+  func testConnectRemindersNoListsOpensListPickerSheet() async {
+    let mock = MockRemindersService(
+      authorization: .undetermined,
+      calendars: [],
+      reminders: [:]
+    )
+    let store = makeStore(listId: nil)
+    let vm = AppViewModel(
+      reminders: mock,
+      selectionStore: store,
+      selectionPolicy: UniformRandomTopLevelPolicy { 0.0 },
+      skipInitialBootstrap: true
+    )
+    await vm.connectReminders()
+    XCTAssertEqual(vm.phase, .listSetup)
+    XCTAssertTrue(vm.showListPickerSheet)
+  }
+
+  func testBootstrapDoesNotShowAutoSelectedToast() async {
+    // Return-visit bootstrap: permission already granted, "Monotask" list found by name.
+    // The toast must NOT appear on return visits.
+    let task = ReminderTask(id: "r-1", title: "Buy milk", isCompleted: false)
+    let mock = MockRemindersService(
+      authorization: .fullAccess,
+      calendars: [ReminderCalendarSummary(id: "cal-1", title: "Monotask")],
+      reminders: ["cal-1": [task]]
+    )
+    let store = makeStore(listId: nil)
+    let vm = AppViewModel(
+      reminders: mock,
+      selectionStore: store,
+      selectionPolicy: UniformRandomTopLevelPolicy { 0.0 },
+      skipInitialBootstrap: true
+    )
+    await vm.start()
+    XCTAssertFalse(vm.showAutoSelectedListToast)
+  }
+
+  // MARK: - Analytics for new onboarding events
+
+  func testConnectRemindersAutoSelectFiresListAutoSelectedEvent() async {
+    let task = ReminderTask(id: "r-1", title: "T", isCompleted: false)
+    let mock = MockRemindersService(
+      authorization: .undetermined,
+      calendars: [ReminderCalendarSummary(id: "cal-1", title: "Monotask")],
+      reminders: ["cal-1": [task]]
+    )
+    let analytics = MockAnalyticsService()
+    let store = makeStore(listId: nil)
+    let vm = AppViewModel(
+      reminders: mock,
+      selectionStore: store,
+      selectionPolicy: UniformRandomTopLevelPolicy { 0.0 },
+      analytics: analytics,
+      skipInitialBootstrap: true
+    )
+    await vm.connectReminders()
+    XCTAssertEqual(analytics.eventCount(named: "onboarding.list_auto_selected"), 1)
+    XCTAssertEqual(analytics.eventCount(named: "onboarding.complete"), 1)
+  }
+
+  func testConnectRemindersNoListsFiresListPickerOpenedEvent() async {
+    let mock = MockRemindersService(authorization: .undetermined, calendars: [], reminders: [:])
+    let analytics = MockAnalyticsService()
+    let store = makeStore(listId: nil)
+    let vm = AppViewModel(
+      reminders: mock,
+      selectionStore: store,
+      selectionPolicy: UniformRandomTopLevelPolicy { 0.0 },
+      analytics: analytics,
+      skipInitialBootstrap: true
+    )
+    await vm.connectReminders()
+    XCTAssertEqual(analytics.eventCount(named: "onboarding.list_picker_opened"), 1)
+  }
 }

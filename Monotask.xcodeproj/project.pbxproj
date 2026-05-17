@@ -19,6 +19,7 @@
 		360176AFA52FA6A415B1FA3F /* MockRemindersService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6387EC86FE304FE87706B23B /* MockRemindersService.swift */; };
 		3AA01BB320566EC2812D98BF /* ListSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DC6E3F60397339805700DD4 /* ListSetupView.swift */; };
 		3B428C2A3187DC09E9E47D4D /* BootstrapCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04E1B4A09BBA1DDCC05E1B2 /* BootstrapCardView.swift */; };
+		E501339A29B143A5B0BBB763 /* ListPickerSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDF9BD91CB344F5E81C7D716 /* ListPickerSheetView.swift */; };
 		402F42A567D26EE55882613B /* MockAnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72A2991A13FA16F28EC2D4DF /* MockAnalyticsService.swift */; };
 		4D685DCBBCE8549D6B1010C5 /* AppViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D49B6C5779CC00A5687625 /* AppViewModelTests.swift */; };
 		5148CC255170109417A807B7 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A43755B5BF3DD7413E727E72 /* OnboardingView.swift */; };
@@ -60,6 +61,7 @@
 		005C397DC31EBA4CE9302FF0 /* RemindersService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersService.swift; sourceTree = "<group>"; };
 		06406949F655DBC0E87E1D3D /* PostItCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostItCard.swift; sourceTree = "<group>"; };
 		0DC6E3F60397339805700DD4 /* ListSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListSetupView.swift; sourceTree = "<group>"; };
+		DDF9BD91CB344F5E81C7D716 /* ListPickerSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListPickerSheetView.swift; sourceTree = "<group>"; };
 		1081A9E891471E4BFE0F61E4 /* AppViewModelSectionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelSectionsTests.swift; sourceTree = "<group>"; };
 		11D54A003154C053E01E66FD /* TelemetryDeckAnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryDeckAnalyticsService.swift; sourceTree = "<group>"; };
 		25DA5A23BB9C638DA8409188 /* ReminderTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderTask.swift; sourceTree = "<group>"; };
@@ -186,6 +188,7 @@
 				C04E1B4A09BBA1DDCC05E1B2 /* BootstrapCardView.swift */,
 				D84A97EE02769BD10123FB3A /* EmptyListView.swift */,
 				0DC6E3F60397339805700DD4 /* ListSetupView.swift */,
+				DDF9BD91CB344F5E81C7D716 /* ListPickerSheetView.swift */,
 				A43755B5BF3DD7413E727E72 /* OnboardingView.swift */,
 				D446D2DF1AAFB0F5EB6FBC07 /* PermissionInstructionsView.swift */,
 				06406949F655DBC0E87E1D3D /* PostItCard.swift */,
@@ -348,6 +351,7 @@
 				7A1E4104C406CEC5AFC0F99B /* EmptyListView.swift in Sources */,
 				08C507209163925D70402A25 /* EventKitRemindersService.swift in Sources */,
 				3AA01BB320566EC2812D98BF /* ListSetupView.swift in Sources */,
+				E501339A29B143A5B0BBB763 /* ListPickerSheetView.swift in Sources */,
 				402F42A567D26EE55882613B /* MockAnalyticsService.swift in Sources */,
 				360176AFA52FA6A415B1FA3F /* MockRemindersService.swift in Sources */,
 				B0412FA365206B307BF16BFA /* MonotaskApp.swift in Sources */,

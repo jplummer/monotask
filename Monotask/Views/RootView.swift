@@ -14,9 +14,13 @@ struct RootView: View {
       case .permissionDenied:
         PermissionInstructionsView()
       case .listSetup:
-        NavigationStack {
-          ListSetupView()
-        }
+        BootstrapCardView()
+          .sheet(isPresented: .constant(true)) {
+            ListPickerSheetView()
+              .presentationDetents([.medium, .large])
+              .presentationDragIndicator(.visible)
+              .interactiveDismissDisabled()
+          }
       case .emptyList:
         NavigationStack {
           EmptyListView()

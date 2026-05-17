@@ -123,6 +123,7 @@ final class AppViewModel {
   }
 
   func applyListChoice(_ summary: ReminderCalendarSummary) async {
+    showListPickerSheet = false  // clear before phase changes
     selectionStore.selectedListIdentifier = summary.id
     activeListSummary = summary
     analytics?.record("list.switch")
@@ -135,6 +136,7 @@ final class AppViewModel {
 
   /// Creates a new Reminders list with the given title and switches Monotask to it.
   func createReminderList(named title: String) async {
+    showListPickerSheet = false
     let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
     guard !trimmed.isEmpty else { return }
     do {

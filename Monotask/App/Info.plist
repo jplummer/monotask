@@ -25,7 +25,10 @@
   <key>NSRemindersFullAccessUsageDescription</key>
   <string>Monotask reads and updates your reminders so it can show one task at a time from your chosen list.</string>
   <key>UILaunchScreen</key>
-  <dict/>
+  <dict>
+    <key>UIColorName</key>
+    <string>GradientTop</string>
+  </dict>
   <key>UISupportedInterfaceOrientations</key>
   <array>
     <string>UIInterfaceOrientationPortrait</string>

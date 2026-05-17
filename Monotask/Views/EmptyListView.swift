@@ -10,8 +10,6 @@ struct EmptyListView: View {
   @State private var isSaving = false
   @State private var frontCardAngle: Double = 1.5
   @FocusState private var editFocus: PostItEditFocus?
-  @State private var showNewListAlert = false
-  @State private var newListName = ""
 
   private let horizontalPadding: CGFloat = 24
   /// Space reserved so the post-it does not cover the bottom chrome area (points).
@@ -89,7 +87,7 @@ struct EmptyListView: View {
     .toolbar {
       ToolbarItem(placement: .principal) {
         if !isEditing {
-          listPickerMenu
+          listPickerButton
         }
       }
       ToolbarItem(placement: .topBarLeading) {
@@ -112,48 +110,12 @@ struct EmptyListView: View {
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
     }
-    .alert("New Reminders list", isPresented: $showNewListAlert) {
-      TextField("List name", text: $newListName)
-      Button("Create") {
-        let name = newListName
-        newListName = ""
-        Task { await model.createReminderList(named: name) }
-      }
-      Button("Cancel", role: .cancel) { newListName = "" }
-    } message: {
-      Text("Creates a new list in Reminders and switches Monotask to it.")
-    }
   }
 
-  // MARK: - List picker menu
+  // MARK: - List picker button
 
-  private var listPickerMenu: some View {
-    Menu {
-      Section("Select Reminders list") {
-        let calendars = model.calendarsForSetup().sorted {
-          $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
-        }
-        let activeId = model.activeListSummary?.id
-        ForEach(calendars) { cal in
-          Button {
-            Task { await model.applyListChoice(cal) }
-          } label: {
-            if cal.id == activeId {
-              Label(cal.title, systemImage: "checkmark")
-            } else {
-              Text(cal.title)
-            }
-          }
-        }
-      }
-      Divider()
-      Button {
-        newListName = ""
-        showNewListAlert = true
-      } label: {
-        Label("Add New List", systemImage: "plus.circle")
-      }
-    } label: {
+  private var listPickerButton: some View {
+    Button { model.showListPickerSheet = true } label: {
       HStack(spacing: 6) {
         Text(model.activeListSummary?.title ?? AppConfig.appName)
           .font(.headline)
@@ -165,8 +127,10 @@ struct EmptyListView: View {
       .frame(width: 220)
       .transaction { $0.animation = nil }
     }
+    .buttonStyle(.plain)
+    .foregroundStyle(.primary)
     .accessibilityLabel("Reminders list, \(model.activeListSummary?.title ?? AppConfig.appName)")
-    .accessibilityHint("Opens list of Reminders lists")
+    .accessibilityHint("Opens list picker")
   }
 
   // MARK: - Icon button

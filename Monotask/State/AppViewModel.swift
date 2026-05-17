@@ -119,7 +119,7 @@ final class AppViewModel {
   func openListPickerFromToast() {
     analytics?.record("onboarding.change_tapped")
     dismissAutoSelectedToast()
-    // Dismisses the toast; user switches lists via the nav bar picker.
+    showListPickerSheet = true
   }
 
   func applyListChoice(_ summary: ReminderCalendarSummary) async {

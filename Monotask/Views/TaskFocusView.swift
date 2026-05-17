@@ -9,8 +9,6 @@ struct TaskFocusView: View {
   @State private var draftNotes = ""
   @FocusState private var editFocus: PostItEditFocus?
 
-  @State private var showNewListAlert = false
-  @State private var newListName = ""
   @State private var frontCardAngle: Double = 0
 
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -87,7 +85,7 @@ struct TaskFocusView: View {
     .toolbar {
       ToolbarItem(placement: .principal) {
         if !isEditing {
-          listPickerMenu
+          listPickerButton
         }
       }
       ToolbarItem(placement: .topBarTrailing) {
@@ -121,19 +119,6 @@ struct TaskFocusView: View {
       ListPickerSheetView()
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
-    }
-    .alert("New Reminders list", isPresented: $showNewListAlert) {
-      TextField("List name", text: $newListName)
-      Button("Create") {
-        let name = newListName
-        newListName = ""
-        Task { await model.createReminderList(named: name) }
-      }
-      Button("Cancel", role: .cancel) {
-        newListName = ""
-      }
-    } message: {
-      Text("Creates a new list in Reminders and switches Monotask to it.")
     }
     .onChange(of: task.id) { _, _ in
       if isEditing { cancelInlineEdit() }
@@ -172,33 +157,8 @@ struct TaskFocusView: View {
     }
   }
 
-  private var listPickerMenu: some View {
-    Menu {
-      Section("Select Reminders list") {
-        let calendars = model.calendarsForSetup().sorted {
-          $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
-        }
-        let activeId = model.activeListSummary?.id
-        ForEach(calendars) { cal in
-          Button {
-            Task { await model.applyListChoice(cal) }
-          } label: {
-            if cal.id == activeId {
-              Label(cal.title, systemImage: "checkmark")
-            } else {
-              Text(cal.title)
-            }
-          }
-        }
-      }
-      Divider()
-      Button {
-        newListName = ""
-        showNewListAlert = true
-      } label: {
-        Label("Add New List", systemImage: "plus.circle")
-      }
-    } label: {
+  private var listPickerButton: some View {
+    Button { model.showListPickerSheet = true } label: {
       HStack(spacing: 6) {
         Text(model.activeListSummary?.title ?? AppConfig.appName)
           .font(.headline)
@@ -210,8 +170,10 @@ struct TaskFocusView: View {
       .frame(width: 220)
       .transaction { $0.animation = nil }
     }
+    .buttonStyle(.plain)
+    .foregroundStyle(.primary)
     .accessibilityLabel("Reminders list, \(model.activeListSummary?.title ?? AppConfig.appName)")
-    .accessibilityHint("Opens list of Reminders lists")
+    .accessibilityHint("Opens list picker")
   }
 
   private func squareSide(maxHeight: CGFloat, maxWidth: CGFloat) -> CGFloat {

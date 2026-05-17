@@ -27,8 +27,8 @@ struct OnboardingView: View {
           checkboxLeadingReserve: 32
         )
 
-        // Completion checkbox — sole CTA. Positioned at upper-left of the front card,
-        // matching the layout logic in TaskFocusView's postItFloatingChrome.
+        // Completion checkbox — sole CTA. Positioned at upper-left of the front card.
+        // Approximates the upper-left chrome position from TaskFocusView (unrotated; 2° visual error is negligible).
         Button {
           Task { await model.connectReminders() }
         } label: {
@@ -45,7 +45,6 @@ struct OnboardingView: View {
           x: proxy.size.width / 2 - side / 2 + 6 + 22,
           y: proxy.size.height / 2 - upShift - side / 2 + 40
         )
-        .opacity(contentVisible ? 1 : 0)
       }
       .opacity(contentVisible ? 1 : 0)
     }

@@ -1,14 +1,19 @@
 import SwiftUI
 
 struct BootstrapCardView: View {
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
   @State private var showSpinner = false
+  @State private var frontCardAngle: Double = 0
   // PostItCard requires a focus binding; unused here because isEditing is always false.
   @FocusState private var dummyFocus: PostItEditFocus?
-  @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+  // Matches TaskFocusView exactly.
+  private let horizontalPadding: CGFloat = 24
+  private let bottomChromeReserve: CGFloat = 72
 
   var body: some View {
     GeometryReader { proxy in
-      let side = max(200, min(proxy.size.width - 48, proxy.size.height))
+      let side = max(200, min(proxy.size.width - horizontalPadding * 2, proxy.size.height - bottomChromeReserve))
       PostItCard(
         squareSide: side,
         isEditing: false,
@@ -19,7 +24,7 @@ struct BootstrapCardView: View {
         focus: $dummyFocus,
         stackedCardsCount: 3,
         colorIndex: 0,
-        frontCardRotation: reduceMotion ? 0 : 2.0
+        frontCardRotation: reduceMotion ? 0 : frontCardAngle
       )
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -29,6 +34,9 @@ struct BootstrapCardView: View {
           .padding(.bottom, 60)
           .transition(.opacity)
       }
+    }
+    .onAppear {
+      frontCardAngle = Double.random(in: -2.5...2.5)
     }
     .task {
       try? await Task.sleep(for: .milliseconds(300))

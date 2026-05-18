@@ -21,6 +21,11 @@ struct RootView: View {
       // Layer 3: onboarding and permission overlays. Always on top, so their
       // fade-out is never obscured by the NavigationStack background below.
       overlayLayer
+
+      // Layer 4: list picker dropdown. Floats above everything, driven by showListPickerSheet.
+      if model.showListPickerSheet {
+        ListPickerDropdownView(isDismissible: model.phase != .listSetup)
+      }
     }
     .onChange(of: model.phase) { _, newPhase in
       withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.35)) {
@@ -43,13 +48,7 @@ struct RootView: View {
   private var navigationLayer: some View {
     switch displayedPhase {
     case .listSetup:
-      Color.clear
-        .sheet(isPresented: .constant(true)) {
-          ListPickerSheetView()
-            .presentationDetents([.medium, .large])
-            .presentationDragIndicator(.visible)
-            .interactiveDismissDisabled()
-        }
+      Color.clear  // dropdown (layer 4) handles this phase
 
     case .emptyList:
       NavigationStack {

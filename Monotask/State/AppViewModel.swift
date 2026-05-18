@@ -109,6 +109,7 @@ final class AppViewModel {
   }
 
   func openListSetup() {
+    showListPickerSheet = true
     phase = .listSetup
   }
 
@@ -143,7 +144,6 @@ final class AppViewModel {
 
   /// Creates a new Reminders list with the given title and switches Monotask to it.
   func createReminderList(named title: String) async {
-    showListPickerSheet = false
     let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
     guard !trimmed.isEmpty else { return }
     do {
@@ -440,13 +440,14 @@ final class AppViewModel {
     }
     if fromOnboarding {
       analytics?.record("onboarding.list_picker_opened")
-      showListPickerSheet = true
     }
+    showListPickerSheet = true
     phase = .listSetup
   }
 
   private func loadPoolAndFocus() async {
     guard let listId = activeListSummary?.id ?? selectionStore.selectedListIdentifier else {
+      showListPickerSheet = true
       phase = .listSetup
       return
     }
@@ -479,6 +480,7 @@ final class AppViewModel {
     } catch {
       analytics?.record("error.critical", parameters: ["site": "loadPoolAndFocus"])
       userMessage = error.localizedDescription
+      showListPickerSheet = true
       phase = .listSetup
     }
   }

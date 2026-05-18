@@ -102,14 +102,6 @@ struct EmptyListView: View {
       // Defer past the first render cycle to avoid conflicting with the view's entry animation.
       DispatchQueue.main.async { beginEdit() }
     }
-    .sheet(isPresented: Binding(
-      get: { model.showListPickerSheet },
-      set: { if !$0 { model.showListPickerSheet = false } }
-    )) {
-      ListPickerSheetView()
-        .presentationDetents([.medium, .large])
-        .presentationDragIndicator(.visible)
-    }
   }
 
   // MARK: - List picker button

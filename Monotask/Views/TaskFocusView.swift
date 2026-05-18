@@ -112,14 +112,6 @@ struct TaskFocusView: View {
     )) {
       AddTaskSheet()
     }
-    .sheet(isPresented: Binding(
-      get: { model.showListPickerSheet },
-      set: { if !$0 { model.showListPickerSheet = false } }
-    )) {
-      ListPickerSheetView()
-        .presentationDetents([.medium, .large])
-        .presentationDragIndicator(.visible)
-    }
     .onChange(of: task.id) { _, _ in
       if isEditing { cancelInlineEdit() }
       frontCardAngle = Double.random(in: -2.5...2.5)

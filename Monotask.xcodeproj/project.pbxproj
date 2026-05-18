@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		03F4F7C3FF9D44CE6A66E305 /* AppViewModelOnboardingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B10FD36271E941B9FDA153A /* AppViewModelOnboardingTests.swift */; };
 		08C507209163925D70402A25 /* EventKitRemindersService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67ADAFC102AC71EE087BD6E /* EventKitRemindersService.swift */; };
-		1C5BFC79515F06F559313FB4 /* AddTaskSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70ABF40ABD611E676AE43560 /* AddTaskSheet.swift */; };
 		1C9EF48F63B6BD20A0C892E5 /* Monotask.icon in Resources */ = {isa = PBXBuildFile; fileRef = D186AFBE9E04A298DFF50C92 /* Monotask.icon */; };
 		1EDD36506EDC098A1C740CE3 /* SelectionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F346652DC3D832B10E62A54 /* SelectionStore.swift */; };
 		261661A94965EAC1959107DA /* UniformRandomTopLevelPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97859C8EE67792A23C73D74F /* UniformRandomTopLevelPolicyTests.swift */; };
@@ -77,7 +76,6 @@
 		6387EC86FE304FE87706B23B /* MockRemindersService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRemindersService.swift; sourceTree = "<group>"; };
 		673164E172A3DC3B67499382 /* AppViewModelEditTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelEditTests.swift; sourceTree = "<group>"; };
 		68A29CA4DE4F8093BFA52EAC /* AppViewModelExternalChangeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelExternalChangeTests.swift; sourceTree = "<group>"; };
-		70ABF40ABD611E676AE43560 /* AddTaskSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskSheet.swift; sourceTree = "<group>"; };
 		72A2991A13FA16F28EC2D4DF /* MockAnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAnalyticsService.swift; sourceTree = "<group>"; };
 		75DA0B54B0B47596455685CB /* Monotask.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Monotask.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F013528CA9350091CF39245 /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
@@ -184,7 +182,6 @@
 		A6A2073ED205462C59D512A8 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				70ABF40ABD611E676AE43560 /* AddTaskSheet.swift */,
 				D84A97EE02769BD10123FB3A /* EmptyListView.swift */,
 				59E281000D1FFD418E984E63 /* ListPickerDropdownView.swift */,
 				0DC6E3F60397339805700DD4 /* ListSetupView.swift */,
@@ -343,7 +340,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1C5BFC79515F06F559313FB4 /* AddTaskSheet.swift in Sources */,
 				753EC5116ED04C0C3741ECE9 /* AnalyticsService.swift in Sources */,
 				3574236E9AFCEAF8958B5B87 /* AppConfig.swift in Sources */,
 				A7F1239C36DE24F766BA26EF /* AppViewModel.swift in Sources */,

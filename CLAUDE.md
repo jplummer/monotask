@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## What is Monotask
+## What is Monotasker
 
 An iOS 18+ SwiftUI app that surfaces one randomly-selected incomplete reminder at a time from a chosen Apple Reminders list. Built on EventKit with a post-it-on-gradient single-task UI.
 
@@ -11,21 +11,21 @@ An iOS 18+ SwiftUI app that surfaces one randomly-selected incomplete reminder a
 Requires Xcode 16+ and [xcodegen](https://github.com/yonaskolb/XcodeGen) (`brew install xcodegen`).
 
 ```bash
-xcodegen generate          # regenerate Monotask.xcodeproj from project.yml
-open Monotask.xcodeproj    # then Cmd+R on an iPhone simulator
+xcodegen generate          # regenerate Monotasker.xcodeproj from project.yml
+open Monotasker.xcodeproj    # then Cmd+R on an iPhone simulator
 ```
 
 After any `project.yml` edit, re-run `xcodegen generate` before building.
 
 ### Signing
 
-Team ID lives in `Monotask/Config/MonotaskSigning.local.xcconfig` (gitignored). First `xcodegen generate` copies from the `.example` file. Replace `XXXXXXXXXX` with your 10-character Team ID.
+Team ID lives in `Monotasker/Config/MonotaskerSigning.local.xcconfig` (gitignored). First `xcodegen generate` copies from the `.example` file. Replace `XXXXXXXXXX` with your 10-character Team ID.
 
 ### Tests
 
 ```bash
 xcodegen generate
-xcodebuild -scheme Monotask -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.1' test
+xcodebuild -scheme Monotasker -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.1' test
 ```
 
 List available simulators: `xcrun simctl list devices available`. Adjust `name` and `OS` to match an installed runtime.
@@ -37,7 +37,7 @@ List available simulators: `xcrun simctl list devices available`. Adjust `name` 
 ### Data flow
 
 ```
-MonotaskApp (@main)
+MonotaskerApp (@main)
   └─ AppViewModel (owns all state)
        ├─ RemindersService (protocol) ← EventKitRemindersService (device) / MockRemindersService (tests)
        ├─ SelectionStore (UserDefaults) ← persists chosen list ID + last focused reminder ID
@@ -62,20 +62,20 @@ MonotaskApp (@main)
 - **Add-task surfacing**: If pool was 0 or 1 when add started, focus the new task. If 2+, keep current focus.
 - **Re-roll**: Excludes current task from random pick. If only one task exists, shows "only one task" alert.
 - **External sync**: `EKEventStoreChanged` triggers pool reload so Reminders app edits stay in sync.
-- **List resolution order**: Persisted list ID first, then a list matching `AppConfig.appName` ("Monotask").
+- **List resolution order**: Persisted list ID first, then a list matching `AppConfig.appName` ("Monotasker").
 
 ### Source layout
 
 | Directory | Purpose |
 |---|---|
-| `Monotask/App/` | `@main` entry point, `AppConfig` (centralized app name) |
-| `Monotask/Models/` | `ReminderTask` — domain model wrapping `EKReminder` |
-| `Monotask/Services/` | `RemindersService` protocol + EventKit/mock implementations |
-| `Monotask/State/` | `AppViewModel` (all app state), `SelectionStore` (UserDefaults persistence) |
-| `Monotask/Selection/` | `UniformRandomTopLevelPolicy` — random pick with exclusion |
-| `Monotask/Views/` | All SwiftUI views |
-| `Monotask/Resources/` | `DesignColors` (gradient + post-it palette), asset catalogs |
-| `MonotaskTests/` | Unit tests (selection policy, selection store, view model) |
+| `Monotasker/App/` | `@main` entry point, `AppConfig` (centralized app name) |
+| `Monotasker/Models/` | `ReminderTask` — domain model wrapping `EKReminder` |
+| `Monotasker/Services/` | `RemindersService` protocol + EventKit/mock implementations |
+| `Monotasker/State/` | `AppViewModel` (all app state), `SelectionStore` (UserDefaults persistence) |
+| `Monotasker/Selection/` | `UniformRandomTopLevelPolicy` — random pick with exclusion |
+| `Monotasker/Views/` | All SwiftUI views |
+| `Monotasker/Resources/` | `DesignColors` (gradient + post-it palette), asset catalogs |
+| `MonotaskerTests/` | Unit tests (selection policy, selection store, view model) |
 
 ### Focus view UI layers
 

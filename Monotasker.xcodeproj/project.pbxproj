@@ -1,0 +1,646 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		05F75279112A852B12FCD63C /* EmptyListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37E1F64C3DFFDE194E6A260 /* EmptyListView.swift */; };
+		094ADAFAFA9D84EF913E10AD /* ListSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3F7806D8FB62844B150D5F /* ListSetupView.swift */; };
+		0DF022510A9B650EE125F419 /* AppViewModelBootstrapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E6274A2301AA7539AB208BD /* AppViewModelBootstrapTests.swift */; };
+		2929B90F65CDC6D59E8AE180 /* AppViewModelUndoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F92B8F8BEE6E3F6779A598FB /* AppViewModelUndoTests.swift */; };
+		3040581F442B2D5309153F01 /* Monotasker.icon in Resources */ = {isa = PBXBuildFile; fileRef = E7D104475773FAD94F235CD8 /* Monotasker.icon */; };
+		3C8FD55AC173057D1B018CEE /* DesignColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA560826E7A81BAE1313A62 /* DesignColors.swift */; };
+		3E93809486553210C043B93D /* AppViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C38700F7E4185C0EF1C611C2 /* AppViewModelTests.swift */; };
+		41591B5E20F1E3C27ED58C17 /* ReminderTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 894F880C1A025FAF50ACED16 /* ReminderTask.swift */; };
+		564A3AB4EC366D96F33ED9C7 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513CD22864E48476D24B4BBC /* AppConfig.swift */; };
+		5B93C3C8E5024A6D9C7F1099 /* AppViewModelAddTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9E3D1BEA36EC36D1F667BA9 /* AppViewModelAddTests.swift */; };
+		5E06EC7793DED9EC23094A9A /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9DE647586C89A625FB71FBD /* AnalyticsService.swift */; };
+		5EEC8DE2326EC079AA88B481 /* AppViewModelOnboardingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00AADF232D7514D43F61D139 /* AppViewModelOnboardingTests.swift */; };
+		6A6F20B18A2B525BE6BC73E6 /* RemindersService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 241AD82F3BB4084204D9A815 /* RemindersService.swift */; };
+		72E349EC598CD833217C8040 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1AF731C766BBAD715D8D8C1A /* LaunchScreen.storyboard */; };
+		7413738E593B91ADEDC2C63E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 77CCAA0D4687C74FDD768944 /* Assets.xcassets */; };
+		7639A8D385B92F9E14F4ABE7 /* SelectionStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 191DFA086BD8962F26CC85EE /* SelectionStoreTests.swift */; };
+		8334202A5160345E5A28D4C9 /* PermissionInstructionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEC2869EBCD8924FDDA8AE16 /* PermissionInstructionsView.swift */; };
+		867EA2481049A4906AF1995B /* AppViewModelEditTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66E6FE0796C9F625E8DEA153 /* AppViewModelEditTests.swift */; };
+		8A341041F3B4D617776C1AEB /* AppViewModelSectionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AD1BDA6DBDB0191A2409C29 /* AppViewModelSectionsTests.swift */; };
+		8D1BD8761B3522C3B8665B08 /* RandomSelectionPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FB1732060DC579C2F2D886 /* RandomSelectionPolicy.swift */; };
+		9A77760969824F56867403C2 /* TelemetryDeck in Frameworks */ = {isa = PBXBuildFile; productRef = 9C80B62E6F4A972F668EC7EE /* TelemetryDeck */; };
+		9E3F9A72A245E47330E34E60 /* UniformRandomTopLevelPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 702F20A4DC08D3378C430D0C /* UniformRandomTopLevelPolicyTests.swift */; };
+		9E4EA8DA2DDE3F0319759D5E /* MockRemindersService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 220717498F2EC7368FCDFE3A /* MockRemindersService.swift */; };
+		A8DDA4C0C97FF3207686670B /* PostItCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC72B5EEBAD759ED1CBD309B /* PostItCard.swift */; };
+		AB74B2461E2290C773A90934 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61D7A7BC89DD274FA9680009 /* OnboardingView.swift */; };
+		AC93E84BDF95745E3238F218 /* MonotaskerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B81E6F3DEB8E574EB6F2848 /* MonotaskerApp.swift */; };
+		AE5F8902F7AE9CE665C2C780 /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09D70A3DB6BE2E0893BBACC /* AppViewModel.swift */; };
+		AEF214316BDC2C43C83E24A2 /* SelectionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2ED2413B4D75F8088F34D9C /* SelectionStore.swift */; };
+		AF5B82494954A6F007387A24 /* ListPickerDropdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9DF94F47CD703B1F0017EE /* ListPickerDropdownView.swift */; };
+		C0C8F860CADD66111C7D7D36 /* AppViewModelListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A20E782EC237B870D8E261E /* AppViewModelListTests.swift */; };
+		C1152F640685643DB9F11F77 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9606C97765BB0127A6F8B688 /* RootView.swift */; };
+		C74C41691A7A1AC1370F469D /* TaskFocusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C803C26B1EE9E939F4B4B58 /* TaskFocusView.swift */; };
+		D1D7C76E71C50DA571F38CCA /* TelemetryDeckAnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE3AFDE5170EC62C509E5B0 /* TelemetryDeckAnalyticsService.swift */; };
+		DF45BF3DFFFC642183131DF9 /* AppViewModelRerollTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3145736F109820AFA665B29F /* AppViewModelRerollTests.swift */; };
+		E6312E7B014A78E7B7AFFCE8 /* AppViewModelExternalChangeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 908D1D10B3D69141888A025C /* AppViewModelExternalChangeTests.swift */; };
+		F61FAEAD98293E3BAF47D907 /* MockAnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32A0D47280D66A3A139EA052 /* MockAnalyticsService.swift */; };
+		FF89D7D2F290B8B90B383898 /* EventKitRemindersService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20EE3B0BBC2C9BF9D90D6C4 /* EventKitRemindersService.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		9D0754C0EDA42825C3E92C56 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 882350DA03A27BF53C05787D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 30242A74DBD59A85E989BD6B;
+			remoteInfo = Monotasker;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		00AADF232D7514D43F61D139 /* AppViewModelOnboardingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelOnboardingTests.swift; sourceTree = "<group>"; };
+		0456CAB6CC848D33B280D85B /* MonotaskerTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MonotaskerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0C803C26B1EE9E939F4B4B58 /* TaskFocusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskFocusView.swift; sourceTree = "<group>"; };
+		191DFA086BD8962F26CC85EE /* SelectionStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionStoreTests.swift; sourceTree = "<group>"; };
+		1AF731C766BBAD715D8D8C1A /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		1B34B6C56703390D1AE1B3E1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		1E6274A2301AA7539AB208BD /* AppViewModelBootstrapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelBootstrapTests.swift; sourceTree = "<group>"; };
+		220717498F2EC7368FCDFE3A /* MockRemindersService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRemindersService.swift; sourceTree = "<group>"; };
+		220A9072E30A9FB28842C670 /* Monotasker.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Monotasker.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		241AD82F3BB4084204D9A815 /* RemindersService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersService.swift; sourceTree = "<group>"; };
+		24F1C3FE604D3ACABD65BA07 /* MonotaskerSigning.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = MonotaskerSigning.xcconfig; sourceTree = "<group>"; };
+		3145736F109820AFA665B29F /* AppViewModelRerollTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelRerollTests.swift; sourceTree = "<group>"; };
+		32A0D47280D66A3A139EA052 /* MockAnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAnalyticsService.swift; sourceTree = "<group>"; };
+		4BA560826E7A81BAE1313A62 /* DesignColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignColors.swift; sourceTree = "<group>"; };
+		513CD22864E48476D24B4BBC /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
+		5AD1BDA6DBDB0191A2409C29 /* AppViewModelSectionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelSectionsTests.swift; sourceTree = "<group>"; };
+		61D7A7BC89DD274FA9680009 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		65FB1732060DC579C2F2D886 /* RandomSelectionPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomSelectionPolicy.swift; sourceTree = "<group>"; };
+		66E6FE0796C9F625E8DEA153 /* AppViewModelEditTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelEditTests.swift; sourceTree = "<group>"; };
+		702F20A4DC08D3378C430D0C /* UniformRandomTopLevelPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniformRandomTopLevelPolicyTests.swift; sourceTree = "<group>"; };
+		77CCAA0D4687C74FDD768944 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		7B81E6F3DEB8E574EB6F2848 /* MonotaskerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonotaskerApp.swift; sourceTree = "<group>"; };
+		7DE3AFDE5170EC62C509E5B0 /* TelemetryDeckAnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryDeckAnalyticsService.swift; sourceTree = "<group>"; };
+		838FAFC1B587F6A8BF87F113 /* MonotaskerSigning.local.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = MonotaskerSigning.local.xcconfig; sourceTree = "<group>"; };
+		894F880C1A025FAF50ACED16 /* ReminderTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderTask.swift; sourceTree = "<group>"; };
+		908D1D10B3D69141888A025C /* AppViewModelExternalChangeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelExternalChangeTests.swift; sourceTree = "<group>"; };
+		9606C97765BB0127A6F8B688 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		9A20E782EC237B870D8E261E /* AppViewModelListTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelListTests.swift; sourceTree = "<group>"; };
+		9F9DF94F47CD703B1F0017EE /* ListPickerDropdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListPickerDropdownView.swift; sourceTree = "<group>"; };
+		A2ED2413B4D75F8088F34D9C /* SelectionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionStore.swift; sourceTree = "<group>"; };
+		B09D70A3DB6BE2E0893BBACC /* AppViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
+		B20EE3B0BBC2C9BF9D90D6C4 /* EventKitRemindersService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventKitRemindersService.swift; sourceTree = "<group>"; };
+		B9DE647586C89A625FB71FBD /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
+		B9E3D1BEA36EC36D1F667BA9 /* AppViewModelAddTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelAddTests.swift; sourceTree = "<group>"; };
+		C38700F7E4185C0EF1C611C2 /* AppViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelTests.swift; sourceTree = "<group>"; };
+		E37E1F64C3DFFDE194E6A260 /* EmptyListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyListView.swift; sourceTree = "<group>"; };
+		E7D104475773FAD94F235CD8 /* Monotasker.icon */ = {isa = PBXFileReference; lastKnownFileType = wrapper.icon; path = Monotasker.icon; sourceTree = "<group>"; };
+		EC72B5EEBAD759ED1CBD309B /* PostItCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostItCard.swift; sourceTree = "<group>"; };
+		EF3F7806D8FB62844B150D5F /* ListSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListSetupView.swift; sourceTree = "<group>"; };
+		F92B8F8BEE6E3F6779A598FB /* AppViewModelUndoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelUndoTests.swift; sourceTree = "<group>"; };
+		FEC2869EBCD8924FDDA8AE16 /* PermissionInstructionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionInstructionsView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		027A7A31615A57180640F716 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9A77760969824F56867403C2 /* TelemetryDeck in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1D67C18094013BC15A6B326E /* MonotaskerTests */ = {
+			isa = PBXGroup;
+			children = (
+				B9E3D1BEA36EC36D1F667BA9 /* AppViewModelAddTests.swift */,
+				1E6274A2301AA7539AB208BD /* AppViewModelBootstrapTests.swift */,
+				66E6FE0796C9F625E8DEA153 /* AppViewModelEditTests.swift */,
+				908D1D10B3D69141888A025C /* AppViewModelExternalChangeTests.swift */,
+				9A20E782EC237B870D8E261E /* AppViewModelListTests.swift */,
+				00AADF232D7514D43F61D139 /* AppViewModelOnboardingTests.swift */,
+				3145736F109820AFA665B29F /* AppViewModelRerollTests.swift */,
+				5AD1BDA6DBDB0191A2409C29 /* AppViewModelSectionsTests.swift */,
+				C38700F7E4185C0EF1C611C2 /* AppViewModelTests.swift */,
+				F92B8F8BEE6E3F6779A598FB /* AppViewModelUndoTests.swift */,
+				191DFA086BD8962F26CC85EE /* SelectionStoreTests.swift */,
+				702F20A4DC08D3378C430D0C /* UniformRandomTopLevelPolicyTests.swift */,
+			);
+			path = MonotaskerTests;
+			sourceTree = "<group>";
+		};
+		23114E04EF644CDE1F1A0115 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				E37E1F64C3DFFDE194E6A260 /* EmptyListView.swift */,
+				9F9DF94F47CD703B1F0017EE /* ListPickerDropdownView.swift */,
+				EF3F7806D8FB62844B150D5F /* ListSetupView.swift */,
+				61D7A7BC89DD274FA9680009 /* OnboardingView.swift */,
+				FEC2869EBCD8924FDDA8AE16 /* PermissionInstructionsView.swift */,
+				EC72B5EEBAD759ED1CBD309B /* PostItCard.swift */,
+				9606C97765BB0127A6F8B688 /* RootView.swift */,
+				0C803C26B1EE9E939F4B4B58 /* TaskFocusView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		3C1C650B5DC65ABF3C861CB3 /* Selection */ = {
+			isa = PBXGroup;
+			children = (
+				65FB1732060DC579C2F2D886 /* RandomSelectionPolicy.swift */,
+			);
+			path = Selection;
+			sourceTree = "<group>";
+		};
+		4FB834E0F2B16BB7BF80BC41 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				E7D104475773FAD94F235CD8 /* Monotasker.icon */,
+				838FAFC1B587F6A8BF87F113 /* MonotaskerSigning.local.xcconfig */,
+				24F1C3FE604D3ACABD65BA07 /* MonotaskerSigning.xcconfig */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+		8558948309DA6C93AD9EA82E = {
+			isa = PBXGroup;
+			children = (
+				ADD0D19F56D33BFBAD828752 /* Monotasker */,
+				1D67C18094013BC15A6B326E /* MonotaskerTests */,
+				C97248E2E9DE0FA46212FC54 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		8B628BEBB0C66FC5C555E0F4 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				513CD22864E48476D24B4BBC /* AppConfig.swift */,
+				1B34B6C56703390D1AE1B3E1 /* Info.plist */,
+				1AF731C766BBAD715D8D8C1A /* LaunchScreen.storyboard */,
+				7B81E6F3DEB8E574EB6F2848 /* MonotaskerApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		AAFFE60E0ABF000AD4C7001C /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				894F880C1A025FAF50ACED16 /* ReminderTask.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		ADD0D19F56D33BFBAD828752 /* Monotasker */ = {
+			isa = PBXGroup;
+			children = (
+				8B628BEBB0C66FC5C555E0F4 /* App */,
+				4FB834E0F2B16BB7BF80BC41 /* Config */,
+				AAFFE60E0ABF000AD4C7001C /* Models */,
+				C1348C962703B535372834A3 /* Resources */,
+				3C1C650B5DC65ABF3C861CB3 /* Selection */,
+				D16039C6A8E20F26F76E3389 /* Services */,
+				B856815BA119CAEF8C5B15B9 /* State */,
+				23114E04EF644CDE1F1A0115 /* Views */,
+			);
+			path = Monotasker;
+			sourceTree = "<group>";
+		};
+		B856815BA119CAEF8C5B15B9 /* State */ = {
+			isa = PBXGroup;
+			children = (
+				B09D70A3DB6BE2E0893BBACC /* AppViewModel.swift */,
+				A2ED2413B4D75F8088F34D9C /* SelectionStore.swift */,
+			);
+			path = State;
+			sourceTree = "<group>";
+		};
+		C1348C962703B535372834A3 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				77CCAA0D4687C74FDD768944 /* Assets.xcassets */,
+				4BA560826E7A81BAE1313A62 /* DesignColors.swift */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		C97248E2E9DE0FA46212FC54 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				220A9072E30A9FB28842C670 /* Monotasker.app */,
+				0456CAB6CC848D33B280D85B /* MonotaskerTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D16039C6A8E20F26F76E3389 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				B9DE647586C89A625FB71FBD /* AnalyticsService.swift */,
+				B20EE3B0BBC2C9BF9D90D6C4 /* EventKitRemindersService.swift */,
+				32A0D47280D66A3A139EA052 /* MockAnalyticsService.swift */,
+				220717498F2EC7368FCDFE3A /* MockRemindersService.swift */,
+				241AD82F3BB4084204D9A815 /* RemindersService.swift */,
+				7DE3AFDE5170EC62C509E5B0 /* TelemetryDeckAnalyticsService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		29643E65655634CC3FF1533F /* MonotaskerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4CF6D0E769064F41CFA5BE09 /* Build configuration list for PBXNativeTarget "MonotaskerTests" */;
+			buildPhases = (
+				E255BE93DB703BEFEBBA528F /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DF8F7051DD450D66FD47E67F /* PBXTargetDependency */,
+			);
+			name = MonotaskerTests;
+			packageProductDependencies = (
+			);
+			productName = MonotaskerTests;
+			productReference = 0456CAB6CC848D33B280D85B /* MonotaskerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		30242A74DBD59A85E989BD6B /* Monotasker */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0E20EB04AD0125D39B0C4BAE /* Build configuration list for PBXNativeTarget "Monotasker" */;
+			buildPhases = (
+				AD1684256BD7959A8ABEF30B /* Sources */,
+				BB6F324FABF7DACA47D07F2F /* Resources */,
+				027A7A31615A57180640F716 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Monotasker;
+			packageProductDependencies = (
+				9C80B62E6F4A972F668EC7EE /* TelemetryDeck */,
+			);
+			productName = Monotasker;
+			productReference = 220A9072E30A9FB28842C670 /* Monotasker.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		882350DA03A27BF53C05787D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = 0EF11BAECA75AA5FA71996BC /* Build configuration list for PBXProject "Monotasker" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 8558948309DA6C93AD9EA82E;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				FD215BD4A246A9EC08CA6937 /* XCRemoteSwiftPackageReference "SwiftSDK" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = C97248E2E9DE0FA46212FC54 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				30242A74DBD59A85E989BD6B /* Monotasker */,
+				29643E65655634CC3FF1533F /* MonotaskerTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		BB6F324FABF7DACA47D07F2F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7413738E593B91ADEDC2C63E /* Assets.xcassets in Resources */,
+				72E349EC598CD833217C8040 /* LaunchScreen.storyboard in Resources */,
+				3040581F442B2D5309153F01 /* Monotasker.icon in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AD1684256BD7959A8ABEF30B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5E06EC7793DED9EC23094A9A /* AnalyticsService.swift in Sources */,
+				564A3AB4EC366D96F33ED9C7 /* AppConfig.swift in Sources */,
+				AE5F8902F7AE9CE665C2C780 /* AppViewModel.swift in Sources */,
+				3C8FD55AC173057D1B018CEE /* DesignColors.swift in Sources */,
+				05F75279112A852B12FCD63C /* EmptyListView.swift in Sources */,
+				FF89D7D2F290B8B90B383898 /* EventKitRemindersService.swift in Sources */,
+				AF5B82494954A6F007387A24 /* ListPickerDropdownView.swift in Sources */,
+				094ADAFAFA9D84EF913E10AD /* ListSetupView.swift in Sources */,
+				F61FAEAD98293E3BAF47D907 /* MockAnalyticsService.swift in Sources */,
+				9E4EA8DA2DDE3F0319759D5E /* MockRemindersService.swift in Sources */,
+				AC93E84BDF95745E3238F218 /* MonotaskerApp.swift in Sources */,
+				AB74B2461E2290C773A90934 /* OnboardingView.swift in Sources */,
+				8334202A5160345E5A28D4C9 /* PermissionInstructionsView.swift in Sources */,
+				A8DDA4C0C97FF3207686670B /* PostItCard.swift in Sources */,
+				8D1BD8761B3522C3B8665B08 /* RandomSelectionPolicy.swift in Sources */,
+				41591B5E20F1E3C27ED58C17 /* ReminderTask.swift in Sources */,
+				6A6F20B18A2B525BE6BC73E6 /* RemindersService.swift in Sources */,
+				C1152F640685643DB9F11F77 /* RootView.swift in Sources */,
+				AEF214316BDC2C43C83E24A2 /* SelectionStore.swift in Sources */,
+				C74C41691A7A1AC1370F469D /* TaskFocusView.swift in Sources */,
+				D1D7C76E71C50DA571F38CCA /* TelemetryDeckAnalyticsService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E255BE93DB703BEFEBBA528F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5B93C3C8E5024A6D9C7F1099 /* AppViewModelAddTests.swift in Sources */,
+				0DF022510A9B650EE125F419 /* AppViewModelBootstrapTests.swift in Sources */,
+				867EA2481049A4906AF1995B /* AppViewModelEditTests.swift in Sources */,
+				E6312E7B014A78E7B7AFFCE8 /* AppViewModelExternalChangeTests.swift in Sources */,
+				C0C8F860CADD66111C7D7D36 /* AppViewModelListTests.swift in Sources */,
+				5EEC8DE2326EC079AA88B481 /* AppViewModelOnboardingTests.swift in Sources */,
+				DF45BF3DFFFC642183131DF9 /* AppViewModelRerollTests.swift in Sources */,
+				8A341041F3B4D617776C1AEB /* AppViewModelSectionsTests.swift in Sources */,
+				3E93809486553210C043B93D /* AppViewModelTests.swift in Sources */,
+				2929B90F65CDC6D59E8AE180 /* AppViewModelUndoTests.swift in Sources */,
+				7639A8D385B92F9E14F4ABE7 /* SelectionStoreTests.swift in Sources */,
+				9E3F9A72A245E47330E34E60 /* UniformRandomTopLevelPolicyTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		DF8F7051DD450D66FD47E67F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 30242A74DBD59A85E989BD6B /* Monotasker */;
+			targetProxy = 9D0754C0EDA42825C3E92C56 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		115366D4E5DA305DCDDE401A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 24F1C3FE604D3ACABD65BA07 /* MonotaskerSigning.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = Monotasker;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Monotasker/App/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jonplummer.monotasker;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		59EF17BAFB53396437B30456 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		6A778145D492991CF2DC7B63 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 24F1C3FE604D3ACABD65BA07 /* MonotaskerSigning.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.jonplummer.monotasker.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Monotasker.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Monotasker";
+			};
+			name = Debug;
+		};
+		7BA7DAB517911E3A11F6CC4E /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 24F1C3FE604D3ACABD65BA07 /* MonotaskerSigning.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.jonplummer.monotasker.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Monotasker.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Monotasker";
+			};
+			name = Release;
+		};
+		98CFBFBE0D793D3E05F94609 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		B70A2372C4A57017B89485EA /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 24F1C3FE604D3ACABD65BA07 /* MonotaskerSigning.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = Monotasker;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Monotasker/App/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jonplummer.monotasker;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0E20EB04AD0125D39B0C4BAE /* Build configuration list for PBXNativeTarget "Monotasker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				115366D4E5DA305DCDDE401A /* Debug */,
+				B70A2372C4A57017B89485EA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		0EF11BAECA75AA5FA71996BC /* Build configuration list for PBXProject "Monotasker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				59EF17BAFB53396437B30456 /* Debug */,
+				98CFBFBE0D793D3E05F94609 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		4CF6D0E769064F41CFA5BE09 /* Build configuration list for PBXNativeTarget "MonotaskerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6A778145D492991CF2DC7B63 /* Debug */,
+				7BA7DAB517911E3A11F6CC4E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		FD215BD4A246A9EC08CA6937 /* XCRemoteSwiftPackageReference "SwiftSDK" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/TelemetryDeck/SwiftSDK";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		9C80B62E6F4A972F668EC7EE /* TelemetryDeck */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FD215BD4A246A9EC08CA6937 /* XCRemoteSwiftPackageReference "SwiftSDK" */;
+			productName = TelemetryDeck;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 882350DA03A27BF53C05787D /* Project object */;
+}

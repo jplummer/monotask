@@ -1,17 +1,17 @@
-name: Monotask
-# Optional YAML overrides (e.g. machine-specific). Team ID: use MonotaskSigning.local.xcconfig.
+name: Monotasker
+# Optional YAML overrides (e.g. machine-specific). Team ID: use MonotaskerSigning.local.xcconfig.
 include:
   - project.local.yml
 options:
-  bundleIdPrefix: com.monotask
+  bundleIdPrefix: com.jonplummer
   deploymentTarget:
     iOS: '18.0'
   createIntermediateGroups: true
-  # Ensures gitignored MonotaskSigning.local.xcconfig exists so DEVELOPMENT_TEAM can be set (see README).
+  # Ensures gitignored MonotaskerSigning.local.xcconfig exists so DEVELOPMENT_TEAM can be set (see README).
   postGenCommand: |
-    if [ ! -f Monotask/Config/MonotaskSigning.local.xcconfig ]; then
-      cp Monotask/Config/MonotaskSigning.local.xcconfig.example Monotask/Config/MonotaskSigning.local.xcconfig
-      echo "Monotask: created Monotask/Config/MonotaskSigning.local.xcconfig — replace XXXXXXXXXX with your Team ID (README → Signing)."
+    if [ ! -f Monotasker/Config/MonotaskerSigning.local.xcconfig ]; then
+      cp Monotasker/Config/MonotaskerSigning.local.xcconfig.example Monotasker/Config/MonotaskerSigning.local.xcconfig
+      echo "Monotasker: created Monotasker/Config/MonotaskerSigning.local.xcconfig — replace XXXXXXXXXX with your Team ID (README → Signing)."
     fi
 settings:
   base:
@@ -22,7 +22,7 @@ packages:
     from: 2.0.0
 
 targets:
-  Monotask:
+  Monotasker:
     type: application
     platform: iOS
     # Asset catalogs must be included here (not as generic `resources`) so Xcode runs `actool` and
@@ -30,37 +30,37 @@ targets:
     dependencies:
       - package: TelemetryDeck
     sources:
-      - path: Monotask
+      - path: Monotasker
         excludes:
-          - Config/MonotaskSigning.local.xcconfig.example
+          - Config/MonotaskerSigning.local.xcconfig.example
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.monotask.Monotask
+        PRODUCT_BUNDLE_IDENTIFIER: com.jonplummer.monotasker
         GENERATE_INFOPLIST_FILE: NO
-        INFOPLIST_FILE: Monotask/App/Info.plist
-        ASSETCATALOG_COMPILER_APPICON_NAME: 'Monotask'
+        INFOPLIST_FILE: Monotasker/App/Info.plist
+        ASSETCATALOG_COMPILER_APPICON_NAME: 'Monotasker'
         TARGETED_DEVICE_FAMILY: '1'
         CURRENT_PROJECT_VERSION: '1'
         MARKETING_VERSION: '1.0.0'
         INFOPLIST_KEY_LSApplicationCategoryType: 'public.app-category.productivity'
     configFiles:
-      Debug: Monotask/Config/MonotaskSigning.xcconfig
-      Release: Monotask/Config/MonotaskSigning.xcconfig
+      Debug: Monotasker/Config/MonotaskerSigning.xcconfig
+      Release: Monotasker/Config/MonotaskerSigning.xcconfig
     scheme:
       testTargets:
-        - MonotaskTests
-  MonotaskTests:
+        - MonotaskerTests
+  MonotaskerTests:
     type: bundle.unit-test
     platform: iOS
     sources:
-      - path: MonotaskTests
+      - path: MonotaskerTests
     dependencies:
-      - target: Monotask
+      - target: Monotasker
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.monotask.MonotaskTests
+        PRODUCT_BUNDLE_IDENTIFIER: com.jonplummer.monotasker.tests
         GENERATE_INFOPLIST_FILE: YES
-        TEST_HOST: '$(BUILT_PRODUCTS_DIR)/Monotask.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Monotask'
+        TEST_HOST: '$(BUILT_PRODUCTS_DIR)/Monotasker.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Monotasker'
     configFiles:
-      Debug: Monotask/Config/MonotaskSigning.xcconfig
-      Release: Monotask/Config/MonotaskSigning.xcconfig
+      Debug: Monotasker/Config/MonotaskerSigning.xcconfig
+      Release: Monotasker/Config/MonotaskerSigning.xcconfig

@@ -1,6 +1,6 @@
-# Monotask — plan
+# Monotasker — plan
 
-This document is the canonical reference for what Monotask is, how it works, and what's left to build. For planning artifacts and historical specs, see `docs/superpowers/`.
+This document is the canonical reference for what Monotasker is, how it works, and what's left to build. For planning artifacts and historical specs, see `docs/superpowers/`.
 
 Links: [README](../README.md)
 
@@ -14,14 +14,14 @@ An iOS 18+ SwiftUI app that surfaces one randomly-selected incomplete reminder a
 
 ## Decisions locked
 
-- **App name**: `Monotask`. Centralized via `AppConfig.appName` / `CFBundleDisplayName`. Default Reminders list title follows the app name.
+- **App name**: `Monotasker`. Centralized via `AppConfig.appName` / `CFBundleDisplayName`. Default Reminders list title follows the app name.
 - **Deployment target**: iOS 18+. Uses `requestFullAccessToReminders`. `writeOnly` access is treated as insufficient and routed to permission instructions (full read access is required).
 - **Random pool (v1)**: all incomplete reminders in the chosen list. Public EventKit does not expose parent/subtask relationships on `EKReminder`, so subtasks cannot be filtered at fetch time without private APIs. **Sections** in Reminders.app are a visual concept — all reminders in a list are fetched flat. Whether section "header" tasks appear in `EKReminder` results is unknown; see [Sections smoke test](#sections-smoke-test) before any sections-aware work.
 - **Re-roll**: excludes the currently-selected task when the pool has ≥ 2 items; with only one task, re-roll surfaces the same task and shows the "only one task" alert.
 - **Complete vs Trash**: Complete sets `isCompleted = true`; Trash removes via `EKEventStore.remove`. With **2+** tasks, both actions defer and show a **toast with Undo**; after the window expires the action commits. With **1** task, both apply immediately. No separate confirmation alert — undo covers mistaken taps.
 - **Edit (v1)**: inline on the post-it (title and notes), not a separate sheet. No public URL to open a specific reminder in the system Reminders app.
 - **Add task**: a control is always available on the main focus path (including empty list flows).
-- **Scaffolding**: xcodegen keeps the Xcode project reproducible; `Monotask.xcodeproj` is checked in for clone-and-open.
+- **Scaffolding**: xcodegen keeps the Xcode project reproducible; `Monotasker.xcodeproj` is checked in for clone-and-open.
 - **Branding**: App icon (Icon Composer, light/dark/tinted), gradient palette, and post-it personality are locked.
 - **App category**: `public.app-category.productivity` (set in `project.yml`).
 - **Instrumentation**: TelemetryDeck (pseudonymous — SHA-256 hashed per-install UUID, no PII). All events wired:
@@ -98,8 +98,8 @@ Reached after permission granted, when the stored list vanished, or when the use
 flowchart TB
   Enter([Enter setup])
   StoredId{Stored ID valid?}
-  NameMatch{Named Monotask?}
-  Toast["Toast: We found your Monotask list!"]
+  NameMatch{Named Monotasker?}
+  Toast["Toast: We found your Monotasker list!"]
   Picker[List picker sheet]
   Persist[Persist list id]
   Exit([Return to main flow])
@@ -146,21 +146,21 @@ Implemented via `poolSizeWhenAddOpened` in `AppViewModel`.
 
 - Gradient background + post-it card (`PostItCard`, `DesignColors` with asset + RGB fallbacks).
 - Focus screen: **bottom icon strip** (re-roll, trash), **floating chrome** on/near the card (complete — upper-left checkbox; edit — bottom-right pencil; add — below lower-right corner); navigation bar holds the **list picker button** (opens a sheet).
-- Post-action **toasts**: undo for complete/trash (multi-task pool), "Task added." after add, "We found your Monotask list!" with "Change" after onboarding auto-selection. All VoiceOver-accessible.
+- Post-action **toasts**: undo for complete/trash (multi-task pool), "Task added." after add, "We found your Monotasker list!" with "Change" after onboarding auto-selection. All VoiceOver-accessible.
 - **Reduce Motion**: all animations gate on `accessibilityReduceMotion`; card tilt disabled when on.
 
 ### Source layout
 
 | Directory | Purpose |
 |---|---|
-| `Monotask/App/` | `@main` entry point, `AppConfig` |
-| `Monotask/Models/` | `ReminderTask` — domain model wrapping `EKReminder` |
-| `Monotask/Services/` | `RemindersService` protocol + EventKit/mock implementations |
-| `Monotask/State/` | `AppViewModel`, `SelectionStore` |
-| `Monotask/Selection/` | `UniformRandomTopLevelPolicy` |
-| `Monotask/Views/` | All SwiftUI views |
-| `Monotask/Resources/` | `DesignColors`, asset catalogs |
-| `MonotaskTests/` | Unit tests (selection policy, selection store, view model) |
+| `Monotasker/App/` | `@main` entry point, `AppConfig` |
+| `Monotasker/Models/` | `ReminderTask` — domain model wrapping `EKReminder` |
+| `Monotasker/Services/` | `RemindersService` protocol + EventKit/mock implementations |
+| `Monotasker/State/` | `AppViewModel`, `SelectionStore` |
+| `Monotasker/Selection/` | `UniformRandomTopLevelPolicy` |
+| `Monotasker/Views/` | All SwiftUI views |
+| `Monotasker/Resources/` | `DesignColors`, asset catalogs |
+| `MonotaskerTests/` | Unit tests (selection policy, selection store, view model) |
 
 ### Renaming the app
 
@@ -204,7 +204,7 @@ Implemented via `poolSizeWhenAddOpened` in `AppViewModel`.
 ### Performance
 
 - [ ] Coalesce rapid `EKEventStoreChanged` notifications if reloads stack.
-- [ ] Audit `PostItCard` / `TaskFocusView` for expensive shadows and animation modifiers. (Instruments run confirmed no Monotask code in the launch hot path — audit on task interaction if needed.)
+- [ ] Audit `PostItCard` / `TaskFocusView` for expensive shadows and animation modifiers. (Instruments run confirmed no Monotasker code in the launch hot path — audit on task interaction if needed.)
 
 ### Ship-ready polish
 
@@ -252,8 +252,8 @@ Implemented via `poolSizeWhenAddOpened` in `AppViewModel`.
 
 Before implementing any sections-aware behavior, verify what EventKit returns from a sectioned list.
 
-1. In Reminders.app, add sections to the Monotask list and add tasks inside each.
-2. Run Monotask and re-roll several times — note whether section header names appear as tasks.
+1. In Reminders.app, add sections to the Monotasker list and add tasks inside each.
+2. Run Monotasker and re-roll several times — note whether section header names appear as tasks.
 3. Document findings in `EventKitRemindersService` for future contributors.
 
 - [ ] Run manual smoke test

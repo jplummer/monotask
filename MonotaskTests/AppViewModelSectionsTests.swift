@@ -5,7 +5,7 @@ import XCTest
 /// (no notes, no completion status set) do not crash the VM and do not prevent
 /// the app from reaching .focused.
 ///
-/// This is the automated companion to the manual smoke test in docs/TASKS.md.
+/// This is the automated companion to the manual smoke test in docs/PLAN.md.
 @MainActor
 final class AppViewModelSectionsTests: XCTestCase {
 

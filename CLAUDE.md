@@ -91,9 +91,7 @@ The `TaskFocusView` uses three control surfaces:
 
 ## Product docs
 
-- **[docs/PLAN.md](docs/PLAN.md)** — architecture, state machine, locked decisions.
-- **[docs/TASKS.md](docs/TASKS.md)** — implementation checklist and reality check.
-- **[docs/ONBOARDING.md](docs/ONBOARDING.md)** — proposed first-run onboarding (not yet implemented).
+- **[docs/PLAN.md](docs/PLAN.md)** — architecture, state machine, locked decisions, current status, and upcoming work.
 
 ## Conventions
 

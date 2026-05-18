@@ -1,45 +1,38 @@
-# Monotask — product plan
+# Monotask — plan
 
-This document is the canonical plan for the app. For actionable checklists and **implementation order** (branding → instrumentation → a11y → onboarding → performance → App Store last), see [TASKS.md](TASKS.md). For the proposed **first-run onboarding** (permission funnel, not built yet), see [ONBOARDING.md](ONBOARDING.md).
+This document is the canonical reference for what Monotask is, how it works, and what's left to build. For planning artifacts and historical specs, see `docs/superpowers/`.
+
+Links: [README](../README.md)
+
+---
 
 ## Overview
 
 An iOS 18+ SwiftUI app that surfaces one randomly-selected incomplete reminder at a time from a chosen Apple Reminders list, with permission gating, list resolution, and a post-it-on-gradient single-task UI. Built on EventKit, xcodegen (`project.yml`), and an `@Observable` state model with a protocol-wrapped Reminders service for testability.
 
+---
+
 ## Decisions locked
 
 - **App name**: `Monotask`. Centralized via `AppConfig.appName` / `CFBundleDisplayName`. Default Reminders list title follows the app name.
-- **Deployment target**: iOS 18+. Uses `requestFullAccessToReminders`. `writeOnly` access is treated as insufficient and routed to instructions (full read access is required).
-- **Random pool (v1)**: all incomplete reminders in the chosen list (public EventKit does not expose parent/subtask relationships on `EKReminder`, so subtasks cannot be filtered at fetch time without private APIs). **Sections** in Reminders.app are a visual concept — from EventKit's perspective, all reminders in a list are fetched flat regardless of how they appear in the UI. It is unknown whether section "header" tasks appear in `EKReminder` results (and if so, whether we want them in the pool). This needs a manual smoke test before any sections-aware filtering is attempted.
-- **Re-roll**: excludes the currently-selected task when the pool has ≥ 2 items; with only one task, re-roll surfaces the same task and may show the “only one task” alert with “Add another” / “Stay here”.
-- **Complete vs Trash**: Complete sets `isCompleted = true`. Trash removes the reminder via `EKEventStore.remove`. When there are **two or more** tasks in the pool, both actions **defer** talking to EventKit briefly and show a **toast with Undo** (`beginComplete` / `beginDelete` in `AppViewModel`); after the window expires (or if the user does not undo), the action is committed. With **only one** task, complete/trash apply **immediately** (no undo window). There is **no separate confirmation alert** — undo covers mistaken taps when multiple tasks exist.
-- **Edit (v1)**: **inline** on the post-it (title and notes), not a separate sheet. No supported public URL to open a specific reminder in the system Reminders app ([discussion](https://stackoverflow.com/questions/78688263/how-to-open-a-reminders-app-reminder-item-using)).
+- **Deployment target**: iOS 18+. Uses `requestFullAccessToReminders`. `writeOnly` access is treated as insufficient and routed to permission instructions (full read access is required).
+- **Random pool (v1)**: all incomplete reminders in the chosen list. Public EventKit does not expose parent/subtask relationships on `EKReminder`, so subtasks cannot be filtered at fetch time without private APIs. **Sections** in Reminders.app are a visual concept — all reminders in a list are fetched flat. Whether section "header" tasks appear in `EKReminder` results is unknown; see [Sections smoke test](#sections-smoke-test) before any sections-aware work.
+- **Re-roll**: excludes the currently-selected task when the pool has ≥ 2 items; with only one task, re-roll surfaces the same task and shows the "only one task" alert.
+- **Complete vs Trash**: Complete sets `isCompleted = true`; Trash removes via `EKEventStore.remove`. With **2+** tasks, both actions defer and show a **toast with Undo**; after the window expires the action commits. With **1** task, both apply immediately. No separate confirmation alert — undo covers mistaken taps.
+- **Edit (v1)**: inline on the post-it (title and notes), not a separate sheet. No public URL to open a specific reminder in the system Reminders app.
 - **Add task**: a control is always available on the main focus path (including empty list flows).
 - **Scaffolding**: xcodegen keeps the Xcode project reproducible; `Monotask.xcodeproj` is checked in for clone-and-open.
-- **Branding**: App **icon** (Icon Composer, light/dark/tinted), gradient palette, and post-it personality are locked. Onboarding visuals can now be finalized ([TASKS.md — Branding](TASKS.md#branding--visual-identity)).
-- **Instrumentation**: **Daily-use** analytics wired via **TelemetryDeck** (pseudonymous — hashed per-install UUID, no PII). Core events: `app.foreground`, `task.complete`, `task.delete`, `task.undo`, `task.reroll`, `task.add`, `list.switch`, `permission.outcome`, `error.critical`. Onboarding funnel events in ONBOARDING.md share the same pipe when implemented.
+- **Branding**: App icon (Icon Composer, light/dark/tinted), gradient palette, and post-it personality are locked.
+- **App category**: `public.app-category.productivity` (set in `project.yml`).
+- **Instrumentation**: TelemetryDeck (pseudonymous — SHA-256 hashed per-install UUID, no PII). All events wired:
+  - Core: `app.foreground`, `task.complete`, `task.delete`, `task.undo`, `task.reroll`, `task.add`, `list.switch`, `permission.outcome`, `error.critical`
+  - Onboarding funnel: `onboarding.impression`, `onboarding.cta_tapped`, `onboarding.list_auto_selected`, `onboarding.list_picker_opened`, `onboarding.change_tapped`, `onboarding.complete`, `onboarding.first_task_created`
 
-## First-run onboarding (next up)
+---
 
-Flow and wiring are done; placeholder visual in `OnboardingView`. Branding is now locked so splash visual and final copy can be implemented. **Goal**: screens + copy before the system Reminders permission so more users grant **full** access; optional instrumentation for drop-off. Spec and references: [ONBOARDING.md](ONBOARDING.md). Track tasks under [TASKS.md — First-run onboarding](TASKS.md#first-run-onboarding).
+## Phase state machine
 
-## Deferred roadmap
-
-Longer-term ideas live in [TASKS.md — Deferred / roadmap](TASKS.md#deferred--roadmap) so this section stays a short index:
-
-- Animations and gestures (replace or augment the bottom / floating action pattern).
-- Priority, due dates, recurrence UI, subtasks (if Apple exposes stable APIs).
-- **Sections / grouped tasks**: surface or filter by section once the smoke test clarifies EventKit's behavior.
-- **Widgets / Lock Screen / Live Activities**: requires App Group for shared UserDefaults, WidgetKit timeline, and read-only EventKit access from the extension — see TASKS.md for the full checklist.
-- **Due dates**: filter pool or add overdue styling; test against EventKit's recurrence next-instance behavior before committing to a design.
-- **App Store distribution** (icon, screenshots, metadata): **after** UI and branding stabilize — see [TASKS.md — App Store and marketing assets](TASKS.md#app-store-and-marketing-assets).
-- See TASKS.md for the full list.
-
-## High-level state machine
-
-The happy path runs straight down the center: launch, permission check, list check, load pool, selection check, show task. Side branches return to the spine.
-
-Mermaid cannot pin arrow attachment points (e.g. enter-only-at-top) or label position along an edge; the layout below uses `**curve: basis`** for smooth bends, `**TB`** as the only dominant direction, **happy-path edges declared first** as one vertical chain, and **short arrow labels** so legibility is closer to the source node. Rendering still varies by viewer version.
+The happy path runs straight down the center: launch → permission check → list check → load pool → selection check → show task.
 
 ```mermaid
 %%{init: {'flowchart': {'curve': 'basis', 'padding': 12}}}%%
@@ -59,13 +52,14 @@ flowchart TB
   PoolCheck -->|yes| SelCheck
   SelCheck -->|yes| ShowTask
 
-  Request[Request access]
+  Onboarding[Onboarding card]
   Instructions[Permission instructions]
-  Auth -->|undetermined| Request
-  Request --> Auth
+  Auth -->|undetermined| Onboarding
+  Onboarding -->|checkbox tap → granted| ListCheck
+  Onboarding -->|checkbox tap → denied| Instructions
   Auth -->|denied / write-only| Instructions
 
-  SetupList[Setup list]
+  SetupList[List picker sheet]
   ListCheck -->|no| SetupList
   SetupList --> ListCheck
 
@@ -89,86 +83,186 @@ flowchart TB
   ShowTask -->|switch list| SetupList
 ```
 
-
-
 Diagram notes:
+- `denied/writeOnly`: both treated as insufficient for read needs.
+- Reroll / random pick share `UniformRandomTopLevelPolicy`; see `RandomSelectionPolicy.swift`.
+- Complete / trash returns to `LoadPool` after optional undo toast when pool had 2+ tasks.
+- `listSetup` phase shows the card-stack background with an auto-presented bottom sheet — not a dedicated screen.
 
-- `denied/writeOnly`: both insufficient for our read needs.
-- `Reroll` / random pick share the same uniform policy; see code in `RandomSelectionPolicy.swift`.
-- **Complete / trash**: In code, returning to `LoadPool` follows **toasts and optional undo** when the pool had multiple tasks; the diagram omits that detail.
-- **Setup list** (create default list vs pick existing) is detailed below.
+### List resolution (zoomed in)
 
-### Setup list (zoomed in)
-
-Reached on first run, when the stored list vanished, or when the user chooses “Switch list”.
+Reached after permission granted, when the stored list vanished, or when the user taps the list picker.
 
 ```mermaid
 %%{init: {'flowchart': {'curve': 'basis', 'padding': 12}}}%%
 flowchart TB
   Enter([Enter setup])
-  Existing{Other lists?}
-  Offer[Create or pick]
-  CreateOnly[Create only]
-  Create[Create list]
-  Pick[Pick list]
+  StoredId{Stored ID valid?}
+  NameMatch{Named Monotask?}
+  Toast["Toast: We found your Monotask list!"]
+  Picker[List picker sheet]
   Persist[Persist list id]
   Exit([Return to main flow])
 
-  Enter --> Existing
-  Existing -->|yes| Offer
-  Existing -->|no| CreateOnly
-  Offer -->|create| Create
-  Offer -->|pick| Pick
-  CreateOnly --> Create
-  Create --> Persist
-  Pick --> Persist
+  Enter --> StoredId
+  StoredId -->|yes| Persist
+  StoredId -->|no| NameMatch
+  NameMatch -->|yes| Toast
+  Toast --> Persist
+  NameMatch -->|no| Picker
+  Picker --> Persist
   Persist --> Exit
 ```
 
-
-
 - Lists come from all sources the device exposes (iCloud, local, Exchange, etc.).
 - New list title is `AppConfig.appName`; source prefers `defaultCalendarForNewReminders()`, then CalDAV, then first available.
-- **Resolution order**: persisted list id first, then a list whose title matches `AppConfig.appName`. Choice is stored in `SelectionStore`.
+- Resolution order: persisted list id first, then first list whose title matches `AppConfig.appName`. Choice stored in `SelectionStore`.
 
-## Architecture (implementation)
+---
+
+## Architecture
 
 - **UI**: SwiftUI, `@main` app, `@Observable` view model.
-- **State**: `AppViewModel` owns `AppPhase`, pool, current `ReminderTask`, sheets, alerts, and undo state.
-- **Reminders**: `RemindersService` protocol; `EventKitRemindersService` for device; `MockRemindersService` for tests.
-- **Persistence**: `SelectionStore` (`UserDefaults`) — list id + per-list LRU map (up to 50 entries) of last focused reminder id per list. Migrates legacy single-key format on first launch after upgrade.
-- **Analytics**: `AnalyticsService` protocol; `TelemetryDeckAnalyticsService` for production (hashed install UUID); `MockAnalyticsService` for tests. Injected optionally into `AppViewModel`.
+- **State**: `AppViewModel` owns `AppPhase` (`bootstrapping`, `onboarding`, `permissionDenied`, `listSetup`, `emptyList`, `focused`), pool, current `ReminderTask`, sheets, alerts, and undo state.
+- **Reminders**: `RemindersService` protocol; `EventKitRemindersService` for device (lazy `EKEventStore` — not initialized until first use); `MockRemindersService` for tests.
+- **Persistence**: `SelectionStore` (`UserDefaults`) — list id + per-list LRU map (up to 50 entries) of last focused reminder id per list. One-time migration from legacy single-key format on first launch after upgrade.
+- **Analytics**: `AnalyticsService` protocol; `TelemetryDeckAnalyticsService` for production; `MockAnalyticsService` for tests. Injected optionally into `AppViewModel`.
 - **External changes**: `EKEventStoreChanged` triggers reload so edits from the Reminders app stay consistent.
 
-## Random selection
+### Random selection
 
-- `UniformRandomTopLevelPolicy` implements uniform random choice with optional “excluding” id for re-roll.
-- When excluding removes all candidates (single-task pool), the policy falls back to the full pool and signals the UI to show the gentle “only one task” flow.
+`UniformRandomTopLevelPolicy` implements uniform random choice with optional "excluding" id for re-roll. When excluding removes all candidates (single-task pool), the policy falls back to the full pool and the UI shows the "only one task" flow.
 
-## Add-task surfacing rule
+### Add-task surfacing rule
 
-When add completes, behavior depends on **pool size at the moment add started**:
-
+Behavior depends on pool size when add started:
 - **0** in pool → focus the new task.
-- **1** → focus the new task (including “Add another” from the only-one alert).
-- **2+** → keep the current task focused; the new reminder joins the pool.
+- **1** → focus the new task (including "Add another" from the only-one alert).
+- **2+** → keep current task; the new reminder joins the pool silently.
 
-Implemented in `AppViewModel` (`poolSizeWhenAddOpened`).
+Implemented via `poolSizeWhenAddOpened` in `AppViewModel`.
 
-## Visual design (v1)
+### Visual design
 
 - Gradient background + post-it card (`PostItCard`, `DesignColors` with asset + RGB fallbacks).
-- Focus screen: **bottom icon strip** (re-roll, add, trash), **floating chrome** on the card (edit upper area, complete on the card); navigation bar holds the **list picker**. Gestures for actions deferred. Older docs called this an “action row”; **TASKS.md** uses strip + floating chrome + list picker for clarity.
-- Post-action **toasts**: undo for complete/trash (multi-task pool), brief confirmation after add. Toast is VoiceOver-accessible (button trait + hint) when it carries an action.
-- **Reduce Motion**: all animations in `RootView` and `TaskFocusView` gate on `accessibilityReduceMotion`; card tilt disabled when reduce motion is on (`PostItCard`).
+- Focus screen: **bottom icon strip** (re-roll, trash), **floating chrome** on/near the card (complete — upper-left checkbox; edit — bottom-right pencil; add — below lower-right corner); navigation bar holds the **list picker button** (opens a sheet).
+- Post-action **toasts**: undo for complete/trash (multi-task pool), "Task added." after add, "We found your Monotask list!" with "Change" after onboarding auto-selection. All VoiceOver-accessible.
+- **Reduce Motion**: all animations gate on `accessibilityReduceMotion`; card tilt disabled when on.
 
-## Renaming the app
+### Source layout
+
+| Directory | Purpose |
+|---|---|
+| `Monotask/App/` | `@main` entry point, `AppConfig` |
+| `Monotask/Models/` | `ReminderTask` — domain model wrapping `EKReminder` |
+| `Monotask/Services/` | `RemindersService` protocol + EventKit/mock implementations |
+| `Monotask/State/` | `AppViewModel`, `SelectionStore` |
+| `Monotask/Selection/` | `UniformRandomTopLevelPolicy` |
+| `Monotask/Views/` | All SwiftUI views |
+| `Monotask/Resources/` | `DesignColors`, asset catalogs |
+| `MonotaskTests/` | Unit tests (selection policy, selection store, view model) |
+
+### Renaming the app
 
 1. Update `CFBundleDisplayName` in `Info.plist` or via `project.yml`.
 2. Optionally change bundle id / target name in `project.yml`.
 3. Run `xcodegen generate`.
-4. Existing installs keep their chosen list id; new installs see the new default list name behavior.
+4. Existing installs keep their chosen list id; new installs see the new default list name.
 
-## Source layout (reference)
+---
 
-See the repository; primary groups are `App/`, `Models/`, `Services/`, `State/`, `Selection/`, `Views/`, `Resources/`, and `MonotaskTests/`.
+## Current status
+
+### Done
+
+- **Core loop**: EventKit full-access path, pool fetch, random selection + re-roll, complete, trash, inline edit, add sheet, empty list, list setup, persisted list + reminder ids.
+- **Complete / trash UX**: deferred with undo toast for 2+ task pool; immediate for single-task pool. No confirmation alert.
+- **Add feedback**: "Task added." toast after successful add.
+- **All phases**: `AppPhase` and `RootView` switch, including `onboarding`.
+- **First-run onboarding**: single-card-with-checkbox flow; permission gating; list auto-selection toast; list picker sheet for cases B/C; empty-list inline edit; smooth fade-on-tap transition before permission dialog.
+- **Permission denial UI**: `PermissionInstructionsView` — ghost card with dashed border, lock icon, "Open Settings" button.
+- **Only-one-task alert**: with "Add another" / "Stay here".
+- **External changes**: `EKEventStoreChanged` subscription reloads pool/focus.
+- **Per-list reminder memory**: 50-entry LRU map in `SelectionStore`; one-time migration from legacy format.
+- **Daily-use instrumentation**: TelemetryDeck; all core + onboarding events wired.
+- **Accessibility — Reduce Motion**: all animations gated; card tilt off; toasts VoiceOver-accessible.
+- **Tests**: 82 tests across 12 groups; all passing.
+- **App icon**: light, dark, and tinted variants via Icon Composer.
+- **Branding**: gradient palette and post-it personality locked.
+- **App category**: `public.app-category.productivity`.
+
+### Partial
+
+- **Errors**: `userMessage` + generic Notice alert works but isn't inline/recoverable everywhere.
+- **Accessibility**: Reduce Motion gated, VoiceOver labels on all controls. Full traversal order audit and large-text layout testing still needed.
+- **Phase transitions**: crossfades implemented; continued polish in the ship-ready pass.
+
+---
+
+## Upcoming work
+
+### Performance
+
+- [ ] Coalesce rapid `EKEventStoreChanged` notifications if reloads stack.
+- [ ] Audit `PostItCard` / `TaskFocusView` for expensive shadows and animation modifiers. (Instruments run confirmed no Monotask code in the launch hot path — audit on task interaction if needed.)
+
+### Ship-ready polish
+
+- [ ] **Error UX**: Replace or supplement generic `userMessage` alerts with inline / recoverable messaging where it helps.
+- [ ] **Scene lifecycle**: Confirm behavior returning from background / Settings (permission changes, list edits in Reminders).
+- [ ] **Device matrix**: Small phone, large phone, dark/light; toolbar, sheet detents, gradient safe areas, bottom strip + floating chrome.
+- [ ] **Full VoiceOver traversal order audit** + large-text layout.
+- [ ] **PermissionInstructionsView copy**: Tighten for full vs write-only access distinction; consider bullet list mirroring Settings path.
+
+### App Store and marketing assets
+
+**Last** — after UI and branding settle.
+
+- [x] App icon (light, dark, tinted)
+- [x] App category (`public.app-category.productivity`)
+- [ ] Screenshots (required sizes; dark + light)
+- [ ] App Store copy: subtitle, description, keywords, What's New template; align with onboarding copy for consistency
+- [ ] Privacy questionnaire; Privacy Policy URL if required
+- [ ] Support / marketing URLs
+- [ ] App Review notes for the permission flow
+
+### View and behavior refinement
+
+- **RootView**: ensure one alert at a time if `userMessage` and another modal could conflict.
+- **TaskFocusView / PostItCard**: typography hierarchy; toast placement vs keyboard and safe area; optional haptic on undo commit.
+- **EmptyListView**: confirm copy and visuals match TaskFocusView metaphor.
+- **AddTaskSheet**: keyboard default focus; Return key behavior; title length validation.
+- **In-place edit**: Done on title could save + dismiss (optional shortcut).
+- **Cross-cutting**: centralize spacing / corner radius tokens; haptics optional for Complete.
+
+---
+
+## Deferred roadmap
+
+- **Animations / gestures**: swipe complete, swipe re-roll, "back of stack" animation on silent add.
+- **Priority**: weighting or visual priority cues.
+- **Sections / grouped tasks**: see [Sections smoke test](#sections-smoke-test).
+- **Due dates**: "Today / overdue only" pool filter; overdue badge; caveat — completing a recurring `EKReminder` advances it rather than removing it; any due-date filter must account for this.
+- **Recurrence**: surface cadence on card; do not delete recurring reminders.
+- **Widgets / Lock Screen / Live Activities**: requires App Group entitlement, WidgetKit extension target in `project.yml`, shared `UserDefaults`, `WidgetCenter.shared.reloadAllTimelines()` call from `AppViewModel`.
+- **Settings screen**: beyond list switching (appearance, haptics, selection policy).
+- **Subtasks**: if Apple exposes stable APIs.
+
+### Sections smoke test
+
+Before implementing any sections-aware behavior, verify what EventKit returns from a sectioned list.
+
+1. In Reminders.app, add sections to the Monotask list and add tasks inside each.
+2. Run Monotask and re-roll several times — note whether section header names appear as tasks.
+3. Document findings in `EventKitRemindersService` for future contributors.
+
+- [ ] Run manual smoke test
+- [ ] Document findings
+- [ ] If section headers appear: decide on filter strategy and add a unit test
+
+---
+
+## Maintenance
+
+- Keep this file in sync when core behaviors change (phases, surfacing rules, EventKit assumptions, instrumentation events).
+- Regenerate the xcodegen project after `project.yml` edits; commit intentional `.pbxproj` updates.

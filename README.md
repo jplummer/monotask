@@ -66,8 +66,7 @@ Then relaunch the app. On a real device, delete and reinstall the app to reset p
 
 ## Product docs
 
-- **[docs/PLAN.md](docs/PLAN.md)** — architecture, state machine, and locked decisions.
-- **[docs/TASKS.md](docs/TASKS.md)** — working task list: ship-ready polish, per-view refinement, and deferred roadmap (checklist).
+- **[docs/PLAN.md](docs/PLAN.md)** — architecture, state machine, locked decisions, current status, and upcoming work.
 
 ## License
 

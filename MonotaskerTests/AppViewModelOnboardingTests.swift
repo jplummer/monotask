@@ -145,7 +145,7 @@ final class AppViewModelOnboardingTests: XCTestCase {
 
   // MARK: - List auto-selection during onboarding (Case A)
 
-  func testConnectRemindersAutoSelectsMonotaskListShowsToast() async {
+  func testConnectRemindersAutoSelectsMonotaskerListShowsToast() async {
     let task = ReminderTask(id: "r-1", title: "Buy milk", isCompleted: false)
     let mock = MockRemindersService(
       authorization: .undetermined,

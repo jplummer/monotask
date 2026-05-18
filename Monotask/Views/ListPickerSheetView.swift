@@ -1,5 +1,20 @@
 import SwiftUI
 
+private struct ListPickerRow: View {
+  let title: String
+  let isActive: Bool
+
+  var body: some View {
+    HStack {
+      Text(title)
+      Spacer()
+      Image(systemName: "checkmark")
+        .foregroundStyle(Color.accentColor)
+        .opacity(isActive ? 1 : 0)
+    }
+  }
+}
+
 struct ListPickerSheetView: View {
   @Environment(AppViewModel.self) private var model
   @State private var showNewListAlert = false
@@ -16,13 +31,15 @@ struct ListPickerSheetView: View {
     NavigationStack {
       List {
         ForEach(calendars) { cal in
-          Button(cal.title) {
+          Button {
             Task {
               guard !isWorking else { return }
               isWorking = true
               await model.applyListChoice(cal)
               isWorking = false
             }
+          } label: {
+            ListPickerRow(title: cal.title, isActive: cal.id == model.activeListSummary?.id)
           }
           .foregroundStyle(.primary)
         }

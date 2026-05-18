@@ -48,6 +48,8 @@ final class AppViewModel {
   var showAutoSelectedListToast: Bool = false
   /// True when resolveListAndLoad needs the list picker sheet to auto-present.
   var showListPickerSheet: Bool = false
+  /// True during the fade-out/in transition when the user switches lists from the focused phase.
+  var isListSwitching: Bool = false
 
   /// ID of the task currently in the undo window, filtered out of pool reloads.
   private var pendingTaskId: String? = nil
@@ -124,10 +126,15 @@ final class AppViewModel {
 
   func applyListChoice(_ summary: ReminderCalendarSummary) async {
     showListPickerSheet = false  // clear before phase changes
+    if phase == .focused {
+      isListSwitching = true
+      try? await Task.sleep(for: .milliseconds(350))
+    }
     selectionStore.selectedListIdentifier = summary.id
     activeListSummary = summary
     analytics?.record("list.switch")
     await loadPoolAndFocus()
+    isListSwitching = false
   }
 
   func createDefaultList() async {

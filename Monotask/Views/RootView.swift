@@ -67,6 +67,8 @@ struct RootView: View {
         }
       }
       .background(Color.clear)
+      .opacity(model.isListSwitching ? 0 : 1)
+      .animation(reduceMotion ? .none : .easeInOut(duration: 0.3), value: model.isListSwitching)
       // Delayed insertion: overlay fades out first, gradient shows alone, then task fades in.
       .transition(.asymmetric(
         insertion: .opacity.animation(

@@ -35,6 +35,8 @@ struct ListPickerDropdownView: View {
             .contentShape(Rectangle())
             .ignoresSafeArea()
             .onTapGesture { dismiss() }
+            .accessibilityLabel("Dismiss list picker")
+            .accessibilityAddTraits(.isButton)
         }
 
         // Dropdown card — scales from caret tip at nav bar bottom edge
@@ -80,6 +82,7 @@ struct ListPickerDropdownView: View {
               .fontWeight(.semibold)
               .foregroundStyle(Color.accentColor)
               .opacity(cal.id == model.activeListSummary?.id ? 1 : 0)
+              .accessibilityHidden(true)
           }
           .padding(.horizontal, 16)
           .frame(height: 48)
@@ -87,6 +90,8 @@ struct ListPickerDropdownView: View {
         }
         .buttonStyle(.plain)
         .foregroundStyle(.primary)
+        .accessibilityLabel(cal.title)
+        .accessibilityValue(cal.id == model.activeListSummary?.id ? "selected" : "")
 
         if cal != calendars.last {
           Divider().padding(.leading, 16)

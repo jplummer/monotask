@@ -27,6 +27,7 @@ struct PermissionInstructionsView: View {
             Image(systemName: "lock.fill")
               .font(.system(size: 36, weight: .light))
               .foregroundStyle(.primary.opacity(0.7))
+              .accessibilityHidden(true)
             Text("Reminders access needed")
               .font(.title3.weight(.semibold))
               .multilineTextAlignment(.center)
@@ -40,6 +41,7 @@ struct PermissionInstructionsView: View {
             }
             .buttonStyle(.borderedProminent)
             .padding(.top, 4)
+            .accessibilityHint("Opens the Settings app to enable Reminders access")
           }
           .padding(20)
         }

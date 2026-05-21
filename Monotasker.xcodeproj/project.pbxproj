@@ -39,11 +39,14 @@
 		BDEEA1A484FE0BDBDA2B48CA /* MonotaskerTiming.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DC1669EA600047699830695 /* MonotaskerTiming.swift */; };
 		C0C8F860CADD66111C7D7D36 /* AppViewModelListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A20E782EC237B870D8E261E /* AppViewModelListTests.swift */; };
 		C1152F640685643DB9F11F77 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9606C97765BB0127A6F8B688 /* RootView.swift */; };
+		C327E019E8746A6690CBE5CA /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 148FB6536423AA11655043A7 /* SnapshotTesting */; };
 		C74C41691A7A1AC1370F469D /* TaskFocusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C803C26B1EE9E939F4B4B58 /* TaskFocusView.swift */; };
 		D1D7C76E71C50DA571F38CCA /* TelemetryDeckAnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE3AFDE5170EC62C509E5B0 /* TelemetryDeckAnalyticsService.swift */; };
 		DF45BF3DFFFC642183131DF9 /* AppViewModelRerollTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3145736F109820AFA665B29F /* AppViewModelRerollTests.swift */; };
 		E6312E7B014A78E7B7AFFCE8 /* AppViewModelExternalChangeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 908D1D10B3D69141888A025C /* AppViewModelExternalChangeTests.swift */; };
 		F61FAEAD98293E3BAF47D907 /* MockAnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32A0D47280D66A3A139EA052 /* MockAnalyticsService.swift */; };
+		F8CF1039EF132F6778D84CD5 /* SnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69C56310E6EE84F2734555C7 /* SnapshotTests.swift */; };
+		F90E77E4C2E85FA742B2AB66 /* AppViewModelSceneLifecycleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E76F4667F8FA5C55A62E14 /* AppViewModelSceneLifecycleTests.swift */; };
 		FF89D7D2F290B8B90B383898 /* EventKitRemindersService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20EE3B0BBC2C9BF9D90D6C4 /* EventKitRemindersService.swift */; };
 /* End PBXBuildFile section */
 
@@ -71,6 +74,7 @@
 		24F1C3FE604D3ACABD65BA07 /* MonotaskerSigning.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = MonotaskerSigning.xcconfig; sourceTree = "<group>"; };
 		3145736F109820AFA665B29F /* AppViewModelRerollTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelRerollTests.swift; sourceTree = "<group>"; };
 		32A0D47280D66A3A139EA052 /* MockAnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAnalyticsService.swift; sourceTree = "<group>"; };
+		49E76F4667F8FA5C55A62E14 /* AppViewModelSceneLifecycleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelSceneLifecycleTests.swift; sourceTree = "<group>"; };
 		4BA560826E7A81BAE1313A62 /* DesignColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignColors.swift; sourceTree = "<group>"; };
 		4DC1669EA600047699830695 /* MonotaskerTiming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonotaskerTiming.swift; sourceTree = "<group>"; };
 		513CD22864E48476D24B4BBC /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
@@ -78,6 +82,7 @@
 		61D7A7BC89DD274FA9680009 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		65FB1732060DC579C2F2D886 /* RandomSelectionPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomSelectionPolicy.swift; sourceTree = "<group>"; };
 		66E6FE0796C9F625E8DEA153 /* AppViewModelEditTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelEditTests.swift; sourceTree = "<group>"; };
+		69C56310E6EE84F2734555C7 /* SnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotTests.swift; sourceTree = "<group>"; };
 		702F20A4DC08D3378C430D0C /* UniformRandomTopLevelPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniformRandomTopLevelPolicyTests.swift; sourceTree = "<group>"; };
 		77CCAA0D4687C74FDD768944 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7B81E6F3DEB8E574EB6F2848 /* MonotaskerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonotaskerApp.swift; sourceTree = "<group>"; };
@@ -111,6 +116,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		636475E20D152B5618D81F4F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C327E019E8746A6690CBE5CA /* SnapshotTesting in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -124,10 +137,12 @@
 				9A20E782EC237B870D8E261E /* AppViewModelListTests.swift */,
 				00AADF232D7514D43F61D139 /* AppViewModelOnboardingTests.swift */,
 				3145736F109820AFA665B29F /* AppViewModelRerollTests.swift */,
+				49E76F4667F8FA5C55A62E14 /* AppViewModelSceneLifecycleTests.swift */,
 				5AD1BDA6DBDB0191A2409C29 /* AppViewModelSectionsTests.swift */,
 				C38700F7E4185C0EF1C611C2 /* AppViewModelTests.swift */,
 				F92B8F8BEE6E3F6779A598FB /* AppViewModelUndoTests.swift */,
 				191DFA086BD8962F26CC85EE /* SelectionStoreTests.swift */,
+				69C56310E6EE84F2734555C7 /* SnapshotTests.swift */,
 				702F20A4DC08D3378C430D0C /* UniformRandomTopLevelPolicyTests.swift */,
 			);
 			path = MonotaskerTests;
@@ -258,6 +273,7 @@
 			buildConfigurationList = 4CF6D0E769064F41CFA5BE09 /* Build configuration list for PBXNativeTarget "MonotaskerTests" */;
 			buildPhases = (
 				E255BE93DB703BEFEBBA528F /* Sources */,
+				636475E20D152B5618D81F4F /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -266,6 +282,7 @@
 			);
 			name = MonotaskerTests;
 			packageProductDependencies = (
+				148FB6536423AA11655043A7 /* SnapshotTesting */,
 			);
 			productName = MonotaskerTests;
 			productReference = 0456CAB6CC848D33B280D85B /* MonotaskerTests.xctest */;
@@ -312,6 +329,7 @@
 			mainGroup = 8558948309DA6C93AD9EA82E;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				41F2346DC434AE1DA53991FF /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */,
 				FD215BD4A246A9EC08CA6937 /* XCRemoteSwiftPackageReference "SwiftSDK" */,
 			);
 			preferredProjectObjectVersion = 77;
@@ -379,10 +397,12 @@
 				C0C8F860CADD66111C7D7D36 /* AppViewModelListTests.swift in Sources */,
 				5EEC8DE2326EC079AA88B481 /* AppViewModelOnboardingTests.swift in Sources */,
 				DF45BF3DFFFC642183131DF9 /* AppViewModelRerollTests.swift in Sources */,
+				F90E77E4C2E85FA742B2AB66 /* AppViewModelSceneLifecycleTests.swift in Sources */,
 				8A341041F3B4D617776C1AEB /* AppViewModelSectionsTests.swift in Sources */,
 				3E93809486553210C043B93D /* AppViewModelTests.swift in Sources */,
 				2929B90F65CDC6D59E8AE180 /* AppViewModelUndoTests.swift in Sources */,
 				7639A8D385B92F9E14F4ABE7 /* SelectionStoreTests.swift in Sources */,
+				F8CF1039EF132F6778D84CD5 /* SnapshotTests.swift in Sources */,
 				9E3F9A72A245E47330E34E60 /* UniformRandomTopLevelPolicyTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -628,6 +648,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		41F2346DC434AE1DA53991FF /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-snapshot-testing";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.17.0;
+			};
+		};
 		FD215BD4A246A9EC08CA6937 /* XCRemoteSwiftPackageReference "SwiftSDK" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/TelemetryDeck/SwiftSDK";
@@ -639,6 +667,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		148FB6536423AA11655043A7 /* SnapshotTesting */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 41F2346DC434AE1DA53991FF /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
+			productName = SnapshotTesting;
+		};
 		9C80B62E6F4A972F668EC7EE /* TelemetryDeck */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = FD215BD4A246A9EC08CA6937 /* XCRemoteSwiftPackageReference "SwiftSDK" */;

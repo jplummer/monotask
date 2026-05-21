@@ -20,6 +20,9 @@ packages:
   TelemetryDeck:
     url: https://github.com/TelemetryDeck/SwiftSDK
     from: 2.0.0
+  SnapshotTesting:
+    url: https://github.com/pointfreeco/swift-snapshot-testing
+    from: 1.17.0
 targets:
   Monotasker:
     type: application
@@ -55,6 +58,7 @@ targets:
       - path: MonotaskerTests
     dependencies:
       - target: Monotasker
+      - package: SnapshotTesting
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.jonplummer.monotasker.tests

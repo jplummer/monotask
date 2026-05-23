@@ -280,7 +280,7 @@ struct TaskFocusView: View {
 
   private var bottomIconStrip: some View {
     HStack {
-      bottomBarIcon(systemName: "shuffle", accessibilityLabel: "Re-roll") {
+      bottomBarIcon(systemName: "shuffle", accessibilityLabel: "Shuffle") {
         Task { await model.reroll() }
       }
       Spacer(minLength: 0)

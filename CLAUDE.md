@@ -41,7 +41,7 @@ MonotaskerApp (@main)
   └─ AppViewModel (owns all state)
        ├─ RemindersService (protocol) ← EventKitRemindersService (device) / MockRemindersService (tests)
        ├─ SelectionStore (UserDefaults) ← persists chosen list ID + last focused reminder ID
-       └─ UniformRandomTopLevelPolicy ← random selection with re-roll exclusion
+       └─ UniformRandomTopLevelPolicy ← random selection with shuffle exclusion
 ```
 
 ### Phase state machine
@@ -60,7 +60,7 @@ MonotaskerApp (@main)
 
 - **Complete/trash with undo**: When pool has 2+ tasks, actions are deferred for 4 seconds with an undo toast (`pendingUndo`). Single-task pool commits immediately.
 - **Add-task surfacing**: If pool was 0 or 1 when add started, focus the new task. If 2+, keep current focus.
-- **Re-roll**: Excludes current task from random pick. If only one task exists, shows "only one task" alert.
+- **Shuffle**: Excludes current task from random pick. If only one task exists, shows "only one task" alert.
 - **External sync**: `EKEventStoreChanged` triggers pool reload so Reminders app edits stay in sync.
 - **List resolution order**: Persisted list ID first, then a list matching `AppConfig.appName` ("Monotasker").
 
@@ -81,7 +81,7 @@ MonotaskerApp (@main)
 
 The `TaskFocusView` uses three control surfaces:
 
-1. **Bottom icon strip** — safe-area row: re-roll, trash.
+1. **Bottom icon strip** — safe-area row: shuffle, trash.
 2. **Floating chrome** — positioned on/near the post-it card: complete (upper-left checkbox), edit (bottom-right pencil). These rotate with the card's tilt.
 3. **List picker** — nav bar `ToolbarItem(.principal)` menu for switching lists.
 

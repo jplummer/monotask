@@ -32,7 +32,7 @@ struct RootView: View {
         displayedPhase = newPhase
       }
     }
-    .alert("Something went wrong", isPresented: Binding(
+    .alert("", isPresented: Binding(
       get: { model.userMessage != nil },
       set: { if !$0 { model.userMessage = nil } }
     )) {

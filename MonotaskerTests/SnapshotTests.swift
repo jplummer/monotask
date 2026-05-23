@@ -54,13 +54,15 @@ final class SnapshotTests: XCTestCase {
     _ controller: UIViewController,
     device: ViewImageConfig,
     style: UIUserInterfaceStyle,
+    contentSize: UIContentSizeCategory = .large,
     named name: String,
     file: StaticString = #filePath,
     testName: String = #function
   ) {
     let traits = UITraitCollection(traitsFrom: [
       device.traits,
-      UITraitCollection(userInterfaceStyle: style)
+      UITraitCollection(userInterfaceStyle: style),
+      UITraitCollection(preferredContentSizeCategory: contentSize)
     ])
     assertSnapshot(
       of: controller,
@@ -139,5 +141,54 @@ final class SnapshotTests: XCTestCase {
     snap(c, device: .iPhoneSe,      style: .light, named: "se_light")
     snap(c, device: .iPhone13,      style: .light, named: "std_light")
     snap(c, device: .iPhone13ProMax, style: .light, named: "max_light")
+  }
+
+  // MARK: - Large text (accessibility content size)
+
+  func testOnboardingLargeText() {
+    let c = makeController(phase: .onboarding)
+    snap(c, device: .iPhoneSe,       style: .light, contentSize: .accessibilityExtraExtraExtraLarge, named: "se")
+    snap(c, device: .iPhone13,       style: .light, contentSize: .accessibilityExtraExtraExtraLarge, named: "std")
+    snap(c, device: .iPhone13ProMax, style: .light, contentSize: .accessibilityExtraExtraExtraLarge, named: "max")
+  }
+
+  func testPermissionDeniedLargeText() {
+    let c = makeController(phase: .permissionDenied)
+    snap(c, device: .iPhoneSe,       style: .light, contentSize: .accessibilityExtraExtraExtraLarge, named: "se")
+    snap(c, device: .iPhone13,       style: .light, contentSize: .accessibilityExtraExtraExtraLarge, named: "std")
+    snap(c, device: .iPhone13ProMax, style: .light, contentSize: .accessibilityExtraExtraExtraLarge, named: "max")
+  }
+
+  func testEmptyListLargeText() {
+    let c = makeController(phase: .emptyList)
+    snap(c, device: .iPhoneSe,       style: .light, contentSize: .accessibilityExtraExtraExtraLarge, named: "se")
+    snap(c, device: .iPhone13,       style: .light, contentSize: .accessibilityExtraExtraExtraLarge, named: "std")
+    snap(c, device: .iPhone13ProMax, style: .light, contentSize: .accessibilityExtraExtraExtraLarge, named: "max")
+  }
+
+  func testFocusedLargeText() {
+    let task = ReminderTask(
+      id: "r-1",
+      title: "Finish the app",
+      notes: "Almost there.",
+      isCompleted: false
+    )
+    let c = makeController(phase: .focused, task: task)
+    snap(c, device: .iPhoneSe,       style: .light, contentSize: .accessibilityExtraExtraExtraLarge, named: "se")
+    snap(c, device: .iPhone13,       style: .light, contentSize: .accessibilityExtraExtraExtraLarge, named: "std")
+    snap(c, device: .iPhone13ProMax, style: .light, contentSize: .accessibilityExtraExtraExtraLarge, named: "max")
+  }
+
+  func testFocusedLongContentLargeText() {
+    let task = ReminderTask(
+      id: "r-1",
+      title: "Write comprehensive unit tests covering every edge case in the view model",
+      notes: "Make sure to cover the undo flow, the external change handler, the onboarding path, and the list resolution fallback.",
+      isCompleted: false
+    )
+    let c = makeController(phase: .focused, task: task)
+    snap(c, device: .iPhoneSe,       style: .light, contentSize: .accessibilityExtraExtraExtraLarge, named: "se")
+    snap(c, device: .iPhone13,       style: .light, contentSize: .accessibilityExtraExtraExtraLarge, named: "std")
+    snap(c, device: .iPhone13ProMax, style: .light, contentSize: .accessibilityExtraExtraExtraLarge, named: "max")
   }
 }

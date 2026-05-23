@@ -12,15 +12,15 @@ Links: [README](../README.md)
 
 - [ ] **Error UX**: Replace or supplement generic `userMessage` alerts with inline / recoverable messaging where it helps.
 - [ ] **Scene lifecycle**: Confirm behavior returning from background / Settings (permission changes, list edits in Reminders). `sceneDidBecomeActive` is wired; see [manual test cases](#scene-lifecycle-manual-tests) below.
-- [ ] **Device matrix**: Small phone, large phone, dark/light; toolbar, sheet detents, gradient safe areas, bottom strip + floating chrome.
+- [x] **Device matrix**: Snapshot tests cover SE / iPhone 13 / 13 Pro Max × light/dark for all four phases (onboarding, permissionDenied, emptyList, focused) including long-content overflow. Remaining device-only concerns (toolbar behavior, sheet detents, keyboard interactions) are covered by scene lifecycle manual tests (T1–T6).
 - [ ] **Full VoiceOver traversal order audit** + large-text layout.
-- [ ] **PermissionInstructionsView copy**: Tighten for full vs write-only access distinction; consider bullet list mirroring Settings path.
+- [x] **PermissionInstructionsView copy**: iOS grants Reminders access all-or-nothing — there is no user-visible write-only state to distinguish. Current copy ("open Settings and allow Reminders access") is correct.
 
 ### Animations
 
 Card interactions currently have no motion beyond keyboard-tracking and tilt. All three deserve distinct, characterful animations:
 
-- [ ] **Re-roll / shuffle**: card flies off one edge (or back of stack) and a new one arrives — makes the randomness feel tactile.
+- [ ] **Shuffle**: card flies off one edge (or back of stack) and a new one arrives — makes the randomness feel tactile.
 - [ ] **Complete**: card checkmark + satisfying exit (fold, shrink-and-fly, confetti flash — TBD).
 - [ ] **Discard / trash**: card crumples or slides to trash; more dismissive than complete.
 - [ ] Ensure all three gate on `accessibilityReduceMotion`.
@@ -29,9 +29,9 @@ Card interactions currently have no motion beyond keyboard-tracking and tilt. Al
 
 Consider replacing or supplementing the bottom icon strip and floating chrome with swipe gestures:
 
-- [ ] Swipe right → complete (or re-roll — decide which maps to which direction).
+- [ ] Swipe right → complete (or shuffle — decide which maps to which direction).
 - [ ] Swipe left → trash.
-- [ ] Swipe up/down → re-roll.
+- [ ] Swipe up/down → shuffle.
 - [ ] Evaluate whether swipe + icon strip coexist or one replaces the other; swipe affordance (rubber-band preview) so the action is discoverable.
 
 ### View and behavior refinement
@@ -44,7 +44,6 @@ Consider replacing or supplementing the bottom icon strip and floating chrome wi
 
 ### Performance remaining
 
-- [ ] Coalesce rapid `EKEventStoreChanged` notifications if reloads stack.
 - [ ] Remove `[TIMING]` instrumentation (`MonotaskerTiming.swift`, prints in `MonotaskerApp.swift` and `AppViewModel.swift`) once cold-launch is confirmed stable.
 
 ### App Store and marketing assets
@@ -108,7 +107,7 @@ These require a physical device (or simulator with real permission flow). Each t
 1. On Device A, launch Monotasker with a shared iCloud Reminders list.
 2. On Device B (or iCloud web), add a task to the same list.
 3. Wait for sync to propagate, or wait for Device A to receive the notification.
-- **Expect**: Pool reloads within a few seconds; new task appears in re-roll rotation.
+- **Expect**: Pool reloads within a few seconds; new task appears in shuffle rotation.
 
 ---
 
@@ -137,7 +136,7 @@ These require a physical device (or simulator with real permission flow). Each t
 Before implementing any sections-aware behavior, verify what EventKit returns from a sectioned list.
 
 1. In Reminders.app, add sections to the Monotasker list and add tasks inside each.
-2. Run Monotasker and re-roll several times — note whether section header names appear as tasks.
+2. Run Monotasker and shuffle several times — note whether section header names appear as tasks.
 3. Document findings in `EventKitRemindersService` for future contributors.
 
 - [ ] Run manual smoke test
@@ -148,18 +147,18 @@ Before implementing any sections-aware behavior, verify what EventKit returns fr
 
 ## Done
 
-- **Core loop**: EventKit full-access path, pool fetch, random selection + re-roll, complete, trash, inline edit, inline add, empty list, list setup, persisted list + reminder ids.
+- **Core loop**: EventKit full-access path, pool fetch, random selection + shuffle, complete, trash, inline edit, inline add, empty list, list setup, persisted list + reminder ids.
 - **Complete / trash UX**: deferred with undo toast for 2+ task pool; immediate for single-task pool. No confirmation alert.
 - **Add feedback**: "Task added." toast after successful add.
 - **All phases**: `AppPhase` and `RootView` switch, including `onboarding`.
 - **First-run onboarding**: single-card-with-checkbox flow; permission gating; list auto-selection toast; list picker for cases B/C; empty-list inline edit; smooth fade-on-tap transition before permission dialog.
 - **Permission denial UI**: `PermissionInstructionsView` — ghost card with dashed border, lock icon, "Open Settings" button.
 - **Only-one-task alert**: with "Add another" / "Stay here".
-- **External changes**: `EKEventStoreChanged` subscription reloads pool/focus.
+- **External changes**: `EKEventStoreChanged` subscription reloads pool/focus; 500 ms debounce via `externalChangeDebounceTask` coalesces rapid iCloud sync bursts into a single reload.
 - **Per-list reminder memory**: 50-entry LRU map in `SelectionStore`; one-time migration from legacy format.
 - **Analytics**: TelemetryDeck (pseudonymous — SHA-256 hashed per-install UUID, no PII); all core + onboarding events wired; deferred init post-first-frame to stay off cold-launch path.
 - **Accessibility — Reduce Motion**: all animations gated; card tilt off; toasts VoiceOver-accessible.
-- **Tests**: 88 tests across 12 groups; all passing.
+- **Tests**: 104 tests across 14 groups; all passing.
 - **App icon**: light, dark, and tinted variants via Icon Composer.
 - **Branding**: gradient palette and post-it personality locked.
 - **App category**: `public.app-category.productivity`.
@@ -178,7 +177,7 @@ Before implementing any sections-aware behavior, verify what EventKit returns fr
 - **App name**: `Monotasker`. Centralized via `AppConfig.appName` / `CFBundleDisplayName`. Default Reminders list title follows the app name.
 - **Deployment target**: iOS 18+. Uses `requestFullAccessToReminders`. `writeOnly` access is treated as insufficient and routed to permission instructions (full read access is required).
 - **Random pool (v1)**: all incomplete reminders in the chosen list. Public EventKit does not expose parent/subtask relationships on `EKReminder`, so subtasks cannot be filtered at fetch time without private APIs. **Sections** in Reminders.app are a visual concept — all reminders in a list are fetched flat. Whether section "header" tasks appear in `EKReminder` results is unknown; see [Sections smoke test](#sections-smoke-test) before any sections-aware work.
-- **Re-roll**: excludes the currently-selected task when the pool has ≥ 2 items; with only one task, re-roll surfaces the same task and shows the "only one task" alert.
+- **Shuffle**: excludes the currently-selected task when the pool has ≥ 2 items; with only one task, shuffle surfaces the same task and shows the "only one task" alert.
 - **Complete vs Trash**: Complete sets `isCompleted = true`; Trash removes via `EKEventStore.remove`. With **2+** tasks, both actions defer and show a **toast with Undo**; after the window expires the action commits. With **1** task, both apply immediately. No separate confirmation alert — undo covers mistaken taps.
 - **Edit (v1)**: inline on the post-it (title and notes), not a separate sheet. No public URL to open a specific reminder in the system Reminders app.
 - **Add task**: a control is always available on the main focus path (including empty list flows).
@@ -232,16 +231,16 @@ flowchart TB
   ShowTask -->|add| AddSheet
   AddSheet --> LoadPool
 
-  Reroll[Reroll]
-  ShowTask -->|reroll| Reroll
-  Reroll --> ShowTask
+  Shuffle[Shuffle]
+  ShowTask -->|shuffle| Shuffle
+  Shuffle --> ShowTask
   ShowTask -->|inline edit| ShowTask
   ShowTask -->|switch list| SetupList
 ```
 
 Diagram notes:
 - `denied/writeOnly`: both treated as insufficient for read needs.
-- Reroll / random pick share `UniformRandomTopLevelPolicy`; see `RandomSelectionPolicy.swift`.
+- Shuffle / random pick share `UniformRandomTopLevelPolicy`; see `RandomSelectionPolicy.swift`.
 - Complete / trash returns to `LoadPool` after optional undo toast when pool had 2+ tasks.
 - `listSetup` phase shows the card-stack background with an auto-presented list picker dropdown — not a dedicated screen.
 
@@ -285,7 +284,7 @@ flowchart TB
 
 #### Random selection
 
-`UniformRandomTopLevelPolicy` implements uniform random choice with optional "excluding" id for re-roll. When excluding removes all candidates (single-task pool), the policy falls back to the full pool and the UI shows the "only one task" flow.
+`UniformRandomTopLevelPolicy` implements uniform random choice with optional "excluding" id for shuffle. When excluding removes all candidates (single-task pool), the policy falls back to the full pool and the UI shows the "only one task" flow.
 
 #### Add-task surfacing rule
 
@@ -299,7 +298,7 @@ Implemented via `poolSizeWhenAddOpened` in `AppViewModel`.
 #### Visual design
 
 - Gradient background + post-it card (`PostItCard`, `DesignColors` with asset + RGB fallbacks).
-- Focus screen: **bottom icon strip** (re-roll, trash), **floating chrome** on/near the card (complete — upper-left checkbox; edit — bottom-right pencil; add — below lower-right corner); navigation bar holds the **list picker button** (opens a sheet).
+- Focus screen: **bottom icon strip** (shuffle, trash), **floating chrome** on/near the card (complete — upper-left checkbox; edit — bottom-right pencil; add — below lower-right corner); navigation bar holds the **list picker button** (opens a sheet).
 - Post-action **toasts**: undo for complete/trash (multi-task pool), "Task added." after add, "We found your Monotasker list!" with "Change" after onboarding auto-selection. All VoiceOver-accessible.
 - **Reduce Motion**: all animations gate on `accessibilityReduceMotion`; card tilt disabled when on.
 

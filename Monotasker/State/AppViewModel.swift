@@ -167,7 +167,7 @@ final class AppViewModel {
       let summary = try reminders.createReminderList(title: trimmed)
       await applyListChoice(summary)
     } catch {
-      userMessage = error.localizedDescription
+      userMessage = "I couldn't create that list. Please check that Reminders is working and try again."
     }
   }
 
@@ -268,7 +268,7 @@ final class AppViewModel {
       analytics?.record("task.add")
       showTaskAddedToastBriefly()
     } catch {
-      userMessage = error.localizedDescription
+      userMessage = "I couldn't add that task. Please try again."
     }
   }
 
@@ -300,7 +300,7 @@ final class AppViewModel {
       // Deleted externally between edit start and save — reload silently.
       await loadPoolAndFocus()
     } catch {
-      userMessage = error.localizedDescription
+      userMessage = "I couldn't save your changes. Please try again."
     }
   }
 
@@ -350,7 +350,7 @@ final class AppViewModel {
       await loadPoolAndFocus()
     } catch {
       analytics?.record("error.critical", parameters: ["site": "executeImmediately"])
-      userMessage = error.localizedDescription
+      userMessage = "I couldn't complete that action. Please try again."
     }
   }
 
@@ -386,7 +386,7 @@ final class AppViewModel {
       return
     } catch {
       analytics?.record("error.critical", parameters: ["site": "sendToEventKit"])
-      userMessage = error.localizedDescription
+      userMessage = "I couldn't save that change. Shuffle to sync your list."
     }
   }
 
@@ -572,7 +572,7 @@ final class AppViewModel {
       }
       await loadPoolAndFocus()
     } catch {
-      userMessage = error.localizedDescription
+      userMessage = "I added your task but couldn't reload your list. Shuffle to refresh."
     }
   }
 

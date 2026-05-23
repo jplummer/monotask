@@ -47,7 +47,7 @@ Replaces the bootstrap state for users who have not yet granted Reminders permis
 - Front card: #FFF0D1 light / #5C5247 dark, same tilt angles as bootstrap state (match existing card stack implementation)
 - Front card copy: title "Select a Reminders list", note "Monotask gives you one task at a time, from the Reminders list of your choice"
 - **Only visible control:** completion checkbox (circle, upper-left of card)
-- All other icons hidden (no bottom strip, no pencil, no re-roll, no nav bar)
+- All other icons hidden (no bottom strip, no pencil, no shuffle, no nav bar)
 
 **Interaction:**
 - Tap completion checkbox → fires the iOS Reminders permission dialog

@@ -14,7 +14,7 @@ No new lists to maintain. No system to learn. Monotasker connects to the Reminde
 **One task. No overwhelm.**
 - Randomly surfaces a single incomplete reminder so you're never choosing what to do next
 - Complete or delete with a tap — with a 4-second undo if you change your mind
-- Re-roll to a different task when you're not ready for this one
+- Shuffle to a different task when you're not ready for this one
 - Works with any Reminders list on your device
 
 ## Copy direction

@@ -281,7 +281,13 @@ struct TaskFocusView: View {
   private var bottomIconStrip: some View {
     HStack {
       bottomBarIcon(systemName: "shuffle", accessibilityLabel: "Shuffle") {
-        Task { await model.reroll() }
+        Task {
+          await model.reroll()
+          if UIAccessibility.isVoiceOverRunning, let task = model.currentTask {
+            let announcement = [task.title, task.notes].compactMap { $0 }.joined(separator: ". ")
+            UIAccessibility.post(notification: .announcement, argument: announcement)
+          }
+        }
       }
       Spacer(minLength: 0)
       bottomBarIcon(systemName: "trash", accessibilityLabel: "Trash") {

@@ -6,6 +6,8 @@
   <string>$(DEVELOPMENT_LANGUAGE)</string>
   <key>CFBundleDisplayName</key>
   <string>Monotasker</string>
+  <key>CFBundleSpokenName</key>
+  <string>Mono Tasker</string>
   <key>CFBundleExecutable</key>
   <string>$(EXECUTABLE_NAME)</string>
   <key>CFBundleIdentifier</key>

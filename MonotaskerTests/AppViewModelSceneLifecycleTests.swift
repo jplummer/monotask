@@ -23,6 +23,13 @@ final class AppViewModelSceneLifecycleTests: XCTestCase {
     )
   }
 
+  private func makeEmptyStore() -> SelectionStore {
+    let suite = "test.\(UUID().uuidString)"
+    let defaults = UserDefaults(suiteName: suite)!
+    defaults.removePersistentDomain(forName: suite)
+    return SelectionStore(defaults: defaults)
+  }
+
   // MARK: - Recovery: permission screen → granted
 
   func testSceneActiveRecoversFocusedFromPermissionDenied() async {
@@ -35,7 +42,7 @@ final class AppViewModelSceneLifecycleTests: XCTestCase {
     let store = makeStore(reminderId: "r-1")
     let vm = makeVM(mock: mock, store: store)
     await vm.start()
-    XCTAssertEqual(vm.phase, .onboarding)
+    XCTAssertEqual(vm.phase, .permissionDenied)
 
     // Simulate user going to Settings and granting Full Access, then returning.
     mock.setAuthorization(.fullAccess)
@@ -59,7 +66,7 @@ final class AppViewModelSceneLifecycleTests: XCTestCase {
     let store = makeStore(reminderId: "r-1")
     let vm = makeVM(mock: mock, store: store)
     await vm.start()
-    XCTAssertEqual(vm.phase, .onboarding)
+    XCTAssertEqual(vm.phase, .permissionDenied)
 
     mock.setAuthorization(.fullAccess)
     await vm.sceneDidBecomeActive()
@@ -68,7 +75,42 @@ final class AppViewModelSceneLifecycleTests: XCTestCase {
     XCTAssertEqual(vm.currentTask?.id, "r-1")
   }
 
+  func testSceneActiveGoesToListSetupWhenGrantedWithNoStoredList() async {
+    // T1 regression: user denied during onboarding (no stored list), then grants from Settings.
+    // bootstrap() fast path must not route back to .onboarding in this case.
+    let mock = MockRemindersService(
+      authorization: .denied,
+      calendars: [ReminderCalendarSummary(id: "cal-1", title: "SomeOtherList")],
+      reminders: [:]
+    )
+    let store = makeEmptyStore()
+    let vm = makeVM(mock: mock, store: store)
+    vm.phase = .permissionDenied
+
+    mock.setAuthorization(.fullAccess)
+    await vm.sceneDidBecomeActive()
+
+    XCTAssertEqual(vm.phase, .listSetup, "Should go to list setup, not back to onboarding")
+  }
+
   // MARK: - Revocation: app in use → denied
+
+  // T2 regression: iOS kills and relaunches the app after permission is revoked.
+  // bootstrap() hits the stored-list path with .denied auth — must route to .permissionDenied,
+  // not .onboarding (which was the pre-fix behavior).
+  func testBootstrapGoesToPermissionDeniedWhenRevokedWithStoredList() async {
+    let task = ReminderTask(id: "r-1", title: "Task", isCompleted: false)
+    let mock = MockRemindersService(
+      authorization: .denied,
+      calendars: [ReminderCalendarSummary(id: "cal-1", title: "Monotasker")],
+      reminders: ["cal-1": [task]]
+    )
+    let store = makeStore(reminderId: "r-1")
+    let vm = makeVM(mock: mock, store: store)
+    await vm.start()
+
+    XCTAssertEqual(vm.phase, .permissionDenied, "Relaunch after revocation should show permission instructions, not onboarding")
+  }
 
   func testSceneActiveGoesToPermissionDeniedWhenRevokedWhileFocused() async {
     let task = ReminderTask(id: "r-1", title: "Task", isCompleted: false)

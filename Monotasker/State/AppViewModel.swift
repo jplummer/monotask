@@ -61,6 +61,7 @@ final class AppViewModel {
   private var observationTask: Task<Void, Never>?
   private let undoDelay: Duration
   private let externalChangeDebounce: Duration
+  private var initialBootstrapRan = false
 
   init(
     reminders: RemindersService,
@@ -108,10 +109,11 @@ final class AppViewModel {
   /// - Recovery: user was on a permission screen and just granted access from Settings.
   /// - Revocation: user was using the app and just revoked access from Settings.
   func sceneDidBecomeActive() async {
-    switch reminders.currentAuthorization() {
+    let auth = reminders.currentAuthorization()
+    switch auth {
     case .fullAccess:
-      guard phase == .permissionDenied || phase == .onboarding else { return }
-      await bootstrap()
+      guard phase == .permissionDenied || phase == .onboarding || phase == .bootstrapping else { return }
+      await recoverAfterPermissionGrant()
     case .denied, .writeOnly:
       guard phase == .focused || phase == .emptyList || phase == .listSetup else { return }
       phase = .permissionDenied
@@ -427,9 +429,25 @@ final class AppViewModel {
 
   // MARK: - Private
 
+  /// Called by sceneDidBecomeActive when permission was just granted from Settings.
+  /// Skips the .bootstrapping intermediate phase so the permission screen stays visible
+  /// until data is ready, then transitions directly to the target phase.
+  private func recoverAfterPermissionGrant() async {
+    userMessage = nil
+    // No stored list means the user never completed onboarding — treat recovery as
+    // onboarding completion so the auto-selected list toast appears.
+    let fromOnboarding = selectionStore.selectedListIdentifier == nil
+    await resolveListAndLoad(fromOnboarding: fromOnboarding)
+  }
+
   private func bootstrap() async {
-    let bt0 = Date()
-    print("[TIMING] bootstrap() start: +\(String(format: "%.3f", bt0.timeIntervalSince(MonotaskerTiming.t0)))s")
+    // On the very first call (from the init Task), sceneDidBecomeActive may have already
+    // run and resolved the phase before this task was dequeued. If so, skip to avoid
+    // overriding the resolved state. Subsequent calls (refreshAfterSettings) always proceed.
+    let isFirstRun = !initialBootstrapRan
+    initialBootstrapRan = true
+    if isFirstRun && phase != .bootstrapping { return }
+
     phase = .bootstrapping
     userMessage = nil
 
@@ -439,7 +457,6 @@ final class AppViewModel {
     // on first install when the daemon is not yet running.
     guard selectionStore.selectedListIdentifier != nil else {
       phase = .onboarding
-      print("[TIMING] bootstrap() → .onboarding (fast path): +\(String(format: "%.3f", Date().timeIntervalSince(MonotaskerTiming.t0)))s")
       // Pre-warm the daemon in the background while the user reads the onboarding card.
       // By the time they tap the checkbox, the XPC connection is established and the
       // system permission dialog appears without the cold-start delay.
@@ -448,12 +465,15 @@ final class AppViewModel {
       return
     }
 
-    print("[TIMING] bootstrap() calling authorizationStatus: +\(String(format: "%.3f", Date().timeIntervalSince(MonotaskerTiming.t0)))s")
     let authorization = reminders.currentAuthorization()
-    print("[TIMING] bootstrap() authorizationStatus done (\(authorization)): +\(String(format: "%.3f", Date().timeIntervalSince(MonotaskerTiming.t0)))s")
     switch authorization {
-    case .undetermined, .denied, .writeOnly:
+    case .undetermined:
+      // Undetermined with a stored list is a rare reset (e.g. OS reinstall). Show onboarding
+      // so the user can trigger the system permission dialog via the checkbox.
       phase = .onboarding
+    case .denied, .writeOnly:
+      // User completed onboarding (stored list exists) but permission was revoked.
+      phase = .permissionDenied
     case .fullAccess:
       // Fetch immediately — bootstrap card stays visible until data is ready, no artificial delay.
       await resolveListAndLoad()

@@ -11,7 +11,7 @@ Links: [README](../README.md)
 ### Ship-ready polish
 
 - [x] **Error UX**: Friendly per-situation messages replace `localizedDescription`; alert title removed so message stands alone; load-after-add failure silenced (self-healing) but tracked; all six error sites report to TelemetryDeck.
-- [ ] **Scene lifecycle**: Confirm behavior returning from background / Settings (permission changes, list edits in Reminders). `sceneDidBecomeActive` is wired; see [manual test cases](#scene-lifecycle-manual-tests) below.
+- [x] **Scene lifecycle**: T1–T6 all pass on device. `sceneDidBecomeActive` handles permission grant/revocation correctly; bootstrap routes `.denied`+stored-list to `.permissionDenied` (not `.onboarding`); race between sceneActive and bootstrap init Task resolved via `initialBootstrapRan` guard.
 - [x] **Device matrix**: Snapshot tests cover SE / iPhone 13 / 13 Pro Max × light/dark for all four phases (onboarding, permissionDenied, emptyList, focused) including long-content overflow. Remaining device-only concerns (toolbar behavior, sheet detents, keyboard interactions) are covered by scene lifecycle manual tests (T1–T6).
 - [ ] **Full VoiceOver traversal order audit** + large-text layout; see [VoiceOver manual tests](#voiceover-manual-tests) below (V1–V9).
 - [x] **PermissionInstructionsView copy**: iOS grants Reminders access all-or-nothing — there is no user-visible write-only state to distinguish. Current copy ("open Settings and allow Reminders access") is correct.
@@ -44,7 +44,7 @@ Consider replacing or supplementing the bottom icon strip and floating chrome wi
 
 ### Performance remaining
 
-- [ ] Remove `[TIMING]` instrumentation (`MonotaskerTiming.swift`, prints in `MonotaskerApp.swift` and `AppViewModel.swift`) once cold-launch is confirmed stable.
+- [x] Remove `[TIMING]` instrumentation (`MonotaskerTiming.swift`, prints in `MonotaskerApp.swift` and `AppViewModel.swift`) — cold-launch confirmed stable.
 
 ### App Store and marketing assets
 

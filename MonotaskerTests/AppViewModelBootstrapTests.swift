@@ -183,7 +183,7 @@ final class AppViewModelBootstrapTests: XCTestCase {
     let store = makeStore(listId: "cal-1")
     let vm = makeVM(mock: mock, store: store)
     await vm.start()
-    XCTAssertEqual(vm.phase, .onboarding)
+    XCTAssertEqual(vm.phase, .permissionDenied)
     mock.setAuthorization(.fullAccess)
     await vm.refreshAfterSettings()
     XCTAssertEqual(vm.phase, .focused)

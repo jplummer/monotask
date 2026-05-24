@@ -64,7 +64,7 @@ struct OnboardingView: View {
         .buttonStyle(.plain)
         .foregroundStyle(.primary)
         .shadow(color: .black.opacity(0.2), radius: 2, y: 1)
-        .accessibilityLabel("Allow Reminders access")
+        .accessibilityLabel("Complete")
         .rotationEffect(.degrees(angle))
         .position(checkboxPos)
       }

@@ -15,12 +15,15 @@ struct ListSetupView: View {
         Text("Choose where Monotasker reads tasks from. You can create a new list named \(AppConfig.defaultListName) or pick an existing Reminders list.")
           .font(.footnote)
           .foregroundStyle(.secondary)
+          .accessibilityLabel("Choose where Mono Tasker reads tasks from. You can create a new list named \(AppConfig.voiceOverName(AppConfig.defaultListName)) or pick an existing Reminders list.")
       }
       if !calendars.isEmpty {
         Section("Existing lists") {
           Picker("List", selection: $selectedId) {
             ForEach(calendars) { cal in
-              Text(cal.title).tag(cal.id)
+              Text(cal.title)
+                .accessibilityLabel(AppConfig.voiceOverName(cal.title))
+                .tag(cal.id)
             }
           }
           Button("Use selected list") {
@@ -42,6 +45,7 @@ struct ListSetupView: View {
             isWorking = false
           }
         }
+        .accessibilityLabel("Create \(AppConfig.voiceOverName(AppConfig.defaultListName)) list")
         .disabled(isWorking)
       }
     }

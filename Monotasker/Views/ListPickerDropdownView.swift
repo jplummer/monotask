@@ -64,6 +64,7 @@ struct ListPickerDropdownView: View {
       Button("Cancel", role: .cancel) { newListName = "" }
     } message: {
       Text("Creates a new list in Reminders and switches Monotasker to it.")
+        .accessibilityLabel("Creates a new list in Reminders and switches Mono Tasker to it.")
     }
   }
 
@@ -90,7 +91,7 @@ struct ListPickerDropdownView: View {
         }
         .buttonStyle(.plain)
         .foregroundStyle(.primary)
-        .accessibilityLabel(cal.title)
+        .accessibilityLabel(AppConfig.voiceOverName(cal.title))
         .accessibilityValue(cal.id == model.activeListSummary?.id ? "selected" : "")
 
         if cal != calendars.last {

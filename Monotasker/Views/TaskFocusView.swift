@@ -67,6 +67,7 @@ struct TaskFocusView: View {
               checkboxLeadingReserve: 32,
               verticalUpShiftRatio: cardRatio
             )
+            .accessibilitySortPriority(1)
 
             postItFloatingChrome(postIt: postIt)
               .frame(width: size.width, height: size.height)

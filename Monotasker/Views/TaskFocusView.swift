@@ -330,7 +330,11 @@ struct TaskFocusView: View {
   private func announceCurrentTask() {
     guard UIAccessibility.isVoiceOverRunning, let task = model.currentTask else { return }
     let text = [task.title, task.notes].compactMap { $0 }.joined(separator: ". ")
-    UIAccessibility.post(notification: .announcement, argument: text)
+    // Delay slightly so VoiceOver finishes announcing the triggering action (e.g. "Shuffle")
+    // before we post the task title, otherwise the system cancels our announcement.
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+      UIAccessibility.post(notification: .announcement, argument: text)
+    }
   }
 
   private func cancelInlineEdit() {

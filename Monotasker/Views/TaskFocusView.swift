@@ -178,7 +178,6 @@ struct TaskFocusView: View {
       draftTitle = task.title
       draftNotes = task.notes ?? ""
       frontCardAngle = Double.random(in: -2.5...2.5)
-      announceCurrentTask()
     }
     .alert(
       "That's the only task in your list right now.",

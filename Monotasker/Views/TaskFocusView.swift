@@ -392,5 +392,8 @@ private struct Toast: View {
     .accessibilityElement(children: .combine)
     .accessibilityAddTraits(action != nil ? .isButton : [])
     .accessibilityHint(action != nil ? "Tap to \(actionLabel?.lowercased() ?? "act")" : "")
+    .onAppear {
+      UIAccessibility.post(notification: .announcement, argument: message)
+    }
   }
 }

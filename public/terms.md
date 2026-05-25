@@ -10,7 +10,13 @@ title: Terms & Conditions – Monotasker
 
 Monotasker is free to use. By using it, you agree to these terms.
 
-Please don't reverse-engineer, copy, or redistribute the app or its code.
+## Source code
+
+The source code is publicly available on [GitHub](https://github.com/jplummer/monotasker) under the [PolyForm Noncommercial License 1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0/). You may read, fork, and use it for non-commercial purposes. Commercial use requires a separate agreement — contact [jon@jonplummer.com](mailto:jon@jonplummer.com).
+
+## The App Store binary
+
+The compiled app distributed through the App Store follows Apple's standard terms. Please don't redistribute it outside of Apple's platforms.
 
 ## The app is provided as-is
 

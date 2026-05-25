@@ -20,10 +20,11 @@ final class ScreenshotTests: XCTestCase {
 
     snapshot("01-TaskFocus")
 
-    // Tap trash to trigger the undo toast, then capture immediately
+    // Tap trash, wait for undo toast to appear, then let the slide animation finish
     app.buttons["Trash"].tap()
     let undoToast = app.buttons["Undo"]
     XCTAssertTrue(undoToast.waitForExistence(timeout: 3))
+    Thread.sleep(forTimeInterval: 0.5)
     snapshot("02-UndoToast")
 
     // Open list picker

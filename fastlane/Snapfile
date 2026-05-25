@@ -1,7 +1,7 @@
 # Devices for App Store screenshots
 devices([
   "iPhone 16 Pro Max",   # 6.9" required
-  "iPhone 15 Plus",      # 6.5" required for older device support
+  "iPhone 16 Plus",      # 6.5" required for older device support
 ])
 
 languages(["en-US"])

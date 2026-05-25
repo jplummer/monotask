@@ -31,9 +31,16 @@ struct MonotaskerApp: App {
       ReminderTask(id: "t4", title: "Clear out the junk drawer"),
       ReminderTask(id: "t5", title: "Schedule the dentist"),
     ]
+    let otherLists: [ReminderCalendarSummary] = [
+      ReminderCalendarSummary(id: "list-groceries", title: "Groceries"),
+      ReminderCalendarSummary(id: "list-household", title: "Household"),
+      ReminderCalendarSummary(id: "list-restaurants", title: "Restaurants to Try"),
+      ReminderCalendarSummary(id: "list-reading", title: "Reading List"),
+      ReminderCalendarSummary(id: "list-work", title: "Work"),
+    ]
     return MockRemindersService(
       authorization: .fullAccess,
-      calendars: [ReminderCalendarSummary(id: listID, title: AppConfig.appName)],
+      calendars: [ReminderCalendarSummary(id: listID, title: AppConfig.appName)] + otherLists,
       reminders: [listID: tasks]
     )
   }

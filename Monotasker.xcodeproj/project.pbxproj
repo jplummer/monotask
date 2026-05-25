@@ -37,10 +37,12 @@
 		66E314DB09773D9D96B46EA0 /* testFocused.se_light.png in Resources */ = {isa = PBXBuildFile; fileRef = 5ACEEB4B890231C12D370895 /* testFocused.se_light.png */; };
 		6A6F20B18A2B525BE6BC73E6 /* RemindersService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 241AD82F3BB4084204D9A815 /* RemindersService.swift */; };
 		6AB44FDB6F6611C585FB45B0 /* testPermissionDenied.se_light.png in Resources */ = {isa = PBXBuildFile; fileRef = F6687619850CDEE195C4CE01 /* testPermissionDenied.se_light.png */; };
+		6BA92618F07E71DBC1BC0B89 /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F095E28FCDE8C8C15658D5DE /* SnapshotHelper.swift */; };
 		72E349EC598CD833217C8040 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1AF731C766BBAD715D8D8C1A /* LaunchScreen.storyboard */; };
 		73C7454CA19D5724F59270E7 /* testEmptyList.std_dark.png in Resources */ = {isa = PBXBuildFile; fileRef = F932FEB2CA91F3BA86366C9B /* testEmptyList.std_dark.png */; };
 		7413738E593B91ADEDC2C63E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 77CCAA0D4687C74FDD768944 /* Assets.xcassets */; };
 		7639A8D385B92F9E14F4ABE7 /* SelectionStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 191DFA086BD8962F26CC85EE /* SelectionStoreTests.swift */; };
+		79655607B37AF8402C388AD7 /* ScreenshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D99B71378BF7FDC0F136E51 /* ScreenshotTests.swift */; };
 		8334202A5160345E5A28D4C9 /* PermissionInstructionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEC2869EBCD8924FDDA8AE16 /* PermissionInstructionsView.swift */; };
 		867EA2481049A4906AF1995B /* AppViewModelEditTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66E6FE0796C9F625E8DEA153 /* AppViewModelEditTests.swift */; };
 		8A260B6FF73E033F6BB6C846 /* testFocusedLongContentLargeText.std.png in Resources */ = {isa = PBXBuildFile; fileRef = 7FA0B46203D396483B6EB8C9 /* testFocusedLongContentLargeText.std.png */; };
@@ -92,6 +94,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		20CC81D5014D62BBA9B94420 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 882350DA03A27BF53C05787D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 30242A74DBD59A85E989BD6B;
+			remoteInfo = Monotasker;
+		};
 		9D0754C0EDA42825C3E92C56 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 882350DA03A27BF53C05787D /* Project object */;
@@ -138,7 +147,9 @@
 		67C07CDAF4353C3F487606AA /* testEmptyList.max_light.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = testEmptyList.max_light.png; sourceTree = "<group>"; };
 		69C56310E6EE84F2734555C7 /* SnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotTests.swift; sourceTree = "<group>"; };
 		6A8B8BAF23068855BD039B35 /* testOnboarding.std_dark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = testOnboarding.std_dark.png; sourceTree = "<group>"; };
+		6D99B71378BF7FDC0F136E51 /* ScreenshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotTests.swift; sourceTree = "<group>"; };
 		702F20A4DC08D3378C430D0C /* UniformRandomTopLevelPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniformRandomTopLevelPolicyTests.swift; sourceTree = "<group>"; };
+		745207CBBFF4CDF04470F459 /* MonotaskerUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MonotaskerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		77CCAA0D4687C74FDD768944 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		79932623266E9D15DF5956F4 /* testFocused.std_light.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = testFocused.std_light.png; sourceTree = "<group>"; };
 		7B81E6F3DEB8E574EB6F2848 /* MonotaskerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonotaskerApp.swift; sourceTree = "<group>"; };
@@ -181,6 +192,7 @@
 		EC2D918F953C714511818640 /* testPermissionDenied.std_light.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = testPermissionDenied.std_light.png; sourceTree = "<group>"; };
 		EC72B5EEBAD759ED1CBD309B /* PostItCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostItCard.swift; sourceTree = "<group>"; };
 		EF3F7806D8FB62844B150D5F /* ListSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListSetupView.swift; sourceTree = "<group>"; };
+		F095E28FCDE8C8C15658D5DE /* SnapshotHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotHelper.swift; sourceTree = "<group>"; };
 		F6687619850CDEE195C4CE01 /* testPermissionDenied.se_light.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = testPermissionDenied.se_light.png; sourceTree = "<group>"; };
 		F92B8F8BEE6E3F6779A598FB /* AppViewModelUndoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelUndoTests.swift; sourceTree = "<group>"; };
 		F932FEB2CA91F3BA86366C9B /* testEmptyList.std_dark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = testEmptyList.std_dark.png; sourceTree = "<group>"; };
@@ -254,6 +266,15 @@
 			path = Selection;
 			sourceTree = "<group>";
 		};
+		495447A3388C56F656C14AEF /* MonotaskerUITests */ = {
+			isa = PBXGroup;
+			children = (
+				6D99B71378BF7FDC0F136E51 /* ScreenshotTests.swift */,
+				F095E28FCDE8C8C15658D5DE /* SnapshotHelper.swift */,
+			);
+			path = MonotaskerUITests;
+			sourceTree = "<group>";
+		};
 		4FB834E0F2B16BB7BF80BC41 /* Config */ = {
 			isa = PBXGroup;
 			children = (
@@ -269,6 +290,7 @@
 			children = (
 				ADD0D19F56D33BFBAD828752 /* Monotasker */,
 				1D67C18094013BC15A6B326E /* MonotaskerTests */,
+				495447A3388C56F656C14AEF /* MonotaskerUITests */,
 				C97248E2E9DE0FA46212FC54 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -387,6 +409,7 @@
 			children = (
 				220A9072E30A9FB28842C670 /* Monotasker.app */,
 				0456CAB6CC848D33B280D85B /* MonotaskerTests.xctest */,
+				745207CBBFF4CDF04470F459 /* MonotaskerUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -448,6 +471,24 @@
 			productReference = 220A9072E30A9FB28842C670 /* Monotasker.app */;
 			productType = "com.apple.product-type.application";
 		};
+		D19A09D5718B0A2D708DFA04 /* MonotaskerUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9908D427F80920A493F820F0 /* Build configuration list for PBXNativeTarget "MonotaskerUITests" */;
+			buildPhases = (
+				60B2E71183568B2653556B25 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E79F2D1576DD84BDD9ABBFE2 /* PBXTargetDependency */,
+			);
+			name = MonotaskerUITests;
+			packageProductDependencies = (
+			);
+			productName = MonotaskerUITests;
+			productReference = 745207CBBFF4CDF04470F459 /* MonotaskerUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -457,6 +498,9 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
+					D19A09D5718B0A2D708DFA04 = {
+						TestTargetID = 30242A74DBD59A85E989BD6B;
+					};
 				};
 			};
 			buildConfigurationList = 0EF11BAECA75AA5FA71996BC /* Build configuration list for PBXProject "Monotasker" */;
@@ -479,6 +523,7 @@
 			targets = (
 				30242A74DBD59A85E989BD6B /* Monotasker */,
 				29643E65655634CC3FF1533F /* MonotaskerTests */,
+				D19A09D5718B0A2D708DFA04 /* MonotaskerUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -546,6 +591,15 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		60B2E71183568B2653556B25 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				79655607B37AF8402C388AD7 /* ScreenshotTests.swift in Sources */,
+				6BA92618F07E71DBC1BC0B89 /* SnapshotHelper.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AD1684256BD7959A8ABEF30B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -602,6 +656,11 @@
 			isa = PBXTargetDependency;
 			target = 30242A74DBD59A85E989BD6B /* Monotasker */;
 			targetProxy = 9D0754C0EDA42825C3E92C56 /* PBXContainerItemProxy */;
+		};
+		E79F2D1576DD84BDD9ABBFE2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 30242A74DBD59A85E989BD6B /* Monotasker */;
+			targetProxy = 20CC81D5014D62BBA9B94420 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -708,6 +767,24 @@
 			};
 			name = Debug;
 		};
+		6D8EE15ABAA4E3F640659F5E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 24F1C3FE604D3ACABD65BA07 /* MonotaskerSigning.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.jonplummer.monotasker.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Monotasker;
+			};
+			name = Debug;
+		};
 		7BA7DAB517911E3A11F6CC4E /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 24F1C3FE604D3ACABD65BA07 /* MonotaskerSigning.xcconfig */;
@@ -803,6 +880,24 @@
 			};
 			name = Release;
 		};
+		CBA4C57DE2F4A0EE39FC4620 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 24F1C3FE604D3ACABD65BA07 /* MonotaskerSigning.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.jonplummer.monotasker.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Monotasker;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -829,6 +924,15 @@
 			buildConfigurations = (
 				6A778145D492991CF2DC7B63 /* Debug */,
 				7BA7DAB517911E3A11F6CC4E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		9908D427F80920A493F820F0 /* Build configuration list for PBXNativeTarget "MonotaskerUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6D8EE15ABAA4E3F640659F5E /* Debug */,
+				CBA4C57DE2F4A0EE39FC4620 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

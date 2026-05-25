@@ -51,6 +51,21 @@ targets:
     scheme:
       testTargets:
         - MonotaskerTests
+        - MonotaskerUITests
+  MonotaskerUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: MonotaskerUITests
+    dependencies:
+      - target: Monotasker
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.jonplummer.monotasker.uitests
+        GENERATE_INFOPLIST_FILE: YES
+    configFiles:
+      Debug: Monotasker/Config/MonotaskerSigning.xcconfig
+      Release: Monotasker/Config/MonotaskerSigning.xcconfig
   MonotaskerTests:
     type: bundle.unit-test
     platform: iOS

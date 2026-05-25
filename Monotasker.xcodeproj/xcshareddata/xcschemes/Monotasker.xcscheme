@@ -50,6 +50,17 @@
                ReferencedContainer = "container:Monotasker.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "D19A09D5718B0A2D708DFA04"
+               BuildableName = "MonotaskerUITests.xctest"
+               BlueprintName = "MonotaskerUITests"
+               ReferencedContainer = "container:Monotasker.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <CommandLineArguments>
       </CommandLineArguments>

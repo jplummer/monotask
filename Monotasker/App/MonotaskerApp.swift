@@ -17,7 +17,8 @@ struct MonotaskerApp: App {
       reminders: reminders,
       selectionStore: SelectionStore(),
       selectionPolicy: UniformRandomTopLevelPolicy(),
-      analytics: nil
+      analytics: nil,
+      suppressToasts: Self.isScreenshotMode
     ))
   }
 

@@ -61,6 +61,7 @@ final class AppViewModel {
   private var observationTask: Task<Void, Never>?
   private let undoDelay: Duration
   private let externalChangeDebounce: Duration
+  private let suppressToasts: Bool
   private var initialBootstrapRan = false
 
   init(
@@ -70,10 +71,12 @@ final class AppViewModel {
     analytics: AnalyticsService? = nil,
     undoDelay: Duration = .seconds(4),
     externalChangeDebounce: Duration = .milliseconds(500),
-    skipInitialBootstrap: Bool = false
+    skipInitialBootstrap: Bool = false,
+    suppressToasts: Bool = false
   ) {
     self.undoDelay = undoDelay
     self.externalChangeDebounce = externalChangeDebounce
+    self.suppressToasts = suppressToasts
     self.reminders = reminders
     self.selectionStore = selectionStore
     self.selectionPolicy = selectionPolicy
@@ -360,6 +363,7 @@ final class AppViewModel {
   }
 
   private func showTaskAddedToastBriefly() {
+    guard !suppressToasts else { return }
     taskAddedToastTask?.cancel()
     showTaskAddedToast = true
     taskAddedToastTask = Task {
@@ -370,6 +374,7 @@ final class AppViewModel {
   }
 
   private func showAutoSelectedListToastBriefly() {
+    guard !suppressToasts else { return }
     autoSelectedToastTask?.cancel()
     showAutoSelectedListToast = true
     autoSelectedToastTask = Task {

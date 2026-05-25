@@ -223,7 +223,7 @@ struct TaskFocusView: View {
             .transition(.move(edge: .bottom).combined(with: .opacity))
         }
         if model.showAutoSelectedListToast {
-          Toast(message: "We found your Mono Tasker list!", actionLabel: "Change") {
+          Toast(message: "We found your Monotasker list!", actionLabel: "Change") {
             model.openListPickerFromToast()
           }
           .transition(.move(edge: .bottom).combined(with: .opacity))

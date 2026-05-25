@@ -10,39 +10,51 @@ struct MonotaskerApp: App {
   }
 
   init() {
-    let reminders: any RemindersService = Self.isScreenshotMode
-      ? MonotaskerApp.screenshotRemindersService()
-      : EventKitRemindersService()
-    _viewModel = State(initialValue: AppViewModel(
-      reminders: reminders,
-      selectionStore: SelectionStore(),
-      selectionPolicy: UniformRandomTopLevelPolicy(),
-      analytics: nil,
-      suppressToasts: Self.isScreenshotMode
-    ))
+    if Self.isScreenshotMode {
+      let (service, store) = MonotaskerApp.screenshotFixtures()
+      _viewModel = State(initialValue: AppViewModel(
+        reminders: service,
+        selectionStore: store,
+        selectionPolicy: UniformRandomTopLevelPolicy(),
+        analytics: nil,
+        suppressToasts: true
+      ))
+    } else {
+      _viewModel = State(initialValue: AppViewModel(
+        reminders: EventKitRemindersService(),
+        selectionStore: SelectionStore(),
+        selectionPolicy: UniformRandomTopLevelPolicy(),
+        analytics: nil
+      ))
+    }
   }
 
-  private static func screenshotRemindersService() -> MockRemindersService {
-    let listID = "screenshot-list"
+  private static func screenshotFixtures() -> (MockRemindersService, SelectionStore) {
+    let listID = "list-weekend"
     let tasks: [ReminderTask] = [
-      ReminderTask(id: "t1", title: "Install pegboard", notes: "Need to find the right wall anchors first."),
-      ReminderTask(id: "t2", title: "Wash the car", notes: "Vacuum out the trunk while you're at it."),
-      ReminderTask(id: "t3", title: "Rearrange the living room", notes: "Try the couch under the window."),
-      ReminderTask(id: "t4", title: "Clear out the junk drawer"),
-      ReminderTask(id: "t5", title: "Schedule the dentist"),
+      ReminderTask(id: "t1", title: "Install pegboard in the garage", notes: "Need to find the right wall anchors first."),
+      ReminderTask(id: "t2", title: "Build the raised garden bed", notes: "Cedar boards are in the basement already."),
+      ReminderTask(id: "t3", title: "Repaint the front door", notes: "Navy or black — decide before buying."),
+      ReminderTask(id: "t4", title: "Fix the back fence gate"),
+      ReminderTask(id: "t5", title: "Hang the new mirror in the hallway"),
     ]
-    let otherLists: [ReminderCalendarSummary] = [
+    let calendars: [ReminderCalendarSummary] = [
+      ReminderCalendarSummary(id: listID, title: "Weekend Projects"),
       ReminderCalendarSummary(id: "list-groceries", title: "Groceries"),
       ReminderCalendarSummary(id: "list-household", title: "Household"),
       ReminderCalendarSummary(id: "list-restaurants", title: "Restaurants to Try"),
       ReminderCalendarSummary(id: "list-reading", title: "Reading List"),
-      ReminderCalendarSummary(id: "list-work", title: "Work"),
+      ReminderCalendarSummary(id: "list-reminders", title: AppConfig.appName),
     ]
-    return MockRemindersService(
+    let service = MockRemindersService(
       authorization: .fullAccess,
-      calendars: [ReminderCalendarSummary(id: listID, title: AppConfig.appName)] + otherLists,
+      calendars: calendars,
       reminders: [listID: tasks]
     )
+    // Pre-seed selection so bootstrap resolves to Weekend Projects immediately.
+    let store = SelectionStore(defaults: UserDefaults(suiteName: "screenshot") ?? .standard)
+    store.selectedListIdentifier = listID
+    return (service, store)
   }
 
   var body: some Scene {

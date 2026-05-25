@@ -35,8 +35,7 @@ struct ListPickerDropdownView: View {
             .contentShape(Rectangle())
             .ignoresSafeArea()
             .onTapGesture { dismiss() }
-            .accessibilityLabel("Dismiss list picker")
-            .accessibilityAddTraits(.isButton)
+            .accessibilityHidden(true)
         }
 
         // Dropdown card — scales from caret tip at nav bar bottom edge
@@ -95,11 +94,11 @@ struct ListPickerDropdownView: View {
         .accessibilityValue(cal.id == model.activeListSummary?.id ? "selected" : "")
 
         if cal != calendars.last {
-          Divider().padding(.leading, 16)
+          Divider().padding(.leading, 16).accessibilityHidden(true)
         }
       }
 
-      if !calendars.isEmpty { Divider() }
+      if !calendars.isEmpty { Divider().accessibilityHidden(true) }
 
       Button {
         newListName = ""

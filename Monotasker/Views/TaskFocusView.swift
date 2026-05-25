@@ -17,6 +17,7 @@ struct TaskFocusView: View {
 
   @State private var frontCardAngle: Double = 0
   @State private var keyboardHeight: CGFloat = 0
+  @State private var hasAppeared = false
 
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -25,82 +26,86 @@ struct TaskFocusView: View {
   private let bottomChromeReserve: CGFloat = 72
 
   var body: some View {
+    taskObservers
+      .onChange(of: model.showAddSheet) { _, new in
+        if new {
+          if isEditing { cancelInlineEdit() }
+          beginInlineAdd()
+        } else {
+          isAdding = false
+          addFocus = nil
+        }
+      }
+      .onChange(of: model.pendingUndo != nil) { hadUndo, hasUndo in
+        // Undo window expired or undo was tapped — announce what's now showing.
+        // Use a longer delay so VoiceOver's "Undo" button feedback clears first.
+        if hadUndo && !hasUndo {
+          guard UIAccessibility.isVoiceOverRunning else { return }
+          let text = [model.currentTask?.title, model.currentTask?.notes]
+            .compactMap { $0 }.joined(separator: ". ")
+          DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+            UIAccessibility.post(notification: .announcement, argument: text)
+          }
+        }
+      }
+      .onChange(of: model.showTaskAddedToast) { wasShowing, isShowing in
+        // When the "Task added." toast clears, announce the task now in focus.
+        if wasShowing && !isShowing { announceCurrentTask() }
+      }
+      .alert(
+        "That's the only task in your list right now.",
+        isPresented: Binding(
+          get: { model.showOnlyOneTaskAlert },
+          set: { if !$0 { model.dismissOnlyOneTaskAlert() } }
+        )
+      ) {
+        Button("Add another") { model.beginAddFromOnlyOneAlert() }
+        Button("Stay here", role: .cancel) { model.dismissOnlyOneTaskAlert() }
+      } message: {
+        Text("Add another task to shuffle between, or stay on this one.")
+      }
+  }
+
+  private var taskObservers: some View {
+    layoutView
+      .onChange(of: task.id) { _, _ in
+        if isEditing { cancelInlineEdit() }
+        if isAdding { cancelInlineAdd() }
+        frontCardAngle = Double.random(in: -2.5...2.5)
+        // If the add toast is about to announce, wait for it to finish before reading the task.
+        if hasAppeared && !model.showTaskAddedToast { announceCurrentTask() }
+      }
+      .onChange(of: task.title) { _, newTitle in
+        if !isEditing { draftTitle = newTitle }
+      }
+      .onChange(of: task.notes ?? "") { _, newNotes in
+        if !isEditing { draftNotes = newNotes }
+      }
+      .onAppear {
+        draftTitle = task.title
+        draftNotes = task.notes ?? ""
+        frontCardAngle = Double.random(in: -2.5...2.5)
+        hasAppeared = true
+        guard UIAccessibility.isVoiceOverRunning else { return }
+        let text = [task.title, task.notes].compactMap { $0 }.joined(separator: ". ")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+          UIAccessibility.post(notification: .announcement, argument: text)
+        }
+      }
+  }
+
+  private var layoutView: some View {
     GeometryReader { proxy in
       let size = proxy.size
       let maxSide = squareSide(maxHeight: size.height, maxWidth: size.width)
       let cardRatio = PostItCardLayout.cardRatio(keyboardHeight: keyboardHeight, containerHeight: size.height)
       let postIt = postItGeometry(container: size, squareSide: maxSide)
       let currentColorIdx = model.pool.firstIndex(where: { $0.id == task.id }) ?? 0
-
       let bottomPad = max(proxy.safeAreaInsets.bottom, 12)
 
       ZStack(alignment: .bottom) {
-        ZStack {
-          if isAdding {
-            PostItCard(
-              squareSide: maxSide,
-              isEditing: true,
-              displayTitle: "",
-              displayNotes: nil,
-              editTitle: $addDraftTitle,
-              editNotes: $addDraftNotes,
-              focus: $addFocus,
-              stackedCardsCount: model.pool.count,
-              colorIndex: (currentColorIdx + 1) % DesignColors.postItColorCount,
-              frontCardRotation: addCardAngle,
-              checkboxLeadingReserve: 32,
-              titlePlaceholder: "Add a task",
-              verticalUpShiftRatio: cardRatio
-            )
-          } else {
-            PostItCard(
-              squareSide: maxSide,
-              isEditing: isEditing,
-              displayTitle: task.title,
-              displayNotes: task.notes,
-              editTitle: $draftTitle,
-              editNotes: $draftNotes,
-              focus: $editFocus,
-              stackedCardsCount: model.pool.count,
-              colorIndex: model.pool.firstIndex(where: { $0.id == task.id }) ?? 0,
-              frontCardRotation: frontCardAngle,
-              checkboxLeadingReserve: 32,
-              verticalUpShiftRatio: cardRatio
-            )
-
-            postItFloatingChrome(postIt: postIt)
-              .frame(width: size.width, height: size.height)
-              .allowsHitTesting(!isEditing)
-              .opacity(isEditing ? 0 : 1)
-              .animation(reduceMotion ? .none : .easeInOut(duration: 0.15), value: isEditing)
-          }
-        }
-
-        VStack(spacing: 8) {
-          if !isAdding {
-            if let undo = model.pendingUndo {
-              Toast(message: undo.toastMessage, actionLabel: "Undo") {
-                Task { await model.undoPendingAction() }
-              }
-              .transition(.move(edge: .bottom).combined(with: .opacity))
-            }
-            if model.showTaskAddedToast {
-              Toast(message: "Task added.")
-                .transition(.move(edge: .bottom).combined(with: .opacity))
-            }
-            if model.showAutoSelectedListToast {
-              Toast(message: "We found your Mono Tasker list!", actionLabel: "Change") {
-                model.openListPickerFromToast()
-              }
-              .transition(.move(edge: .bottom).combined(with: .opacity))
-            }
-          }
-        }
-        .padding(.bottom, bottomPad + 60)
-        .animation(reduceMotion ? .none : .easeInOut(duration: 0.22), value: model.pendingUndo != nil)
-        .animation(reduceMotion ? .none : .spring(response: 0.4, dampingFraction: 0.8), value: model.showTaskAddedToast)
-        .animation(reduceMotion ? .none : .spring(response: 0.4, dampingFraction: 0.8), value: model.showAutoSelectedListToast)
-
+        cardLayer(maxSide: maxSide, cardRatio: cardRatio, postIt: postIt, size: size, currentColorIdx: currentColorIdx)
+        toastLayer(bottomPad: bottomPad)
         bottomIconStrip
           .padding(.horizontal, 28)
           .padding(.bottom, bottomPad)
@@ -109,6 +114,7 @@ struct TaskFocusView: View {
           .opacity(isEditing || isAdding ? 0 : 1)
           .animation(reduceMotion ? .none : .easeInOut(duration: 0.15), value: isEditing)
           .animation(reduceMotion ? .none : .easeInOut(duration: 0.15), value: isAdding)
+          .accessibilitySortPriority(-3)
       }
       .frame(width: size.width, height: size.height)
     }
@@ -117,84 +123,28 @@ struct TaskFocusView: View {
     .onKeyboardHeightChange { keyboardHeight = $0 }
     .toolbar {
       ToolbarItem(placement: .principal) {
-        if !isEditing && !isAdding {
-          listPickerButton
-        }
+        if !isEditing && !isAdding { listPickerButton }
       }
       ToolbarItem(placement: .topBarTrailing) {
         if isEditing {
-          Button("Done") {
-            Task { await saveInlineEdit() }
-          }
-          .disabled(draftTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-          .fontWeight(.semibold)
+          Button("Done") { Task { await saveInlineEdit() } }
+            .disabled(draftTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            .fontWeight(.semibold)
         } else if isAdding {
-          Button("Done") {
-            Task { await saveInlineAdd() }
-          }
-          .disabled(addDraftTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-          .fontWeight(.semibold)
+          Button("Done") { Task { await saveInlineAdd() } }
+            .disabled(addDraftTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            .fontWeight(.semibold)
         }
       }
       ToolbarItem(placement: .topBarLeading) {
         if isEditing {
-          Button("Cancel") {
-            cancelInlineEdit()
-          }
+          Button("Cancel") { cancelInlineEdit() }
         } else if isAdding {
-          Button("Cancel") {
-            cancelInlineAdd()
-          }
+          Button("Cancel") { cancelInlineAdd() }
         }
       }
     }
     .navigationBarTitleDisplayMode(.inline)
-    .onChange(of: model.showAddSheet) { _, new in
-      if new {
-        if isEditing { cancelInlineEdit() }
-        beginInlineAdd()
-      } else {
-        isAdding = false
-        addFocus = nil
-      }
-    }
-    .onChange(of: task.id) { _, _ in
-      if isEditing { cancelInlineEdit() }
-      if isAdding { cancelInlineAdd() }
-      frontCardAngle = Double.random(in: -2.5...2.5)
-      announceCurrentTask()
-    }
-    .onChange(of: task.title) { _, newTitle in
-      if !isEditing {
-        draftTitle = newTitle
-      }
-    }
-    .onChange(of: task.notes ?? "") { _, newNotes in
-      if !isEditing {
-        draftNotes = newNotes
-      }
-    }
-    .onAppear {
-      draftTitle = task.title
-      draftNotes = task.notes ?? ""
-      frontCardAngle = Double.random(in: -2.5...2.5)
-    }
-    .alert(
-      "That's the only task in your list right now.",
-      isPresented: Binding(
-        get: { model.showOnlyOneTaskAlert },
-        set: { if !$0 { model.dismissOnlyOneTaskAlert() } }
-      )
-    ) {
-      Button("Add another") {
-        model.beginAddFromOnlyOneAlert()
-      }
-      Button("Stay here", role: .cancel) {
-        model.dismissOnlyOneTaskAlert()
-      }
-    } message: {
-      Text("Add another task to shuffle between, or stay on this one.")
-    }
   }
 
   private var listPickerButton: some View {
@@ -231,6 +181,82 @@ struct TaskFocusView: View {
     let cy = h / 2 - shift
     let half = squareSide / 2
     return (cx, cy, half)
+  }
+
+  @ViewBuilder
+  private func cardLayer(maxSide: CGFloat, cardRatio: CGFloat, postIt: (cx: CGFloat, cy: CGFloat, half: CGFloat), size: CGSize, currentColorIdx: Int) -> some View {
+    ZStack {
+      if isAdding {
+        PostItCard(
+          squareSide: maxSide,
+          isEditing: true,
+          displayTitle: "",
+          displayNotes: nil,
+          editTitle: $addDraftTitle,
+          editNotes: $addDraftNotes,
+          focus: $addFocus,
+          stackedCardsCount: model.pool.count,
+          colorIndex: (currentColorIdx + 1) % DesignColors.postItColorCount,
+          frontCardRotation: addCardAngle,
+          checkboxLeadingReserve: 32,
+          titlePlaceholder: "Add a task",
+          verticalUpShiftRatio: cardRatio
+        )
+      } else {
+        focusCard(maxSide: maxSide, cardRatio: cardRatio, postIt: postIt, size: size)
+      }
+    }
+  }
+
+  @ViewBuilder
+  private func toastLayer(bottomPad: CGFloat) -> some View {
+    VStack(spacing: 8) {
+      if !isAdding {
+        if let undo = model.pendingUndo {
+          Toast(message: undo.toastMessage, actionLabel: "Undo") {
+            Task { await model.undoPendingAction() }
+          }
+          .transition(.move(edge: .bottom).combined(with: .opacity))
+        }
+        if model.showTaskAddedToast {
+          Toast(message: "Task added.")
+            .transition(.move(edge: .bottom).combined(with: .opacity))
+        }
+        if model.showAutoSelectedListToast {
+          Toast(message: "We found your Mono Tasker list!", actionLabel: "Change") {
+            model.openListPickerFromToast()
+          }
+          .transition(.move(edge: .bottom).combined(with: .opacity))
+        }
+      }
+    }
+    .padding(.bottom, bottomPad + 60)
+    .animation(reduceMotion ? .none : .easeInOut(duration: 0.22), value: model.pendingUndo != nil)
+    .animation(reduceMotion ? .none : .spring(response: 0.4, dampingFraction: 0.8), value: model.showTaskAddedToast)
+    .animation(reduceMotion ? .none : .spring(response: 0.4, dampingFraction: 0.8), value: model.showAutoSelectedListToast)
+  }
+
+  @ViewBuilder
+  private func focusCard(maxSide: CGFloat, cardRatio: CGFloat, postIt: (cx: CGFloat, cy: CGFloat, half: CGFloat), size: CGSize) -> some View {
+    PostItCard(
+      squareSide: maxSide,
+      isEditing: isEditing,
+      displayTitle: task.title,
+      displayNotes: task.notes,
+      editTitle: $draftTitle,
+      editNotes: $draftNotes,
+      focus: $editFocus,
+      stackedCardsCount: model.pool.count,
+      colorIndex: model.pool.firstIndex(where: { $0.id == task.id }) ?? 0,
+      frontCardRotation: frontCardAngle,
+      checkboxLeadingReserve: 32,
+      verticalUpShiftRatio: cardRatio
+    )
+    postItFloatingChrome(postIt: postIt)
+      .frame(width: size.width, height: size.height)
+      .allowsHitTesting(!isEditing)
+      .opacity(isEditing ? 0 : 1)
+      .animation(reduceMotion ? .none : .easeInOut(duration: 0.15), value: isEditing)
   }
 
   private func postItFloatingChrome(postIt: (cx: CGFloat, cy: CGFloat, half: CGFloat)) -> some View {
@@ -277,6 +303,7 @@ struct TaskFocusView: View {
       }
       .position(x: cornerPos.x, y: cornerPos.y + iconHit / 2 + 20)
     }
+    .accessibilitySortPriority(-1)
   }
 
   private var bottomIconStrip: some View {
@@ -329,6 +356,9 @@ struct TaskFocusView: View {
 
   private func announceCurrentTask() {
     guard UIAccessibility.isVoiceOverRunning, let task = model.currentTask else { return }
+    // When an undo window is open, the toast already announces the action ("Task deleted.",
+    // "Completed!"). Announcing the new task title here would interrupt it.
+    guard model.pendingUndo == nil else { return }
     let text = [task.title, task.notes].compactMap { $0 }.joined(separator: ". ")
     // Delay slightly so VoiceOver finishes announcing the triggering action (e.g. "Shuffle")
     // before we post the task title, otherwise the system cancels our announcement.
@@ -402,9 +432,11 @@ private struct Toast: View {
     .onTapGesture { action?() }
     .accessibilityElement(children: .combine)
     .accessibilityAddTraits(action != nil ? .isButton : [])
-    .accessibilityHint(action != nil ? "Tap to \(actionLabel?.lowercased() ?? "act")" : "")
+    .accessibilityHint(action != nil ? "Double tap to \(actionLabel?.lowercased() ?? "act")" : "")
     .onAppear {
-      UIAccessibility.post(notification: .announcement, argument: message)
+      // Announce immediately so the user hears it with the full dwell window available.
+      let announcement = actionLabel.map { "\(message) \($0)." } ?? message
+      UIAccessibility.post(notification: .announcement, argument: announcement)
     }
   }
 }

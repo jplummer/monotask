@@ -153,6 +153,11 @@ struct EmptyListView: View {
   private func beginEdit() {
     isEditing = true
     editFocus = .title
+    if UIAccessibility.isVoiceOverRunning {
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+        UIAccessibility.post(notification: .announcement, argument: "Add a task. Type a title.")
+      }
+    }
   }
 
   private func cancelEdit() {
@@ -161,6 +166,11 @@ struct EmptyListView: View {
     notes = ""
     isEditing = false
     editFocus = nil
+    if UIAccessibility.isVoiceOverRunning {
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+        UIAccessibility.post(notification: .announcement, argument: "What do you need to do? Add a task to your Mono Tasker list.")
+      }
+    }
   }
 
   private func submitEdit() async {

@@ -77,6 +77,14 @@ struct OnboardingView: View {
       frontCardAngle = reduceMotion ? 0 : Double.random(in: -2.5...2.5)
       let animation: Animation? = reduceMotion ? nil : .easeIn(duration: 0.25)
       withAnimation(animation) { contentVisible = true }
+      if UIAccessibility.isVoiceOverRunning {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+          UIAccessibility.post(
+            notification: .announcement,
+            argument: "Mono Tasker gives you one task at a time. Check off this task and choose a Reminders list. If you have a Mono Tasker list we'll use it automatically."
+          )
+        }
+      }
     }
   }
 

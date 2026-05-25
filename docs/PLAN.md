@@ -16,23 +16,15 @@ Links: [README](../README.md)
 - [x] **Full VoiceOver traversal order audit** + large-text layout; V1–V9 all pass on device.
 - [x] **PermissionInstructionsView copy**: iOS grants Reminders access all-or-nothing — there is no user-visible write-only state to distinguish. Current copy ("open Settings and allow Reminders access") is correct.
 
-### Animations
+### Animations and swipe interactions
 
-Card interactions currently have no motion beyond keyboard-tracking and tilt. All three deserve distinct, characterful animations:
+Post-launch polish. All animations must gate on `accessibilityReduceMotion`. Swipe gestures may replace or supplement the icon strip — evaluate coexistence and affordance (rubber-band preview) when implementing.
 
-- [ ] **Shuffle**: card flies off one edge (or back of stack) and a new one arrives — makes the randomness feel tactile.
-- [ ] **Complete**: card checkmark + satisfying exit (fold, shrink-and-fly, confetti flash — TBD).
-- [ ] **Discard / trash**: card crumples or slides to trash; more dismissive than complete.
-- [ ] Ensure all three gate on `accessibilityReduceMotion`.
-
-### Swipe interactions
-
-Consider replacing or supplementing the bottom icon strip and floating chrome with swipe gestures:
-
-- [ ] Swipe right → complete (or shuffle — decide which maps to which direction).
-- [ ] Swipe left → trash.
-- [ ] Swipe up/down → shuffle.
-- [ ] Evaluate whether swipe + icon strip coexist or one replaces the other; swipe affordance (rubber-band preview) so the action is discoverable.
+- [ ] **Trash**: top card slides down and fades out, revealing the new top card. Simplest of the four; start here to validate the two-card transition pattern. SwiftUI `.id(task.id)` + `.transition(.move(edge:.bottom).combined(with:.opacity))` is the likely approach.
+- [ ] **Shuffle**: top card slides away (no 3D needed), shadow removed, card slots behind the stack while fading slightly — conveys "kept, not gone." New top card is revealed underneath. Swipe left to trigger.
+- [ ] **Complete**: distinct from trash — something satisfying (checkmark flash, card folds or shrinks away). TBD. Swipe right to trigger.
+- [ ] **New list**: treat as a navigation push — current stack slides off left, new list's stack arrives from right, keyed on list ID change in `AppViewModel`.
+- [ ] **Add**: new card descends from above into position, keyboard rises simultaneously (coordinate with existing `keyboardHeight` up-shift).
 
 ### View and behavior refinement
 

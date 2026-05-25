@@ -22,7 +22,7 @@ final class ScreenshotTests: XCTestCase {
 
     // Tap trash, wait for undo toast to appear, then let the slide animation finish
     app.buttons["Trash"].tap()
-    let undoToast = app.buttons["Undo"]
+    let undoToast = app.buttons["Task deleted. Undo"]
     XCTAssertTrue(undoToast.waitForExistence(timeout: 3))
     Thread.sleep(forTimeInterval: 0.5)
     snapshot("02-UndoToast")

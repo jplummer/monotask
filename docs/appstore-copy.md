@@ -25,6 +25,22 @@ It works because you're not building a new system — you're using the list you 
 - Shuffle to a different task when you're not feeling this one
 - No new lists, no new habits, no new system to learn
 
+## What's New (v1.0)
+
+Version 1.0. One task. That's the whole idea.
+
+## App Review Notes
+
+Monotasker requires full Reminders access (EventKit) to read and complete tasks from the user's Apple Reminders lists. This is the core function of the app — it cannot operate without it.
+
+**To test the permission flow:**
+1. Launch the app. An onboarding card explains the concept and shows a checkbox labeled "Connect my Reminders."
+2. Tap the checkbox — this triggers the system Reminders permission prompt.
+3. Grant access to proceed to the main task view.
+4. If you deny access, the app shows an instructions screen with a link to Settings. Grant access in Settings → Monotasker → Reminders → Full Access, then return to the app — it resumes automatically.
+
+There are no in-app purchases, accounts, or external servers. All data stays on device via EventKit.
+
 ## Copy direction
 - Lead with singularity (one task), not the tool (Reminders)
 - The Reminders integration is the enabler, not the headline

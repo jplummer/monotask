@@ -43,7 +43,7 @@ All animations must gate on `accessibilityReduceMotion`. Swipe gestures may repl
 - **Widgets / Lock Screen / Live Activities**: requires App Group entitlement, WidgetKit extension target in `project.yml`, shared `UserDefaults`, `WidgetCenter.shared.reloadAllTimelines()` call from `AppViewModel`.
 - **Voice Control**: VoiceOver support is complete (V1–V9). Voice Control (distinct from VoiceOver — it's motor-accessibility, lets users speak UI element names to activate them) requires all interactive elements to have unique, speakable labels. Audit: list picker button, complete/trash/shuffle/edit/add buttons, and undo toast. Most VoiceOver labels likely carry over; verify that no two visible controls share the same label at the same time.
 - **Settings screen**: beyond list switching (appearance, haptics, selection policy).
-- **Website**: a nice website that looks like it goes with the product.
+- **Website**: a marketing site that shares the app's visual language — gradient background, post-it card as the hero element, the same type palette. Single-page or minimal scroll. Should feel like opening the app, not like a generic SaaS landing page. Key sections: hero with App Store badge, one-line value prop, maybe a short "how it works" (pick a list → one task surfaces → do it), and a light/dark screenshot showcase. No feature grid, no pricing table, no testimonial carousels — the simplicity of the product should be reflected in the simplicity of the site.
 
 ### Sections smoke test
 

@@ -1,5 +1,11 @@
 # App Store Copy
 
+## Subtitle
+Let your list pick for you.
+
+## Keywords
+focus,reminders app,single task,to do,procrastination,overwhelm,one thing,choose,productivity
+
 ## Tagline
 Stop staring at your list. Start finishing it.
 

@@ -25,8 +25,9 @@ final class ScreenshotTests: XCTestCase {
     Thread.sleep(forTimeInterval: 1.0)
     snapshot("02-UndoToast")
 
-    // Open list picker
+    // Open list picker and wait for it to fully appear
     app.navigationBars.buttons.firstMatch.tap()
+    XCTAssertTrue(app.staticTexts["Weekend Projects"].waitForExistence(timeout: 3))
     snapshot("03-ListPicker")
 
     // Dismiss picker

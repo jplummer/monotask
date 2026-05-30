@@ -1,7 +1,6 @@
 # Devices for App Store screenshots
 devices([
-  "iPhone 16 Pro Max",   # 6.9" required
-  "iPhone 16 Plus",      # 6.5" required for older device support
+  "iPhone 16 Pro Max",   # 6.9" — App Store Connect scales to all smaller sizes
 ])
 
 languages(["en-US"])

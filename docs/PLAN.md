@@ -20,9 +20,11 @@ Links: [README](../README.md)
 
 Post-launch polish. All animations must gate on `accessibilityReduceMotion`. Swipe gestures may replace or supplement the icon strip — evaluate coexistence and affordance (rubber-band preview) when implementing.
 
-- [ ] **Trash**: top card slides down and fades out, revealing the new top card. Simplest of the four; start here to validate the two-card transition pattern. SwiftUI `.id(task.id)` + `.transition(.move(edge:.bottom).combined(with:.opacity))` is the likely approach.
-- [ ] **Shuffle**: top card slides away (no 3D needed), shadow removed, card slots behind the stack while fading slightly — conveys "kept, not gone." New top card is revealed underneath. Swipe left to trigger.
-- [ ] **Complete**: distinct from trash — something satisfying (checkmark flash, card folds or shrinks away). TBD. Swipe right to trigger.
+**Design process**: For each animation, first define precisely what it must communicate (e.g. "this task is gone forever" vs. "this task is deferred"), then generate several candidate expressions and evaluate them competitively before committing to an implementation. Avoid animating for visual interest alone — every motion should have a semantic job.
+
+- [ ] **Trash**: communicates permanent removal. Top card exits (direction/motion TBD via competitive review), new top card revealed. Simplest transition; start here to validate the two-card pattern. SwiftUI `.id(task.id)` + `.transition(…)` is the likely approach.
+- [ ] **Shuffle**: communicates "kept, not gone — just moved back." Top card slots behind the stack while fading slightly; new top card revealed underneath. Swipe left to trigger.
+- [ ] **Complete**: communicates satisfaction and closure — must feel distinct from trash. Candidates: checkmark flash, card folds or shrinks away, ink-stamp effect. Evaluate competitively. Swipe right to trigger.
 - [ ] **New list**: treat as a navigation push — current stack slides off left, new list's stack arrives from right, keyed on list ID change in `AppViewModel`.
 - [ ] **Add**: new card descends from above into position, keyboard rises simultaneously (coordinate with existing `keyboardHeight` up-shift).
 
@@ -33,6 +35,7 @@ Post-launch polish. All animations must gate on `accessibilityReduceMotion`. Swi
 - [ ] **EmptyListView**: confirm copy and visuals match TaskFocusView metaphor.
 - [ ] **In-place edit**: Done on title could save + dismiss (optional shortcut).
 - [ ] **Cross-cutting**: centralize spacing / corner radius tokens; haptics optional for Complete.
+- [ ] **Stable card color**: assign a card color deterministically per task so the same task always gets the same post-it color across sessions. Candidate approaches: (a) checksum of the stable `EKReminder` calendar item ID mapped into the palette index; (b) checksum of the task title (less stable — breaks on rename). Evaluate whether task grouping (see Deferred roadmap) should take precedence as the color signal when present.
 
 ### Performance remaining
 
@@ -158,7 +161,8 @@ These require a physical device with VoiceOver enabled (Settings → Accessibili
 
 ## Deferred roadmap
 
-- **Dark mode color pass**: Light and dark mode currently use independent palettes that feel unrelated. Goals: (a) derive dark gradient colors from the light palette; (b) make dark-mode card colors noticeably more vibrant; (c) revisit app icon for dark appearance. Do a side-by-side comparison before locking.
+- **Improved color scheme / dark mode**: Light and dark mode currently use independent palettes that feel unrelated. Goals: (a) derive dark gradient colors from the light palette; (b) make dark-mode card colors noticeably more vibrant; (c) revisit app icon for dark appearance; (d) reconsider the overall palette — both modes should feel considered and distinctive, not just inverted. Do a side-by-side light/dark comparison before locking. Consider in tandem with stable-card-color work (see View refinement) since both touch the palette mapping logic.
+- **Task grouping / sections**: Reminders sections are a visual concept in Reminders.app; EventKit surfaces them as `EKCalendarItem` properties (see smoke test findings). If grouping info is accessible, options: (a) display the group name as a small label on the card (provenance chip); (b) use the group as the card color signal — all tasks in a group share a color, giving the palette semantic meaning; (c) filter by group. Option (b) pairs naturally with stable-card-color work and could make the color system feel intentional rather than decorative. Investigate what EventKit actually exposes for section/group before designing.
 - **Categories**: EventKit exposes `EKCalendar` (list) but not per-reminder categories. Options: (a) use reminder notes or title prefix as a lightweight tag shown on the card; (b) wait for richer EventKit APIs; (c) maintain Monotasker-side tags in `UserDefaults` keyed by reminder id. Most likely v1 = small metadata chip on card using a prefix convention or dedicated field.
 - **Nested / subtask handling**: `EKReminder` has no public parent/subtask API. Run the [sections smoke test](#sections-smoke-test) first. Long-term: decide whether to suppress likely-header tasks, expose subtask count as a badge, or wait for Apple APIs.
 - **Priority**: weighting or visual priority cues.
@@ -166,6 +170,7 @@ These require a physical device with VoiceOver enabled (Settings → Accessibili
 - **Due dates**: "Today / overdue only" pool filter; overdue badge; caveat — completing a recurring `EKReminder` advances it rather than removing it.
 - **Recurrence**: surface cadence on card; do not delete recurring reminders.
 - **Widgets / Lock Screen / Live Activities**: requires App Group entitlement, WidgetKit extension target in `project.yml`, shared `UserDefaults`, `WidgetCenter.shared.reloadAllTimelines()` call from `AppViewModel`.
+- **Voice Control**: VoiceOver support is complete (V1–V9). Voice Control (distinct from VoiceOver — it's motor-accessibility, lets users speak UI element names to activate them) requires all interactive elements to have unique, speakable labels. Audit: list picker button, complete/trash/shuffle/edit/add buttons, and undo toast. Most VoiceOver labels likely carry over; verify that no two visible controls share the same label at the same time.
 - **Settings screen**: beyond list switching (appearance, haptics, selection policy).
 - **Website**: a nice website that look like it goes with the product
 

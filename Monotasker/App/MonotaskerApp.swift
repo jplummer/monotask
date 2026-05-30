@@ -9,6 +9,10 @@ struct MonotaskerApp: App {
     CommandLine.arguments.contains("--screenshots")
   }
 
+  static var isDarkScreenshotMode: Bool {
+    CommandLine.arguments.contains("--dark-mode")
+  }
+
   init() {
     if Self.isScreenshotMode {
       let (service, store) = MonotaskerApp.screenshotFixtures()
@@ -63,6 +67,7 @@ struct MonotaskerApp: App {
     WindowGroup {
       RootView()
         .environment(viewModel)
+        .preferredColorScheme(Self.isDarkScreenshotMode ? .dark : nil)
         .task {
           if !Self.isScreenshotMode {
             viewModel.configureAnalytics(

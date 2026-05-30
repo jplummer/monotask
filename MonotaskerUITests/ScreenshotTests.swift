@@ -9,28 +9,33 @@ final class ScreenshotTests: XCTestCase {
     continueAfterFailure = false
     app = XCUIApplication()
     setupSnapshot(app)
-    app.launchArguments = ["--screenshots"]
-    app.launch()
   }
 
-  func testScreenshots() throws {
-    // Wait for bootstrap → focused: Trash button appears only in the focused phase
+  func testLightScreenshots() throws {
+    app.launchArguments = ["--screenshots"]
+    app.launch()
+    try captureScreenshots(prefix: "Light")
+  }
+
+  func testDarkScreenshots() throws {
+    app.launchArguments = ["--screenshots", "--dark-mode"]
+    app.launch()
+    try captureScreenshots(prefix: "Dark")
+  }
+
+  private func captureScreenshots(prefix: String) throws {
     let trashButton = app.buttons["Trash"]
     XCTAssertTrue(trashButton.waitForExistence(timeout: 5))
+    snapshot("\(prefix)-01-TaskFocus")
 
-    snapshot("01-TaskFocus")
-
-    // Tap trash and wait for the undo toast animation to settle (easeInOut 0.22s)
     trashButton.tap()
     Thread.sleep(forTimeInterval: 1.0)
-    snapshot("02-UndoToast")
+    snapshot("\(prefix)-02-UndoToast")
 
-    // Open list picker and wait for it to fully appear
     app.navigationBars.buttons.firstMatch.tap()
     XCTAssertTrue(app.staticTexts["Weekend Projects"].waitForExistence(timeout: 3))
-    snapshot("03-ListPicker")
+    snapshot("\(prefix)-03-ListPicker")
 
-    // Dismiss picker
     app.tap()
   }
 }

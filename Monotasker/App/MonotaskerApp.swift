@@ -51,9 +51,11 @@ struct MonotaskerApp: App {
       calendars: calendars,
       reminders: [listID: tasks]
     )
-    // Pre-seed selection so bootstrap resolves to Weekend Projects immediately.
+    // Pre-seed selection so bootstrap resolves to Weekend Projects with a fixed task.
+    // Pinning "t1" means color index 0 (warm cream) — avoids pink clashing with the gradient.
     let store = SelectionStore(defaults: UserDefaults(suiteName: "screenshot") ?? .standard)
     store.selectedListIdentifier = listID
+    store.setReminderID("t1", forList: listID)
     return (service, store)
   }
 

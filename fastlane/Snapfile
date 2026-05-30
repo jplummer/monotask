@@ -1,6 +1,6 @@
 # Devices for App Store screenshots
 devices([
-  "iPhone 16 Plus",      # 1290×2796 — accepted by App Store Connect
+  "iPhone 15 Plus",      # 1284×2778 — accepted by App Store Connect
 ])
 
 languages(["en-US"])

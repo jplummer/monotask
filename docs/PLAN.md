@@ -8,17 +8,9 @@ Links: [README](../README.md)
 
 ## What's next
 
-### Ship-ready polish
+### Animations — v1.1 priority
 
-- [x] **Error UX**: Friendly per-situation messages replace `localizedDescription`; alert title removed so message stands alone; load-after-add failure silenced (self-healing) but tracked; all six error sites report to TelemetryDeck.
-- [x] **Scene lifecycle**: T1–T6 all pass on device. `sceneDidBecomeActive` handles permission grant/revocation correctly; bootstrap routes `.denied`+stored-list to `.permissionDenied` (not `.onboarding`); race between sceneActive and bootstrap init Task resolved via `initialBootstrapRan` guard.
-- [x] **Device matrix**: Snapshot tests cover SE / iPhone 13 / 13 Pro Max × light/dark for all four phases (onboarding, permissionDenied, emptyList, focused) including long-content overflow. Remaining device-only concerns (toolbar behavior, sheet detents, keyboard interactions) are covered by scene lifecycle manual tests (T1–T6).
-- [x] **Full VoiceOver traversal order audit** + large-text layout; V1–V9 all pass on device.
-- [x] **PermissionInstructionsView copy**: iOS grants Reminders access all-or-nothing — there is no user-visible write-only state to distinguish. Current copy ("open Settings and allow Reminders access") is correct.
-
-### Animations and swipe interactions
-
-Post-launch polish. All animations must gate on `accessibilityReduceMotion`. Swipe gestures may replace or supplement the icon strip — evaluate coexistence and affordance (rubber-band preview) when implementing.
+All animations must gate on `accessibilityReduceMotion`. Swipe gestures may replace or supplement the icon strip — evaluate coexistence and affordance (rubber-band preview) when implementing.
 
 **Design process**: For each animation, first define precisely what it must communicate (e.g. "this task is gone forever" vs. "this task is deferred"), then generate several candidate expressions and evaluate them competitively before committing to an implementation. Avoid animating for visual interest alone — every motion should have a semantic job.
 
@@ -37,21 +29,33 @@ Post-launch polish. All animations must gate on `accessibilityReduceMotion`. Swi
 - [ ] **Cross-cutting**: centralize spacing / corner radius tokens; haptics optional for Complete.
 - [ ] **Stable card color**: assign a card color deterministically per task so the same task always gets the same post-it color across sessions. Candidate approaches: (a) checksum of the stable `EKReminder` calendar item ID mapped into the palette index; (b) checksum of the task title (less stable — breaks on rename). Evaluate whether task grouping (see Deferred roadmap) should take precedence as the color signal when present.
 
-### Performance remaining
+---
 
-- [x] Remove `[TIMING]` instrumentation (`MonotaskerTiming.swift`, prints in `MonotaskerApp.swift` and `AppViewModel.swift`) — cold-launch confirmed stable.
+## Deferred roadmap
 
-### App Store and marketing assets
+- **Improved color scheme / dark mode**: Light and dark mode currently use independent palettes that feel unrelated. Goals: (a) derive dark gradient colors from the light palette; (b) make dark-mode card colors noticeably more vibrant; (c) revisit app icon for dark appearance; (d) reconsider the overall palette — both modes should feel considered and distinctive, not just inverted. Do a side-by-side light/dark comparison before locking. Consider in tandem with stable-card-color work (see View refinement) since both touch the palette mapping logic.
+- **Task grouping / sections**: Reminders sections are a visual concept in Reminders.app; EventKit surfaces them as `EKCalendarItem` properties (see smoke test findings). If grouping info is accessible, options: (a) display the group name as a small label on the card (provenance chip); (b) use the group as the card color signal — all tasks in a group share a color, giving the palette semantic meaning; (c) filter by group. Option (b) pairs naturally with stable-card-color work and could make the color system feel intentional rather than decorative. Investigate what EventKit actually exposes for section/group before designing.
+- **Categories**: EventKit exposes `EKCalendar` (list) but not per-reminder categories. Options: (a) use reminder notes or title prefix as a lightweight tag shown on the card; (b) wait for richer EventKit APIs; (c) maintain Monotasker-side tags in `UserDefaults` keyed by reminder id. Most likely v1 = small metadata chip on card using a prefix convention or dedicated field.
+- **Nested / subtask handling**: `EKReminder` has no public parent/subtask API. Long-term: decide whether to suppress likely-header tasks, expose subtask count as a badge, or wait for Apple APIs.
+- **Priority**: weighting or visual priority cues.
+- **Due dates**: "Today / overdue only" pool filter; overdue badge; caveat — completing a recurring `EKReminder` advances it rather than removing it.
+- **Recurrence**: surface cadence on card; do not delete recurring reminders.
+- **Widgets / Lock Screen / Live Activities**: requires App Group entitlement, WidgetKit extension target in `project.yml`, shared `UserDefaults`, `WidgetCenter.shared.reloadAllTimelines()` call from `AppViewModel`.
+- **Voice Control**: VoiceOver support is complete (V1–V9). Voice Control (distinct from VoiceOver — it's motor-accessibility, lets users speak UI element names to activate them) requires all interactive elements to have unique, speakable labels. Audit: list picker button, complete/trash/shuffle/edit/add buttons, and undo toast. Most VoiceOver labels likely carry over; verify that no two visible controls share the same label at the same time.
+- **Settings screen**: beyond list switching (appearance, haptics, selection policy).
+- **Website**: a nice website that looks like it goes with the product.
 
-**Last** — after UI and branding settle.
+### Sections smoke test
 
-- [x] Screenshots (1284×2778; light + dark; 3 screens each via fastlane snapshot on iPhone 14 Plus)
-- [x] App Store copy: subtitle, description, keywords, What's New, App Review notes — see `docs/appstore-copy.md`
-- [x] Privacy Policy and Support URLs — see `docs/appstore-copy.md`
-- [x] Upload screenshots to App Store Connect
-- [x] Archive and upload build (Product → Archive → Distribute → App Store Connect)
-- [x] Fill in age rating, pricing, version release type
-- [x] Submit for review
+Before implementing any sections-aware behavior, verify what EventKit returns from a sectioned list.
+
+1. In Reminders.app, add sections to the Monotasker list and add tasks inside each.
+2. Run Monotasker and shuffle several times — note whether section header names appear as tasks.
+3. Document findings in `EventKitRemindersService` for future contributors.
+
+- [x] Run manual smoke test
+- [x] Document findings – section headers are not offered. It isn't clear yet if they come in the info bundle with the task or not
+- [x] If section headers appear: decide on filter strategy and add a unit test
 
 ---
 
@@ -151,43 +155,6 @@ These require a physical device with VoiceOver enabled (Settings → Accessibili
 
 ---
 
-## Partial / in progress
-
-- **Errors**: `userMessage` alert with friendly messages; most unrecoverable errors still OK-only.
-- **Accessibility**: Reduce Motion gated, VoiceOver labels on all controls. Full traversal order audit and large-text layout testing still needed.
-- **Phase transitions**: crossfades implemented; continued polish in the ship-ready pass.
-
----
-
-## Deferred roadmap
-
-- **Improved color scheme / dark mode**: Light and dark mode currently use independent palettes that feel unrelated. Goals: (a) derive dark gradient colors from the light palette; (b) make dark-mode card colors noticeably more vibrant; (c) revisit app icon for dark appearance; (d) reconsider the overall palette — both modes should feel considered and distinctive, not just inverted. Do a side-by-side light/dark comparison before locking. Consider in tandem with stable-card-color work (see View refinement) since both touch the palette mapping logic.
-- **Task grouping / sections**: Reminders sections are a visual concept in Reminders.app; EventKit surfaces them as `EKCalendarItem` properties (see smoke test findings). If grouping info is accessible, options: (a) display the group name as a small label on the card (provenance chip); (b) use the group as the card color signal — all tasks in a group share a color, giving the palette semantic meaning; (c) filter by group. Option (b) pairs naturally with stable-card-color work and could make the color system feel intentional rather than decorative. Investigate what EventKit actually exposes for section/group before designing.
-- **Categories**: EventKit exposes `EKCalendar` (list) but not per-reminder categories. Options: (a) use reminder notes or title prefix as a lightweight tag shown on the card; (b) wait for richer EventKit APIs; (c) maintain Monotasker-side tags in `UserDefaults` keyed by reminder id. Most likely v1 = small metadata chip on card using a prefix convention or dedicated field.
-- **Nested / subtask handling**: `EKReminder` has no public parent/subtask API. Run the [sections smoke test](#sections-smoke-test) first. Long-term: decide whether to suppress likely-header tasks, expose subtask count as a badge, or wait for Apple APIs.
-- **Priority**: weighting or visual priority cues.
-- **Sections / grouped tasks**: see [Sections smoke test](#sections-smoke-test).
-- **Due dates**: "Today / overdue only" pool filter; overdue badge; caveat — completing a recurring `EKReminder` advances it rather than removing it.
-- **Recurrence**: surface cadence on card; do not delete recurring reminders.
-- **Widgets / Lock Screen / Live Activities**: requires App Group entitlement, WidgetKit extension target in `project.yml`, shared `UserDefaults`, `WidgetCenter.shared.reloadAllTimelines()` call from `AppViewModel`.
-- **Voice Control**: VoiceOver support is complete (V1–V9). Voice Control (distinct from VoiceOver — it's motor-accessibility, lets users speak UI element names to activate them) requires all interactive elements to have unique, speakable labels. Audit: list picker button, complete/trash/shuffle/edit/add buttons, and undo toast. Most VoiceOver labels likely carry over; verify that no two visible controls share the same label at the same time.
-- **Settings screen**: beyond list switching (appearance, haptics, selection policy).
-- **Website**: a nice website that look like it goes with the product
-
-### Sections smoke test
-
-Before implementing any sections-aware behavior, verify what EventKit returns from a sectioned list.
-
-1. In Reminders.app, add sections to the Monotasker list and add tasks inside each.
-2. Run Monotasker and shuffle several times — note whether section header names appear as tasks.
-3. Document findings in `EventKitRemindersService` for future contributors.
-
-- [x] Run manual smoke test
-- [x] Document findings – section headers are not offered. It isn't clear yet if they come in the info bundle with the task or not
-- [x] If section headers appear: decide on filter strategy and add a unit test
-
----
-
 ## Done
 
 - **Core loop**: EventKit full-access path, pool fetch, random selection + shuffle, complete, trash, inline edit, inline add, empty list, list setup, persisted list + reminder ids.
@@ -201,6 +168,7 @@ Before implementing any sections-aware behavior, verify what EventKit returns fr
 - **Per-list reminder memory**: 50-entry LRU map in `SelectionStore`; one-time migration from legacy format.
 - **Analytics**: TelemetryDeck (pseudonymous — SHA-256 hashed per-install UUID, no PII); all core + onboarding events wired; deferred init post-first-frame to stay off cold-launch path.
 - **Accessibility — Reduce Motion**: all animations gated; card tilt off; toasts VoiceOver-accessible.
+- **Accessibility — VoiceOver**: full traversal order audit + large-text layout; V1–V9 all pass on device.
 - **Tests**: 111 tests across 14 groups; all passing.
 - **App icon**: light, dark, and tinted variants via Icon Composer.
 - **Branding**: gradient palette and post-it personality locked.
@@ -210,6 +178,12 @@ Before implementing any sections-aware behavior, verify what EventKit returns fr
 - **Keyboard-stable card positioning**: card stays fixed while keyboard animates; equidistant between nav bar and keyboard top using `PostItCardLayout.cardRatio`.
 - **Add-card color distinctness**: add card always uses a different palette entry than the current front card.
 - **Cold-launch fix**: `observationTask` deferred to post-permission (accessing `Notification.Name.EKEventStoreChanged` before `remindd` was running blocked the main actor for 30+ seconds on fresh install). TelemetryDeck also moved off `App.init()` critical path.
+- **Error UX**: friendly per-situation messages replace `localizedDescription`; alert title removed; load-after-add failure silenced (self-healing) but tracked; all six error sites report to TelemetryDeck.
+- **Scene lifecycle**: T1–T6 all pass on device. `sceneDidBecomeActive` handles permission grant/revocation correctly; race between sceneActive and bootstrap resolved via `initialBootstrapRan` guard.
+- **Device matrix**: snapshot tests cover SE / iPhone 13 / 13 Pro Max × light/dark for all four phases including long-content overflow.
+- **PermissionInstructionsView copy**: iOS grants Reminders access all-or-nothing — current copy is correct.
+- **Performance instrumentation removed**: `[TIMING]` instrumentation (`MonotaskerTiming.swift`) removed; cold-launch confirmed stable.
+- **App Store submission**: screenshots (1284×2778, light + dark, fastlane), copy, keywords, What's New, App Review notes, Privacy Policy and Support URLs — see `docs/appstore-copy.md`. Build archived and submitted for review.
 
 ---
 

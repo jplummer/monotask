@@ -52,5 +52,10 @@ One task at a time, from the Reminders you already have.
 ## Onboarding CTA
 Connect my Reminders
 
+## URLs
+
+- **Privacy Policy**: https://jplummer.github.io/monotasker/public/privacy
+- **Support**: https://jplummer.github.io/monotasker/public/terms
+
 ## Apple Developer portal — App ID description (internal, not public)
 Monotasker iOS App

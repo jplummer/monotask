@@ -4,9 +4,5 @@ platform :ios do
   desc "Generate App Store screenshots"
   lane :screenshots do
     snapshot
-    # Resize from iPhone 16 Plus (1290×2796) to the App Store required 1284×2778
-    Dir.glob("./fastlane/screenshots/**/*.png").each do |path|
-      sh "sips --resampleHeightWidth 2778 1284 '#{File.expand_path(path)}' --out '#{File.expand_path(path)}'"
-    end
   end
 end

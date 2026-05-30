@@ -7,7 +7,7 @@ Let your list pick for you.
 focus,reminders app,single task,to do,procrastination,overwhelm,one thing,choose,productivity
 
 ## Tagline
-Stop staring at your list. Start finishing it.
+Stop staring at your list. Start checking things off.
 
 ## Description
 

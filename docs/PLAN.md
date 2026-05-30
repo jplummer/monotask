@@ -42,11 +42,13 @@ Post-launch polish. All animations must gate on `accessibilityReduceMotion`. Swi
 
 **Last** — after UI and branding settle.
 
-- [ ] Screenshots (required sizes; dark + light)
-- [ ] App Store copy: subtitle, description, keywords, What's New template; align with onboarding copy for consistency
-- [ ] Privacy questionnaire; Privacy Policy URL if required
-- [ ] Support / marketing URLs
-- [ ] App Review notes for the permission flow
+- [x] Screenshots (1284×2778; light + dark; 3 screens each via fastlane snapshot on iPhone 14 Plus)
+- [x] App Store copy: subtitle, description, keywords, What's New, App Review notes — see `docs/appstore-copy.md`
+- [x] Privacy Policy and Support URLs — see `docs/appstore-copy.md`
+- [x] Upload screenshots to App Store Connect
+- [x] Archive and upload build (Product → Archive → Distribute → App Store Connect)
+- [x] Fill in age rating, pricing, version release type
+- [x] Submit for review
 
 ---
 
@@ -165,6 +167,7 @@ These require a physical device with VoiceOver enabled (Settings → Accessibili
 - **Recurrence**: surface cadence on card; do not delete recurring reminders.
 - **Widgets / Lock Screen / Live Activities**: requires App Group entitlement, WidgetKit extension target in `project.yml`, shared `UserDefaults`, `WidgetCenter.shared.reloadAllTimelines()` call from `AppViewModel`.
 - **Settings screen**: beyond list switching (appearance, haptics, selection policy).
+- **Website**: a nice website that look like it goes with the product
 
 ### Sections smoke test
 
@@ -174,9 +177,9 @@ Before implementing any sections-aware behavior, verify what EventKit returns fr
 2. Run Monotasker and shuffle several times — note whether section header names appear as tasks.
 3. Document findings in `EventKitRemindersService` for future contributors.
 
-- [ ] Run manual smoke test
-- [ ] Document findings
-- [ ] If section headers appear: decide on filter strategy and add a unit test
+- [x] Run manual smoke test
+- [x] Document findings – section headers are not offered. It isn't clear yet if they come in the info bundle with the task or not
+- [x] If section headers appear: decide on filter strategy and add a unit test
 
 ---
 
@@ -193,7 +196,7 @@ Before implementing any sections-aware behavior, verify what EventKit returns fr
 - **Per-list reminder memory**: 50-entry LRU map in `SelectionStore`; one-time migration from legacy format.
 - **Analytics**: TelemetryDeck (pseudonymous — SHA-256 hashed per-install UUID, no PII); all core + onboarding events wired; deferred init post-first-frame to stay off cold-launch path.
 - **Accessibility — Reduce Motion**: all animations gated; card tilt off; toasts VoiceOver-accessible.
-- **Tests**: 104 tests across 14 groups; all passing.
+- **Tests**: 111 tests across 14 groups; all passing.
 - **App icon**: light, dark, and tinted variants via Icon Composer.
 - **Branding**: gradient palette and post-it personality locked.
 - **App category**: `public.app-category.productivity`.

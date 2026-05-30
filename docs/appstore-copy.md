@@ -9,19 +9,21 @@ focus,reminders app,single task,to do,procrastination,overwhelm,one thing,choose
 ## Tagline
 Stop staring at your list. Start finishing it.
 
-## Description (draft)
+## Description
 
-Stop staring at your list. Start finishing it.
+You have a list. You have time. You're still not checking things off — because picking what to do next is its own obstacle.
 
-Monotasker shows you one task at a time — randomly picked from your Apple Reminders — so you can stop scrolling and start doing.
+Monotasker removes that obstacle. It connects to your Apple Reminders and shows you one task, chosen at random. Not a dashboard. Not a priority matrix. Just the next thing.
 
-No new lists to maintain. No system to learn. Monotasker connects to the Reminders you already have and puts one in front of you. Do it, skip it, or toss it. Then get the next one.
+Do it, skip it, or toss it. Monotasker picks another one and waits.
 
-**One task. No overwhelm.**
-- Randomly surfaces a single incomplete reminder so you're never choosing what to do next
-- Complete or delete with a tap — with a 4-second undo if you change your mind
-- Shuffle to a different task when you're not ready for this one
-- Works with any Reminders list on your device
+It works because you're not building a new system — you're using the list you already have, with one small change: it chooses one thing for you to focus on. Just one thing. And it keeps showing you that same task every time you open the app — until you do it, or decide you're not doing it.
+
+- Surfaces one random incomplete task from any Reminders list
+- Returns to the same task every time you open the app — until you act on it
+- Complete or delete with a tap — 4-second undo if you change your mind
+- Shuffle to a different task when you're not feeling this one
+- No new lists, no new habits, no new system to learn
 
 ## Copy direction
 - Lead with singularity (one task), not the tool (Reminders)

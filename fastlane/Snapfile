@@ -1,6 +1,6 @@
 # Devices for App Store screenshots
 devices([
-  "iPhone 16 Pro Max",   # 6.9" — App Store Connect scales to all smaller sizes
+  "iPhone 16 Plus",      # 1290×2796 — accepted by App Store Connect
 ])
 
 languages(["en-US"])

@@ -90,15 +90,17 @@ struct TaskFocusView: View {
         if isEditing { cancelInlineEdit() }
         if isAdding { cancelInlineAdd() }
         frontCardAngle = Double.random(in: -2.5...2.5)
+        // The outgoing card already faded to 0 opacity. Fade the new card in at its normal
+        // position — no position animation, the stack was already there underneath.
         if !reduceMotion {
           cardAnimOffset = .zero
           cardAnimScale = 1.0
-          cardAnimInYOffset = 20
-          cardAnimOpacity = 0.5
-          withAnimation(.spring(response: 0.32, dampingFraction: 0.75)) {
-            cardAnimInYOffset = 0
+          cardAnimInYOffset = 0
+          withAnimation(.easeOut(duration: 0.14)) {
             cardAnimOpacity = 1.0
           }
+        } else {
+          cardAnimOpacity = 1.0
         }
         // If the add toast is about to announce, wait for it to finish before reading the task.
         if hasAppeared && !model.showTaskAddedToast { announceCurrentTask() }
@@ -282,7 +284,8 @@ struct TaskFocusView: View {
       cardAnimationOffset: cardAnimOffset,
       cardAnimationScale: cardAnimScale,
       cardAnimationOpacity: cardAnimOpacity,
-      cardAnimationInYOffset: cardAnimInYOffset
+      cardAnimationInYOffset: cardAnimInYOffset,
+      incomingColorIndex: model.shuffleIncomingColorIndex
     )
     postItFloatingChrome(postIt: postIt)
       .frame(width: size.width, height: size.height)

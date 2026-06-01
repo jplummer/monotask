@@ -53,6 +53,10 @@ final class AppViewModel {
   /// Incremented each time a shuffle begins. Views observe this to start the outgoing animation
   /// before currentTask changes.
   var shuffleCount: Int = 0
+  /// Color palette index of the task that will become the new front card after the shuffle animation.
+  /// Set before the animation starts so the topmost background card can show the correct color.
+  /// Stays set after currentTask changes to avoid a color jump during the incoming fade-in.
+  var shuffleIncomingColorIndex: Int? = nil
 
   /// ID of the task currently in the undo window, filtered out of pool reloads.
   private var pendingTaskId: String? = nil
@@ -201,9 +205,12 @@ final class AppViewModel {
     guard let current = currentTask else { return }
     let result = selectionPolicy.pick(from: pool, excluding: current.id)
     guard let task = result.task else { return }
+    shuffleIncomingColorIndex = pool.firstIndex(where: { $0.id == task.id })
     shuffleCount += 1
     try? await Task.sleep(for: .milliseconds(260))
     currentTask = task
+    // shuffleIncomingColorIndex intentionally left set so the background card color stays
+    // correct during the incoming fade-in; cleared at the start of the next shuffle.
     guard let listId = activeListSummary?.id else { return }
     selectionStore.setReminderID(task.id, forList: listId)
     analytics?.record("task.reroll")

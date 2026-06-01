@@ -77,6 +77,9 @@ struct PostItCard: View {
   var cardAnimationScale: CGFloat = 1.0
   var cardAnimationOpacity: Double = 1.0
   var cardAnimationInYOffset: CGFloat = 0
+  /// When set, the topmost background card uses this palette index instead of its random color,
+  /// so the peeking card matches the task that is about to become the front card.
+  var incomingColorIndex: Int? = nil
 
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   /// Randomly generated per-card jitter, stable for the view's lifetime.
@@ -130,11 +133,12 @@ struct PostItCard: View {
 
   private var backgroundCards: [BackgroundCard] {
     cardJitter.enumerated().map { i, jitter in
-      BackgroundCard(
+      let colorIdx = (i == 0) ? (incomingColorIndex ?? jitter.colorIdx) : jitter.colorIdx
+      return BackgroundCard(
         id: i,
         angle: jitter.angle,
         offset: CGSize(width: jitter.dx, height: jitter.dy),
-        color: DesignColors.postItColor(at: jitter.colorIdx)
+        color: DesignColors.postItColor(at: colorIdx)
       )
     }
   }

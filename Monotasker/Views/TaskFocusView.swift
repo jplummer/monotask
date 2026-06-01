@@ -286,21 +286,27 @@ struct TaskFocusView: View {
       outgoingAnimOpacity: outgoingAnimOpacity
     )
     let isShuffling = model.shuffleOutgoingTask != nil
-    postItFloatingChrome(postIt: postIt)
+    // During shuffle, icons use the old card's angle so they stay physically attached to
+    // the outgoing card. The same animated state values that drive the outgoing overlay
+    // also drive the chrome, so the icons travel with the old card for free.
+    let chromeAngle = isShuffling ? outgoingCardAngle : frontCardAngle
+    postItFloatingChrome(postIt: postIt, cardAngle: chromeAngle)
       .frame(width: size.width, height: size.height)
       .allowsHitTesting(!isEditing && !isShuffling)
-      .opacity(isEditing || isShuffling ? 0 : 1)
+      .opacity(isEditing ? 0 : (isShuffling ? outgoingAnimOpacity : 1))
+      .offset(isShuffling ? outgoingAnimOffset : .zero)
+      .scaleEffect(isShuffling ? outgoingAnimScale : 1.0)
       .animation(reduceMotion ? .none : .easeInOut(duration: 0.15), value: isEditing)
       .animation(.none, value: isShuffling)
   }
 
-  private func postItFloatingChrome(postIt: (cx: CGFloat, cy: CGFloat, half: CGFloat)) -> some View {
+  private func postItFloatingChrome(postIt: (cx: CGFloat, cy: CGFloat, half: CGFloat), cardAngle: Double) -> some View {
     let cx = postIt.cx
     let cy = postIt.cy
     let half = postIt.half
     let iconHit: CGFloat = 44
     let inset: CGFloat = 6
-    let angle = reduceMotion ? 0.0 : frontCardAngle
+    let angle = reduceMotion ? 0.0 : cardAngle
 
     // Rotate the on-card icon anchor points with the card's tilt.
     let checkboxPos = PostItCardLayout.rotatedPoint(

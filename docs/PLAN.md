@@ -10,24 +10,25 @@ Links: [README](../README.md)
 
 ### Animations — v1.1 priority
 
-All animations must gate on `accessibilityReduceMotion`. Swipe gestures may replace or supplement the icon strip — evaluate coexistence and affordance (rubber-band preview) when implementing.
+All animations must gate on `accessibilityReduceMotion` (crossfade fallback). Gestures are a separate concern — animations should stand alone before gestures are layered on. The stack is honest: 1 task = 1 visible card, 2 tasks = 2, etc. (capped at a reasonable maximum). Animations should reflect the actual stack depth, so completing the last task reveals nothing, and shuffling with 2 cards shows both.
 
-**Design process**: For each animation, first define precisely what it must communicate (e.g. "this task is gone forever" vs. "this task is deferred"), then generate several candidate expressions and evaluate them competitively before committing to an implementation. Avoid animating for visual interest alone — every motion should have a semantic job.
+The system uses five motion primitives, each owned by one action:
 
-- [ ] **Trash**: communicates permanent removal. Top card exits (direction/motion TBD via competitive review), new top card revealed. Simplest transition; start here to validate the two-card pattern. SwiftUI `.id(task.id)` + `.transition(…)` is the likely approach.
-- [ ] **Shuffle**: communicates "kept, not gone — just moved back." Top card slots behind the stack while fading slightly; new top card revealed underneath. Swipe left to trigger.
-- [ ] **Complete**: communicates satisfaction and closure — must feel distinct from trash. Candidates: checkmark flash, card folds or shrinks away, ink-stamp effect. Evaluate competitively. Swipe right to trigger.
-- [ ] **New list**: treat as a navigation push — current stack slides off left, new list's stack arrives from right, keyed on list ID change in `AppViewModel`.
-- [ ] **Add**: new card descends from above into position, keyboard rises simultaneously (coordinate with existing `keyboardHeight` up-shift).
+- **Horizontal swap** — list switch (existing list): old stack slides off right, new stack arrives from left simultaneously, continuous motion as if both stacks are on the same surface sliding under view. No pause between the two.
+- **Horizontal swap + Add** — list switch (new empty list): same horizontal swap, then immediately the Add animation opens the new task card. An empty list is a momentary state the user shouldn't rest in.
+- **Down-to-bottom-slot** — shuffle: the top card slides down along the stack's own offset geometry, coming to rest as the bottom peek of the visible stack. The new top card (which was second) comes forward. Both movements are trackable simultaneously because the outgoing card ends up in a specific visible location — the bottom slot — not somewhere behind the incoming card.
+- **Downward exit** — trash: card slides down and off-screen with a clean ease-in curve (no spring, no overshoot). Gravity and disposal. Undo toast handles the safety net; the animation is allowed to be honest.
+- **Upward float-fade** — complete: card drifts upward ~20–30pt while fading to zero opacity. Not a sharp slide — a float and dissolve. "Accomplished things don't need a destination." The upward drift signals positive resolution without conflicting with the horizontal swap direction.
+- **Keyboard-coordinated descent** — add: the add card is already on screen above the keyboard while the user types. When the user finishes and the keyboard begins sliding down, the card flows with it into its correct stack position — front of stack if the pool was 0–1 when add began (new task gets focus), back of stack if pool was 2+ (joins the queue silently). The keyboard dismiss is the animation trigger; no separate beat.
 
 ### View and behavior refinement
 
-- [ ] **RootView**: ensure one alert at a time if `userMessage` and another modal could conflict.
-- [ ] **TaskFocusView / PostItCard**: typography hierarchy; toast placement vs keyboard and safe area; optional haptic on undo commit.
-- [ ] **EmptyListView**: confirm copy and visuals match TaskFocusView metaphor.
-- [ ] **In-place edit**: Done on title could save + dismiss (optional shortcut).
-- [ ] **Cross-cutting**: centralize spacing / corner radius tokens; haptics optional for Complete.
-- [ ] **Stable card color**: assign a card color deterministically per task so the same task always gets the same post-it color across sessions. Candidate approaches: (a) checksum of the stable `EKReminder` calendar item ID mapped into the palette index; (b) checksum of the task title (less stable — breaks on rename). Evaluate whether task grouping (see Deferred roadmap) should take precedence as the color signal when present.
+- **RootView**: ensure one alert at a time if `userMessage` and another modal could conflict.
+- **TaskFocusView / PostItCard**: typography hierarchy; toast placement vs keyboard and safe area; optional haptic on undo commit.
+- **EmptyListView**: confirm copy and visuals match TaskFocusView metaphor.
+- **In-place edit**: Done on title could save + dismiss (optional shortcut).
+- **Cross-cutting**: centralize spacing / corner radius tokens; haptics optional for Complete.
+- **Stable card color**: assign a card color deterministically per task so the same task always gets the same post-it color across sessions. Candidate approaches: (a) checksum of the stable `EKReminder` calendar item ID mapped into the palette index; (b) checksum of the task title (less stable — breaks on rename). Evaluate whether task grouping (see Deferred roadmap) should take precedence as the color signal when present.
 
 ---
 
@@ -43,7 +44,7 @@ All animations must gate on `accessibilityReduceMotion`. Swipe gestures may repl
 - **Widgets / Lock Screen / Live Activities**: requires App Group entitlement, WidgetKit extension target in `project.yml`, shared `UserDefaults`, `WidgetCenter.shared.reloadAllTimelines()` call from `AppViewModel`.
 - **Voice Control**: VoiceOver support is complete (V1–V9). Voice Control (distinct from VoiceOver — it's motor-accessibility, lets users speak UI element names to activate them) requires all interactive elements to have unique, speakable labels. Audit: list picker button, complete/trash/shuffle/edit/add buttons, and undo toast. Most VoiceOver labels likely carry over; verify that no two visible controls share the same label at the same time.
 - **Settings screen**: beyond list switching (appearance, haptics, selection policy).
-- **Website**: a marketing site that shares the app's visual language — gradient background, post-it card as the hero element, the same type palette. Single-page or minimal scroll. Should feel like opening the app, not like a generic SaaS landing page. Key sections: hero with App Store badge, one-line value prop, maybe a short "how it works" (pick a list → one task surfaces → do it), and a light/dark screenshot showcase. No feature grid, no pricing table, no testimonial carousels — the simplicity of the product should be reflected in the simplicity of the site.
+- **Website**: a nice website that looks like it goes with the product.
 
 ### Sections smoke test
 
@@ -53,9 +54,9 @@ Before implementing any sections-aware behavior, verify what EventKit returns fr
 2. Run Monotasker and shuffle several times — note whether section header names appear as tasks.
 3. Document findings in `EventKitRemindersService` for future contributors.
 
-- [x] Run manual smoke test
-- [x] Document findings – section headers are not offered. It isn't clear yet if they come in the info bundle with the task or not
-- [x] If section headers appear: decide on filter strategy and add a unit test
+- Run manual smoke test
+- Document findings – section headers are not offered. It isn't clear yet if they come in the info bundle with the task or not
+- If section headers appear: decide on filter strategy and add a unit test
 
 ---
 
@@ -66,48 +67,62 @@ Before implementing any sections-aware behavior, verify what EventKit returns fr
 These require a physical device (or simulator with real permission flow). Each test is listed with setup, steps, and expected result. Run after any change to `AppViewModel`, `MonotaskerApp`, or EventKit interaction.
 
 **T1 — Grant permission from Settings (was permissionDenied)**
+
 1. Fresh install or revoke Reminders access in Settings → Monotasker → Reminders = None.
 2. Launch Monotasker. Tap the onboarding checkbox → deny permission when prompted.
 3. Confirm app shows the ghost-card "Reminders access needed" screen.
 4. Without killing the app, open Settings → Monotasker → Reminders → set to Full Access.
 5. Return to Monotasker.
+
 - **Expect**: App detects the change, runs bootstrap, transitions to the focused task screen (or list picker if no list resolved).
 
 **T2 — Revoke permission while app is in use**
+
 1. Launch Monotasker with full Reminders access. Confirm a task is visible.
 2. Without killing the app, open Settings → Monotasker → Reminders → set to None.
 3. Return to Monotasker.
+
 - **Expect**: App transitions to the permission instructions screen. No crash, no stale task shown.
 
 **T3 — Return from Reminders.app after editing a task**
+
 1. Launch Monotasker. Note the task title shown.
 2. Without killing the app, open Reminders.app and change the title of that task.
 3. Return to Monotasker.
+
 - **Expect**: Card updates to reflect the new title (EKEventStoreChanged fires on foreground return).
 
 **T4 — Return from Reminders.app after deleting the current task**
+
 1. Launch Monotasker with ≥2 tasks. Note the task shown.
 2. Open Reminders.app and delete that task (not all tasks).
 3. Return to Monotasker.
+
 - **Expect**: A different task is shown; no alert about "task not found".
 
 **T5 — Return from Reminders.app after deleting the entire list**
+
 1. Launch Monotasker. Confirm a task is visible.
 2. Open Reminders.app and delete the Monotasker list entirely.
 3. Return to Monotasker.
+
 - **Expect**: App shows the list picker (`.listSetup` phase). No crash.
 
 **T6 — Undo window survives a brief background**
+
 1. Launch Monotasker with ≥2 tasks.
 2. Tap Trash on a task — the undo toast appears (4-second window).
 3. Immediately home-screen the app and wait ~1 second, then return.
 4. Observe whether the undo toast is still showing or has committed.
+
 - **Expect**: If < 4s elapsed (wall clock), undo toast still visible. If ≥ 4s, task is gone and pool reloaded.
 
 **T7 — EKEventStoreChanged fires after iCloud sync**
+
 1. On Device A, launch Monotasker with a shared iCloud Reminders list.
 2. On Device B (or iCloud web), add a task to the same list.
 3. Wait for sync to propagate, or wait for Device A to receive the notification.
+
 - **Expect**: Pool reloads within a few seconds; new task appears in shuffle rotation.
 
 ### VoiceOver manual tests
@@ -115,42 +130,61 @@ These require a physical device (or simulator with real permission flow). Each t
 These require a physical device with VoiceOver enabled (Settings → Accessibility → VoiceOver). Run after any change to view structure, accessibility labels, or hints. Enable VoiceOver before launching the app; use single-finger swipe right/left to move focus, double-tap to activate.
 
 **V1 — Onboarding traversal**
+
 1. Fresh install (or revoke + relaunch). VoiceOver should land on the card.
+
 - **Expect**: Focus moves in order: card title/description text → checkbox button ("Connect my Reminders"). No orphaned or unreachable elements. Checkbox hint reads aloud.
 
 **V2 — Permission denied screen**
+
 1. Deny permission at the onboarding prompt.
+
 - **Expect**: Focus order: lock icon is hidden from VoiceOver → heading ("Reminders access needed") → body text → "Open Settings" button with hint. No duplicate or inaccessible elements.
 
 **V3 — Focused task screen traversal**
+
 1. With a task visible, swipe through all elements.
+
 - **Expect**: Focus order: list picker button (nav bar) → task title → task notes (if present) → complete checkbox (upper-left, "Mark complete") → edit button ("Edit task") → shuffle button ("Shuffle") → trash button ("Trash"). Card tilt does not affect focus order.
 
 **V4 — Complete and trash with undo (2+ tasks)**
+
 1. With ≥2 tasks, double-tap Complete.
+
 - **Expect**: Undo toast announced by VoiceOver. Focus moves to toast; "Undo" button is reachable and activatable. Toast dismisses after 4 seconds and focus returns to the new task.
 
-2. Repeat with Trash.
+1. Repeat with Trash.
+
 - **Expect**: Same behavior.
 
 **V5 — Add task**
+
 1. Double-tap the add button (pencil / below card).
+
 - **Expect**: Add card appears; focus moves to the title text field automatically. Keyboard accessible. Done/submit action reachable. "Task added." toast announced after save.
 
 **V6 — Inline edit**
+
 1. With a task visible, double-tap the edit button (pencil, lower-right of card).
+
 - **Expect**: Title field becomes editable; focus moves into it. Notes field reachable by swiping. Dismiss keyboard to commit; changes reflected on card without losing focus context.
 
 **V7 — List picker**
+
 1. Double-tap the list picker button in the nav bar.
+
 - **Expect**: Dropdown opens; each list name is announced with its selection state ("checked" or unchecked). Selecting a list closes the dropdown and announces the new list name or a transition. Scrim dismiss (double-tap outside) reachable.
 
 **V8 — Empty list state**
+
 1. Switch to a list with no tasks.
+
 - **Expect**: Empty state message announced. Add task field or button reachable and labeled.
 
 **V9 — Large text with VoiceOver**
+
 1. Set text size to maximum (Settings → Accessibility → Display & Text Size → Larger Text → drag to max), then enable VoiceOver.
+
 - **Expect**: All labels readable; no text truncated mid-word without being announced in full by VoiceOver. Card and controls remain tappable (touch targets ≥ 44 pt).
 
 ---
@@ -255,7 +289,10 @@ flowchart TB
   ShowTask -->|switch list| SetupList
 ```
 
+
+
 Diagram notes:
+
 - `denied/writeOnly`: both treated as insufficient for read needs.
 - Shuffle / random pick share `UniformRandomTopLevelPolicy`; see `RandomSelectionPolicy.swift`.
 - Complete / trash returns to `LoadPool` after optional undo toast when pool had 2+ tasks.
@@ -286,6 +323,8 @@ flowchart TB
   Persist --> Exit
 ```
 
+
+
 - Lists come from all sources the device exposes (iCloud, local, Exchange, etc.).
 - New list title is `AppConfig.appName`; source prefers `defaultCalendarForNewReminders()`, then CalDAV, then first available.
 - Resolution order: persisted list id first, then first list whose title matches `AppConfig.appName`. Choice stored in `SelectionStore`.
@@ -306,6 +345,7 @@ flowchart TB
 #### Add-task surfacing rule
 
 Behavior depends on pool size when add started:
+
 - **0** in pool → focus the new task.
 - **1** → focus the new task (including "Add another" from the only-one alert).
 - **2+** → keep current task; the new reminder joins the pool silently.
@@ -321,16 +361,18 @@ Implemented via `poolSizeWhenAddOpened` in `AppViewModel`.
 
 #### Source layout
 
-| Directory | Purpose |
-|---|---|
-| `Monotasker/App/` | `@main` entry point, `AppConfig` |
-| `Monotasker/Models/` | `ReminderTask` — domain model wrapping `EKReminder` |
-| `Monotasker/Services/` | `RemindersService` protocol + EventKit/mock implementations |
-| `Monotasker/State/` | `AppViewModel`, `SelectionStore` |
-| `Monotasker/Selection/` | `UniformRandomTopLevelPolicy` |
-| `Monotasker/Views/` | All SwiftUI views |
-| `Monotasker/Resources/` | `DesignColors`, asset catalogs |
-| `MonotaskerTests/` | Unit tests (selection policy, selection store, view model) |
+
+| Directory               | Purpose                                                     |
+| ----------------------- | ----------------------------------------------------------- |
+| `Monotasker/App/`       | `@main` entry point, `AppConfig`                            |
+| `Monotasker/Models/`    | `ReminderTask` — domain model wrapping `EKReminder`         |
+| `Monotasker/Services/`  | `RemindersService` protocol + EventKit/mock implementations |
+| `Monotasker/State/`     | `AppViewModel`, `SelectionStore`                            |
+| `Monotasker/Selection/` | `UniformRandomTopLevelPolicy`                               |
+| `Monotasker/Views/`     | All SwiftUI views                                           |
+| `Monotasker/Resources/` | `DesignColors`, asset catalogs                              |
+| `MonotaskerTests/`      | Unit tests (selection policy, selection store, view model)  |
+
 
 #### Renaming the app
 
@@ -345,3 +387,4 @@ Implemented via `poolSizeWhenAddOpened` in `AppViewModel`.
 
 - Keep this file in sync when core behaviors change (phases, surfacing rules, EventKit assumptions, instrumentation events).
 - Regenerate the xcodegen project after `project.yml` edits; commit intentional `.pbxproj` updates.
+

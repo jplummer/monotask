@@ -286,24 +286,22 @@ struct TaskFocusView: View {
       outgoingAnimOpacity: outgoingAnimOpacity
     )
     let isShuffling = model.shuffleOutgoingTask != nil
+    // Normal chrome — always rendered at the new card's position so it is already in place
+    // when the outgoing overlay above becomes transparent. During shuffle, the outgoing
+    // chrome on top covers it; as that fades the new icons are revealed naturally.
+    postItFloatingChrome(postIt: postIt, cardAngle: frontCardAngle)
+      .frame(width: size.width, height: size.height)
+      .allowsHitTesting(!isEditing && !isShuffling)
+      .opacity(isEditing ? 0 : 1)
+      .animation(reduceMotion ? .none : .easeInOut(duration: 0.15), value: isEditing)
+    // Outgoing chrome — rendered on top during shuffle, travels with old card, then removed.
     if isShuffling {
-      // Outgoing chrome — travels with the old card. Driven by the same animated state
-      // values as the outgoing card overlay, so icons slide away together.
       postItFloatingChrome(postIt: postIt, cardAngle: outgoingCardAngle)
         .frame(width: size.width, height: size.height)
         .allowsHitTesting(false)
         .offset(outgoingAnimOffset)
         .scaleEffect(outgoingAnimScale)
         .opacity(outgoingAnimOpacity)
-        .transition(.identity)
-    } else {
-      // Normal chrome — appears instantly when shuffle ends, already at the new card's
-      // position. Two separate instances avoids any ternary-switch animation between them.
-      postItFloatingChrome(postIt: postIt, cardAngle: frontCardAngle)
-        .frame(width: size.width, height: size.height)
-        .allowsHitTesting(!isEditing)
-        .opacity(isEditing ? 0 : 1)
-        .animation(reduceMotion ? .none : .easeInOut(duration: 0.15), value: isEditing)
         .transition(.identity)
     }
   }

@@ -90,12 +90,15 @@ struct TaskFocusView: View {
         if isEditing { cancelInlineEdit() }
         if isAdding { cancelInlineAdd() }
         frontCardAngle = Double.random(in: -2.5...2.5)
-        // Snap the new card to full opacity immediately — it should seem like it was
-        // already there underneath, revealed by the outgoing card moving away.
-        cardAnimOffset = .zero
-        cardAnimScale = 1.0
-        cardAnimInYOffset = 0
-        cardAnimOpacity = 1.0
+        // Snap the new card instantly — it should seem like it was already there,
+        // revealed by the outgoing card moving away. withAnimation(.none) kills any
+        // residual animation context that would cause the card to visibly shift.
+        withAnimation(.none) {
+          cardAnimOffset = .zero
+          cardAnimScale = 1.0
+          cardAnimInYOffset = 0
+          cardAnimOpacity = 1.0
+        }
         // If the add toast is about to announce, wait for it to finish before reading the task.
         if hasAppeared && !model.showTaskAddedToast { announceCurrentTask() }
       }

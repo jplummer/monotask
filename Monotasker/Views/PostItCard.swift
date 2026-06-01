@@ -132,8 +132,11 @@ struct PostItCard: View {
   }
 
   private var backgroundCards: [BackgroundCard] {
-    cardJitter.enumerated().map { i, jitter in
-      let colorIdx = (i == 0) ? (incomingColorIndex ?? jitter.colorIdx) : jitter.colorIdx
+    let topIndex = cardJitter.count - 1
+    return cardJitter.enumerated().map { i, jitter in
+      // The topmost background card (last in ZStack render order) is the one visually revealed
+      // when the front card slides away. Match it to the incoming task's color.
+      let colorIdx = (i == topIndex) ? (incomingColorIndex ?? jitter.colorIdx) : jitter.colorIdx
       return BackgroundCard(
         id: i,
         angle: jitter.angle,

@@ -24,6 +24,7 @@ struct TaskFocusView: View {
   @State private var outgoingAnimOffset: CGSize = .zero
   @State private var outgoingAnimScale: CGFloat = 1.0
   @State private var outgoingAnimOpacity: Double = 1.0
+  @State private var outgoingAnimRotation: Double = 0
 
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -84,9 +85,15 @@ struct TaskFocusView: View {
         outgoingAnimOffset = .zero
         outgoingAnimScale = 1.0
         outgoingAnimOpacity = 1.0
+        outgoingAnimRotation = 0
+        // Spring for position/scale/rotation: physical tuck-behind feel.
+        withAnimation(.spring(response: 0.28, dampingFraction: 0.82)) {
+          outgoingAnimOffset = CGSize(width: -12, height: -8)
+          outgoingAnimScale = 0.76
+          outgoingAnimRotation = 8
+        }
+        // Opacity on its own curve — card fades as it tucks away.
         withAnimation(.easeIn(duration: 0.22)) {
-          outgoingAnimOffset = CGSize(width: -6, height: 28)
-          outgoingAnimScale = 0.88
           outgoingAnimOpacity = 0
         }
       }
@@ -280,7 +287,7 @@ struct TaskFocusView: View {
       outgoingDisplayTitle: model.shuffleOutgoingTask?.title,
       outgoingDisplayNotes: model.shuffleOutgoingTask?.notes,
       outgoingColorIndex: model.shuffleOutgoingTask.flatMap { t in model.pool.firstIndex(where: { $0.id == t.id }) },
-      outgoingCardRotation: outgoingCardAngle,
+      outgoingCardRotation: outgoingCardAngle + outgoingAnimRotation,
       outgoingAnimOffset: outgoingAnimOffset,
       outgoingAnimScale: outgoingAnimScale,
       outgoingAnimOpacity: outgoingAnimOpacity
@@ -301,6 +308,7 @@ struct TaskFocusView: View {
         .allowsHitTesting(false)
         .offset(outgoingAnimOffset)
         .scaleEffect(outgoingAnimScale)
+        .rotationEffect(.degrees(outgoingAnimRotation))
         .opacity(outgoingAnimOpacity)
         .transition(.identity)
     }

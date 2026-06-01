@@ -118,6 +118,9 @@ struct PostItCard: View {
           // Incoming card — rendered at the front-card position, behind the outgoing card.
           // Revealed as the outgoing card animates away; same color and content as the task
           // that is about to become the new front card.
+          // .transaction disables any ambient animation that SwiftUI would otherwise apply
+          // to this view's appearance (the outgoing withAnimation fires in the same render
+          // cycle and would otherwise cause the incoming card to hop in).
           if let title = incomingDisplayTitle, let colorIdx = incomingColorIndex {
             incomingCardFace(title: title, notes: incomingDisplayNotes)
               .frame(width: squareSide, height: squareSide)
@@ -126,6 +129,7 @@ struct PostItCard: View {
               .shadow(color: .black.opacity(0.26), radius: 20, y: 10)
               .rotationEffect(.degrees(reduceMotion ? 0 : incomingCardRotation))
               .offset(y: -upShift)
+              .transaction { $0.animation = nil }
           }
 
           // Main post-it card (outgoing during shuffle)

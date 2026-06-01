@@ -72,6 +72,11 @@ struct PostItCard: View {
   var displayNotesAccessibilityLabel: String? = nil
   /// Fraction of the container height to shift the card above center. Pass 0 to center vertically.
   var verticalUpShiftRatio: CGFloat = PostItCardLayout.verticalUpShiftRatio
+  /// Additional offset applied to the front card only — used for shuffle outgoing/incoming animation.
+  var cardAnimationOffset: CGSize = .zero
+  var cardAnimationScale: CGFloat = 1.0
+  var cardAnimationOpacity: Double = 1.0
+  var cardAnimationInYOffset: CGFloat = 0
 
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   /// Randomly generated per-card jitter, stable for the view's lifetime.
@@ -111,7 +116,10 @@ struct PostItCard: View {
             .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
             .shadow(color: .black.opacity(0.26), radius: 20, y: 10)
             .rotationEffect(.degrees(reduceMotion ? 0 : frontCardRotation))
-            .offset(y: -upShift)
+            .offset(y: -upShift + cardAnimationInYOffset)
+            .offset(cardAnimationOffset)
+            .scaleEffect(cardAnimationScale)
+            .opacity(cardAnimationOpacity)
         }
         .frame(width: geo.size.width, height: geo.size.height)
       }

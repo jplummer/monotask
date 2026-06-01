@@ -19,6 +19,12 @@ struct TaskFocusView: View {
   @State private var keyboardHeight: CGFloat = 0
   @State private var hasAppeared = false
 
+  // Shuffle animation — outgoing (card slides to bottom-slot) and incoming (new card rises).
+  @State private var cardAnimOffset: CGSize = .zero
+  @State private var cardAnimScale: CGFloat = 1.0
+  @State private var cardAnimOpacity: Double = 1.0
+  @State private var cardAnimInYOffset: CGFloat = 0
+
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
   private let horizontalPadding: CGFloat = 24
@@ -68,10 +74,32 @@ struct TaskFocusView: View {
 
   private var taskObservers: some View {
     layoutView
+      .onChange(of: model.shuffleCount) { _, _ in
+        guard !reduceMotion else { return }
+        cardAnimOffset = .zero
+        cardAnimScale = 1.0
+        cardAnimOpacity = 1.0
+        cardAnimInYOffset = 0
+        withAnimation(.easeIn(duration: 0.22)) {
+          cardAnimOffset = CGSize(width: -6, height: 28)
+          cardAnimScale = 0.88
+          cardAnimOpacity = 0
+        }
+      }
       .onChange(of: task.id) { _, _ in
         if isEditing { cancelInlineEdit() }
         if isAdding { cancelInlineAdd() }
         frontCardAngle = Double.random(in: -2.5...2.5)
+        if !reduceMotion {
+          cardAnimOffset = .zero
+          cardAnimScale = 1.0
+          cardAnimInYOffset = 20
+          cardAnimOpacity = 0.5
+          withAnimation(.spring(response: 0.32, dampingFraction: 0.75)) {
+            cardAnimInYOffset = 0
+            cardAnimOpacity = 1.0
+          }
+        }
         // If the add toast is about to announce, wait for it to finish before reading the task.
         if hasAppeared && !model.showTaskAddedToast { announceCurrentTask() }
       }
@@ -250,7 +278,11 @@ struct TaskFocusView: View {
       colorIndex: model.pool.firstIndex(where: { $0.id == task.id }) ?? 0,
       frontCardRotation: frontCardAngle,
       checkboxLeadingReserve: 32,
-      verticalUpShiftRatio: cardRatio
+      verticalUpShiftRatio: cardRatio,
+      cardAnimationOffset: cardAnimOffset,
+      cardAnimationScale: cardAnimScale,
+      cardAnimationOpacity: cardAnimOpacity,
+      cardAnimationInYOffset: cardAnimInYOffset
     )
     postItFloatingChrome(postIt: postIt)
       .frame(width: size.width, height: size.height)

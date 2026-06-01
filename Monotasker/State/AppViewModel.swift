@@ -50,6 +50,9 @@ final class AppViewModel {
   var showListPickerSheet: Bool = false
   /// True during the fade-out/in transition when the user switches lists from the focused phase.
   var isListSwitching: Bool = false
+  /// Incremented each time a shuffle begins. Views observe this to start the outgoing animation
+  /// before currentTask changes.
+  var shuffleCount: Int = 0
 
   /// ID of the task currently in the undo window, filtered out of pool reloads.
   private var pendingTaskId: String? = nil
@@ -198,6 +201,8 @@ final class AppViewModel {
     guard let current = currentTask else { return }
     let result = selectionPolicy.pick(from: pool, excluding: current.id)
     guard let task = result.task else { return }
+    shuffleCount += 1
+    try? await Task.sleep(for: .milliseconds(260))
     currentTask = task
     guard let listId = activeListSummary?.id else { return }
     selectionStore.setReminderID(task.id, forList: listId)

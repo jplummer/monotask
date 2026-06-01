@@ -72,17 +72,16 @@ struct PostItCard: View {
   var displayNotesAccessibilityLabel: String? = nil
   /// Fraction of the container height to shift the card above center. Pass 0 to center vertically.
   var verticalUpShiftRatio: CGFloat = PostItCardLayout.verticalUpShiftRatio
-  /// Additional offset applied to the front card only — used for shuffle outgoing animation.
-  var cardAnimationOffset: CGSize = .zero
-  var cardAnimationScale: CGFloat = 1.0
-  var cardAnimationOpacity: Double = 1.0
-  var cardAnimationInYOffset: CGFloat = 0
-  /// When set, renders the incoming task's card behind the outgoing front card so it is
-  /// genuinely revealed as the outgoing card moves away — correct color and content.
-  var incomingDisplayTitle: String? = nil
-  var incomingDisplayNotes: String? = nil
-  var incomingColorIndex: Int? = nil
-  var incomingCardRotation: Double = 0
+  /// Outgoing card overlay shown during shuffle. currentTask has already updated to the new task
+  /// by the time this is set, so the main card beneath is already correct — this overlay just
+  /// animates the old card away on top of it.
+  var outgoingDisplayTitle: String? = nil
+  var outgoingDisplayNotes: String? = nil
+  var outgoingColorIndex: Int? = nil
+  var outgoingCardRotation: Double = 0
+  var outgoingAnimOffset: CGSize = .zero
+  var outgoingAnimScale: CGFloat = 1.0
+  var outgoingAnimOpacity: Double = 1.0
 
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   /// Randomly generated per-card jitter, stable for the view's lifetime.
@@ -115,34 +114,33 @@ struct PostItCard: View {
               )
           }
 
-          // Incoming card — rendered at the front-card position, behind the outgoing card.
-          // Revealed as the outgoing card animates away; same color and content as the task
-          // that is about to become the new front card.
-          // .transaction disables any ambient animation that SwiftUI would otherwise apply
-          // to this view's appearance (the outgoing withAnimation fires in the same render
-          // cycle and would otherwise cause the incoming card to hop in).
-          if let title = incomingDisplayTitle, let colorIdx = incomingColorIndex {
-            incomingCardFace(title: title, notes: incomingDisplayNotes)
-              .frame(width: squareSide, height: squareSide)
-              .background(DesignColors.postItColor(at: colorIdx))
-              .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-              .shadow(color: .black.opacity(0.26), radius: 20, y: 10)
-              .rotationEffect(.degrees(reduceMotion ? 0 : incomingCardRotation))
-              .offset(y: -upShift)
-              .transaction { $0.animation = nil }
-          }
-
-          // Main post-it card (outgoing during shuffle)
+          // Main post-it card — always at full opacity. currentTask is updated immediately
+          // when shuffle fires, so this is already showing the new task while the outgoing
+          // overlay above animates away.
           postItBody
             .frame(width: squareSide, height: squareSide)
             .background(DesignColors.postItColor(at: colorIndex))
             .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
             .shadow(color: .black.opacity(0.26), radius: 20, y: 10)
             .rotationEffect(.degrees(reduceMotion ? 0 : frontCardRotation))
-            .offset(y: -upShift + cardAnimationInYOffset)
-            .offset(cardAnimationOffset)
-            .scaleEffect(cardAnimationScale)
-            .opacity(cardAnimationOpacity)
+            .offset(y: -upShift)
+
+          // Outgoing overlay — the old task animating away on top of the already-correct main card.
+          // .transition(.identity) prevents SwiftUI from applying an insertion animation when
+          // the overlay appears; the outgoing animation is driven entirely by the anim params.
+          if let title = outgoingDisplayTitle, let colorIdx = outgoingColorIndex {
+            outgoingCardFace(title: title, notes: outgoingDisplayNotes)
+              .frame(width: squareSide, height: squareSide)
+              .background(DesignColors.postItColor(at: colorIdx))
+              .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+              .shadow(color: .black.opacity(0.26), radius: 20, y: 10)
+              .rotationEffect(.degrees(reduceMotion ? 0 : outgoingCardRotation))
+              .offset(y: -upShift)
+              .offset(outgoingAnimOffset)
+              .scaleEffect(outgoingAnimScale)
+              .opacity(outgoingAnimOpacity)
+              .transition(.identity)
+          }
         }
         .frame(width: geo.size.width, height: geo.size.height)
       }
@@ -163,7 +161,7 @@ struct PostItCard: View {
   }
 
   @ViewBuilder
-  private func incomingCardFace(title: String, notes: String?) -> some View {
+  private func outgoingCardFace(title: String, notes: String?) -> some View {
     ScrollView {
       VStack(alignment: .leading, spacing: 12) {
         Text(title)

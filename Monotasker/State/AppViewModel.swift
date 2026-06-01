@@ -50,15 +50,10 @@ final class AppViewModel {
   var showListPickerSheet: Bool = false
   /// True during the fade-out/in transition when the user switches lists from the focused phase.
   var isListSwitching: Bool = false
-  /// Incremented each time a shuffle begins. Views observe this to start the outgoing animation
-  /// before currentTask changes.
-  var shuffleCount: Int = 0
-  /// The task that will become the front card after shuffle. Set before the animation starts so
-  /// the incoming card can be rendered behind the outgoing card during the reveal.
-  var shuffleIncomingTask: ReminderTask? = nil
-  /// Pre-assigned tilt for the incoming card, shared with PostItCard and used as the new
-  /// frontCardAngle after the outgoing card is gone, so there is no tilt snap on reveal.
-  var shuffleIncomingCardAngle: Double = 0
+  /// The task being shuffled away. Set at the same time currentTask is updated to the new task,
+  /// so the outgoing overlay can show the old card animating away while the new card is already
+  /// underneath. Cleared after the outgoing animation finishes.
+  var shuffleOutgoingTask: ReminderTask? = nil
 
   /// ID of the task currently in the undo window, filtered out of pool reloads.
   private var pendingTaskId: String? = nil
@@ -207,12 +202,10 @@ final class AppViewModel {
     guard let current = currentTask else { return }
     let result = selectionPolicy.pick(from: pool, excluding: current.id)
     guard let task = result.task else { return }
-    shuffleIncomingTask = task
-    shuffleIncomingCardAngle = Double.random(in: -2.5...2.5)
-    shuffleCount += 1
-    try? await Task.sleep(for: .milliseconds(225))
+    shuffleOutgoingTask = current
     currentTask = task
-    shuffleIncomingTask = nil
+    try? await Task.sleep(for: .milliseconds(240))
+    shuffleOutgoingTask = nil
     guard let listId = activeListSummary?.id else { return }
     selectionStore.setReminderID(task.id, forList: listId)
     analytics?.record("task.reroll")

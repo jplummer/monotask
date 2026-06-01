@@ -19,14 +19,11 @@ struct TaskFocusView: View {
   @State private var keyboardHeight: CGFloat = 0
   @State private var hasAppeared = false
 
-  // Shuffle animation — outgoing card transform.
-  @State private var cardAnimOffset: CGSize = .zero
-  @State private var cardAnimScale: CGFloat = 1.0
-  @State private var cardAnimOpacity: Double = 1.0
-  @State private var cardAnimInYOffset: CGFloat = 0
-  // True between shuffleCount increment and task.id change, so the incoming reveal uses
-  // the pre-assigned angle rather than a new random one (prevents tilt snap on reveal).
-  @State private var wasShuffleTransition = false
+  // Shuffle outgoing overlay — the old card animating away on top of the already-correct new card.
+  @State private var outgoingCardAngle: Double = 0
+  @State private var outgoingAnimOffset: CGSize = .zero
+  @State private var outgoingAnimScale: CGFloat = 1.0
+  @State private var outgoingAnimOpacity: Double = 1.0
 
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -77,36 +74,29 @@ struct TaskFocusView: View {
 
   private var taskObservers: some View {
     layoutView
-      .onChange(of: model.shuffleCount) { _, _ in
-        wasShuffleTransition = true
+      .onChange(of: model.shuffleOutgoingTask) { _, new in
+        guard new != nil else { return }
+        // Capture the old card's angle for the outgoing overlay, then set a new angle for the
+        // new card that's already showing underneath.
+        outgoingCardAngle = frontCardAngle
+        frontCardAngle = Double.random(in: -2.5...2.5)
         guard !reduceMotion else { return }
-        cardAnimOffset = .zero
-        cardAnimScale = 1.0
-        cardAnimOpacity = 1.0
-        cardAnimInYOffset = 0
+        outgoingAnimOffset = .zero
+        outgoingAnimScale = 1.0
+        outgoingAnimOpacity = 1.0
         withAnimation(.easeIn(duration: 0.22)) {
-          cardAnimOffset = CGSize(width: -6, height: 28)
-          cardAnimScale = 0.88
-          cardAnimOpacity = 0
+          outgoingAnimOffset = CGSize(width: -6, height: 28)
+          outgoingAnimScale = 0.88
+          outgoingAnimOpacity = 0
         }
       }
       .onChange(of: task.id) { _, _ in
         if isEditing { cancelInlineEdit() }
         if isAdding { cancelInlineAdd() }
-        // Use the pre-assigned incoming angle so the revealed card's tilt matches the
-        // incoming card that was visible behind the outgoing card during the animation.
-        if wasShuffleTransition {
-          wasShuffleTransition = false
-          frontCardAngle = model.shuffleIncomingCardAngle
-        } else {
+        // For shuffle, the angle was already set by onChange(shuffleOutgoingTask) above.
+        // Only randomize for other task changes (complete, trash).
+        if model.shuffleOutgoingTask == nil {
           frontCardAngle = Double.random(in: -2.5...2.5)
-        }
-        // Snap all state instantly — the card was already there, being revealed.
-        withAnimation(.none) {
-          cardAnimOffset = .zero
-          cardAnimScale = 1.0
-          cardAnimInYOffset = 0
-          cardAnimOpacity = 1.0
         }
         // If the add toast is about to announce, wait for it to finish before reading the task.
         if hasAppeared && !model.showTaskAddedToast { announceCurrentTask() }
@@ -287,14 +277,13 @@ struct TaskFocusView: View {
       frontCardRotation: frontCardAngle,
       checkboxLeadingReserve: 32,
       verticalUpShiftRatio: cardRatio,
-      cardAnimationOffset: cardAnimOffset,
-      cardAnimationScale: cardAnimScale,
-      cardAnimationOpacity: cardAnimOpacity,
-      cardAnimationInYOffset: cardAnimInYOffset,
-      incomingDisplayTitle: model.shuffleIncomingTask?.title,
-      incomingDisplayNotes: model.shuffleIncomingTask?.notes,
-      incomingColorIndex: model.shuffleIncomingTask.flatMap { t in model.pool.firstIndex(where: { $0.id == t.id }) },
-      incomingCardRotation: model.shuffleIncomingCardAngle
+      outgoingDisplayTitle: model.shuffleOutgoingTask?.title,
+      outgoingDisplayNotes: model.shuffleOutgoingTask?.notes,
+      outgoingColorIndex: model.shuffleOutgoingTask.flatMap { t in model.pool.firstIndex(where: { $0.id == t.id }) },
+      outgoingCardRotation: outgoingCardAngle,
+      outgoingAnimOffset: outgoingAnimOffset,
+      outgoingAnimScale: outgoingAnimScale,
+      outgoingAnimOpacity: outgoingAnimOpacity
     )
     postItFloatingChrome(postIt: postIt)
       .frame(width: size.width, height: size.height)

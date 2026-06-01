@@ -285,11 +285,13 @@ struct TaskFocusView: View {
       outgoingAnimScale: outgoingAnimScale,
       outgoingAnimOpacity: outgoingAnimOpacity
     )
+    let isShuffling = model.shuffleOutgoingTask != nil
     postItFloatingChrome(postIt: postIt)
       .frame(width: size.width, height: size.height)
-      .allowsHitTesting(!isEditing)
-      .opacity(isEditing ? 0 : 1)
+      .allowsHitTesting(!isEditing && !isShuffling)
+      .opacity(isEditing || isShuffling ? 0 : 1)
       .animation(reduceMotion ? .none : .easeInOut(duration: 0.15), value: isEditing)
+      .animation(.none, value: isShuffling)
   }
 
   private func postItFloatingChrome(postIt: (cx: CGFloat, cy: CGFloat, half: CGFloat)) -> some View {

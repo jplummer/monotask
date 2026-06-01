@@ -72,14 +72,17 @@ struct PostItCard: View {
   var displayNotesAccessibilityLabel: String? = nil
   /// Fraction of the container height to shift the card above center. Pass 0 to center vertically.
   var verticalUpShiftRatio: CGFloat = PostItCardLayout.verticalUpShiftRatio
-  /// Additional offset applied to the front card only — used for shuffle outgoing/incoming animation.
+  /// Additional offset applied to the front card only — used for shuffle outgoing animation.
   var cardAnimationOffset: CGSize = .zero
   var cardAnimationScale: CGFloat = 1.0
   var cardAnimationOpacity: Double = 1.0
   var cardAnimationInYOffset: CGFloat = 0
-  /// When set, the topmost background card uses this palette index instead of its random color,
-  /// so the peeking card matches the task that is about to become the front card.
+  /// When set, renders the incoming task's card behind the outgoing front card so it is
+  /// genuinely revealed as the outgoing card moves away — correct color and content.
+  var incomingDisplayTitle: String? = nil
+  var incomingDisplayNotes: String? = nil
   var incomingColorIndex: Int? = nil
+  var incomingCardRotation: Double = 0
 
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   /// Randomly generated per-card jitter, stable for the view's lifetime.
@@ -112,7 +115,20 @@ struct PostItCard: View {
               )
           }
 
-          // Main post-it card
+          // Incoming card — rendered at the front-card position, behind the outgoing card.
+          // Revealed as the outgoing card animates away; same color and content as the task
+          // that is about to become the new front card.
+          if let title = incomingDisplayTitle, let colorIdx = incomingColorIndex {
+            incomingCardFace(title: title, notes: incomingDisplayNotes)
+              .frame(width: squareSide, height: squareSide)
+              .background(DesignColors.postItColor(at: colorIdx))
+              .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+              .shadow(color: .black.opacity(0.26), radius: 20, y: 10)
+              .rotationEffect(.degrees(reduceMotion ? 0 : incomingCardRotation))
+              .offset(y: -upShift)
+          }
+
+          // Main post-it card (outgoing during shuffle)
           postItBody
             .frame(width: squareSide, height: squareSide)
             .background(DesignColors.postItColor(at: colorIndex))
@@ -132,18 +148,39 @@ struct PostItCard: View {
   }
 
   private var backgroundCards: [BackgroundCard] {
-    let topIndex = cardJitter.count - 1
-    return cardJitter.enumerated().map { i, jitter in
-      // The topmost background card (last in ZStack render order) is the one visually revealed
-      // when the front card slides away. Match it to the incoming task's color.
-      let colorIdx = (i == topIndex) ? (incomingColorIndex ?? jitter.colorIdx) : jitter.colorIdx
-      return BackgroundCard(
+    cardJitter.enumerated().map { i, jitter in
+      BackgroundCard(
         id: i,
         angle: jitter.angle,
         offset: CGSize(width: jitter.dx, height: jitter.dy),
-        color: DesignColors.postItColor(at: colorIdx)
+        color: DesignColors.postItColor(at: jitter.colorIdx)
       )
     }
+  }
+
+  @ViewBuilder
+  private func incomingCardFace(title: String, notes: String?) -> some View {
+    ScrollView {
+      VStack(alignment: .leading, spacing: 12) {
+        Text(title)
+          .font(.largeTitle.weight(.semibold))
+          .foregroundStyle(.primary)
+          .multilineTextAlignment(.leading)
+          .padding(.leading, checkboxLeadingReserve)
+          .frame(maxWidth: .infinity, alignment: .leading)
+        if let notes, !notes.isEmpty {
+          Text(notes)
+            .font(.body)
+            .foregroundStyle(.secondary)
+            .multilineTextAlignment(.leading)
+            .padding(.leading, checkboxLeadingReserve)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+      }
+      .padding(20)
+      .frame(maxWidth: .infinity, alignment: .topLeading)
+    }
+    .scrollIndicators(.hidden)
   }
 
   private func regenerateJitter(count: Int) {

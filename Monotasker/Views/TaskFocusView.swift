@@ -19,11 +19,14 @@ struct TaskFocusView: View {
   @State private var keyboardHeight: CGFloat = 0
   @State private var hasAppeared = false
 
-  // Shuffle animation — outgoing (card slides to bottom-slot) and incoming (new card rises).
+  // Shuffle animation — outgoing card transform.
   @State private var cardAnimOffset: CGSize = .zero
   @State private var cardAnimScale: CGFloat = 1.0
   @State private var cardAnimOpacity: Double = 1.0
   @State private var cardAnimInYOffset: CGFloat = 0
+  // True between shuffleCount increment and task.id change, so the incoming reveal uses
+  // the pre-assigned angle rather than a new random one (prevents tilt snap on reveal).
+  @State private var wasShuffleTransition = false
 
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -75,6 +78,7 @@ struct TaskFocusView: View {
   private var taskObservers: some View {
     layoutView
       .onChange(of: model.shuffleCount) { _, _ in
+        wasShuffleTransition = true
         guard !reduceMotion else { return }
         cardAnimOffset = .zero
         cardAnimScale = 1.0
@@ -89,10 +93,15 @@ struct TaskFocusView: View {
       .onChange(of: task.id) { _, _ in
         if isEditing { cancelInlineEdit() }
         if isAdding { cancelInlineAdd() }
-        frontCardAngle = Double.random(in: -2.5...2.5)
-        // Snap the new card instantly — it should seem like it was already there,
-        // revealed by the outgoing card moving away. withAnimation(.none) kills any
-        // residual animation context that would cause the card to visibly shift.
+        // Use the pre-assigned incoming angle so the revealed card's tilt matches the
+        // incoming card that was visible behind the outgoing card during the animation.
+        if wasShuffleTransition {
+          wasShuffleTransition = false
+          frontCardAngle = model.shuffleIncomingCardAngle
+        } else {
+          frontCardAngle = Double.random(in: -2.5...2.5)
+        }
+        // Snap all state instantly — the card was already there, being revealed.
         withAnimation(.none) {
           cardAnimOffset = .zero
           cardAnimScale = 1.0
@@ -282,7 +291,10 @@ struct TaskFocusView: View {
       cardAnimationScale: cardAnimScale,
       cardAnimationOpacity: cardAnimOpacity,
       cardAnimationInYOffset: cardAnimInYOffset,
-      incomingColorIndex: model.shuffleIncomingColorIndex
+      incomingDisplayTitle: model.shuffleIncomingTask?.title,
+      incomingDisplayNotes: model.shuffleIncomingTask?.notes,
+      incomingColorIndex: model.shuffleIncomingTask.flatMap { t in model.pool.firstIndex(where: { $0.id == t.id }) },
+      incomingCardRotation: model.shuffleIncomingCardAngle
     )
     postItFloatingChrome(postIt: postIt)
       .frame(width: size.width, height: size.height)

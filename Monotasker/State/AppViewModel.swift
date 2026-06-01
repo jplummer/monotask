@@ -53,10 +53,12 @@ final class AppViewModel {
   /// Incremented each time a shuffle begins. Views observe this to start the outgoing animation
   /// before currentTask changes.
   var shuffleCount: Int = 0
-  /// Color palette index of the task that will become the new front card after the shuffle animation.
-  /// Set before the animation starts so the topmost background card can show the correct color.
-  /// Stays set after currentTask changes to avoid a color jump during the incoming fade-in.
-  var shuffleIncomingColorIndex: Int? = nil
+  /// The task that will become the front card after shuffle. Set before the animation starts so
+  /// the incoming card can be rendered behind the outgoing card during the reveal.
+  var shuffleIncomingTask: ReminderTask? = nil
+  /// Pre-assigned tilt for the incoming card, shared with PostItCard and used as the new
+  /// frontCardAngle after the outgoing card is gone, so there is no tilt snap on reveal.
+  var shuffleIncomingCardAngle: Double = 0
 
   /// ID of the task currently in the undo window, filtered out of pool reloads.
   private var pendingTaskId: String? = nil
@@ -205,12 +207,12 @@ final class AppViewModel {
     guard let current = currentTask else { return }
     let result = selectionPolicy.pick(from: pool, excluding: current.id)
     guard let task = result.task else { return }
-    shuffleIncomingColorIndex = pool.firstIndex(where: { $0.id == task.id })
+    shuffleIncomingTask = task
+    shuffleIncomingCardAngle = Double.random(in: -2.5...2.5)
     shuffleCount += 1
     try? await Task.sleep(for: .milliseconds(225))
     currentTask = task
-    // shuffleIncomingColorIndex intentionally left set so the background card color stays
-    // correct during the incoming fade-in; cleared at the start of the next shuffle.
+    shuffleIncomingTask = nil
     guard let listId = activeListSummary?.id else { return }
     selectionStore.setReminderID(task.id, forList: listId)
     analytics?.record("task.reroll")

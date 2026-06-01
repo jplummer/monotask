@@ -207,7 +207,7 @@ final class AppViewModel {
     guard let task = result.task else { return }
     shuffleIncomingColorIndex = pool.firstIndex(where: { $0.id == task.id })
     shuffleCount += 1
-    try? await Task.sleep(for: .milliseconds(260))
+    try? await Task.sleep(for: .milliseconds(225))
     currentTask = task
     // shuffleIncomingColorIndex intentionally left set so the background card color stays
     // correct during the incoming fade-in; cleared at the start of the next shuffle.

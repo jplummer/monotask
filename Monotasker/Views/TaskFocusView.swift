@@ -286,18 +286,26 @@ struct TaskFocusView: View {
       outgoingAnimOpacity: outgoingAnimOpacity
     )
     let isShuffling = model.shuffleOutgoingTask != nil
-    // During shuffle, icons use the old card's angle so they stay physically attached to
-    // the outgoing card. The same animated state values that drive the outgoing overlay
-    // also drive the chrome, so the icons travel with the old card for free.
-    let chromeAngle = isShuffling ? outgoingCardAngle : frontCardAngle
-    postItFloatingChrome(postIt: postIt, cardAngle: chromeAngle)
-      .frame(width: size.width, height: size.height)
-      .allowsHitTesting(!isEditing && !isShuffling)
-      .opacity(isEditing ? 0 : (isShuffling ? outgoingAnimOpacity : 1))
-      .offset(isShuffling ? outgoingAnimOffset : .zero)
-      .scaleEffect(isShuffling ? outgoingAnimScale : 1.0)
-      .animation(reduceMotion ? .none : .easeInOut(duration: 0.15), value: isEditing)
-      .animation(.none, value: isShuffling)
+    if isShuffling {
+      // Outgoing chrome — travels with the old card. Driven by the same animated state
+      // values as the outgoing card overlay, so icons slide away together.
+      postItFloatingChrome(postIt: postIt, cardAngle: outgoingCardAngle)
+        .frame(width: size.width, height: size.height)
+        .allowsHitTesting(false)
+        .offset(outgoingAnimOffset)
+        .scaleEffect(outgoingAnimScale)
+        .opacity(outgoingAnimOpacity)
+        .transition(.identity)
+    } else {
+      // Normal chrome — appears instantly when shuffle ends, already at the new card's
+      // position. Two separate instances avoids any ternary-switch animation between them.
+      postItFloatingChrome(postIt: postIt, cardAngle: frontCardAngle)
+        .frame(width: size.width, height: size.height)
+        .allowsHitTesting(!isEditing)
+        .opacity(isEditing ? 0 : 1)
+        .animation(reduceMotion ? .none : .easeInOut(duration: 0.15), value: isEditing)
+        .transition(.identity)
+    }
   }
 
   private func postItFloatingChrome(postIt: (cx: CGFloat, cy: CGFloat, half: CGFloat), cardAngle: Double) -> some View {
